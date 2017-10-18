@@ -31,5 +31,31 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	check(InputComponent);
+
+	InputComponent->BindAxis("Forward", this, &AAvatar::MoveForward);
+	InputComponent->BindAxis("Strafe", this, &AAvatar::MoveRight);
+
+
 }
 
+void AAvatar::MoveForward(float amount)
+{
+	// Don't enter the body of this function if Controller is   // not set up yet, or if the amount to move is equal to 0   
+	if( Controller && amount )
+	{
+		FVector fwd = GetActorForwardVector();
+		// we call AddMovementInput to actually move the
+		// player by `amount` in the `fwd` direction
+		AddMovementInput(fwd, amount);
+	}
+}
+
+void AAvatar::MoveRight(float amount)
+{
+	if (Controller && amount)
+	{
+		FVector right = GetActorRightVector();
+		AddMovementInput(right, amount);
+	}
+}

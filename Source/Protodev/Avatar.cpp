@@ -35,8 +35,9 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	InputComponent->BindAxis("Forward", this, &AAvatar::MoveForward);
 	InputComponent->BindAxis("Strafe", this, &AAvatar::MoveRight);
-
-
+	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
+	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
+	
 }
 
 void AAvatar::MoveForward(float amount)
@@ -59,3 +60,16 @@ void AAvatar::MoveRight(float amount)
 		AddMovementInput(right, amount);
 	}
 }
+
+void AAvatar::Yaw(float amount)
+{
+	AddControllerYawInput(50 * amount * GetWorld()->GetDeltaSeconds());
+
+}
+
+void AAvatar::Pitch(float amount)
+{
+	AddControllerPitchInput(50 * amount * GetWorld()->GetDeltaSeconds());
+}
+
+

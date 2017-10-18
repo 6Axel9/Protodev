@@ -27,5 +27,6 @@ public:
 
 	void MoveForward(float amount);   
 	void MoveRight(float amount);
-
+	void Yaw(float amount); 
+	void Pitch(float amount);
 };

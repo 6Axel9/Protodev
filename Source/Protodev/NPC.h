@@ -22,11 +22,13 @@ public:
 
 	UTexture2D* npcIcon;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Collision)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Collision)
 
-	//USphereComponent* ProxSphere;
+	USphereComponent* ProxSphere;
 
-	/*ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity Sphere"));*/
+	UFUNCTION(BlueprintNativeEvent, Category = "Collision")
+	void Prox(class UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 
 protected:
 	// Called when the game starts or when spawned

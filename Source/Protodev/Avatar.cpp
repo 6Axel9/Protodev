@@ -37,7 +37,8 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Strafe", this, &AAvatar::MoveRight);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
-	
+	//InputComponent->BindAction("Jump", this, &AAvatar::Jumping);
+
 }
 
 void AAvatar::MoveForward(float amount)
@@ -72,4 +73,8 @@ void AAvatar::Pitch(float amount)
 	AddControllerPitchInput(50 * amount * GetWorld()->GetDeltaSeconds());
 }
 
-
+//void AAvatar::Jumping(bool keyheld)
+//{
+//	AAvatar::Jump();
+//}
+//

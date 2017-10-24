@@ -18,7 +18,7 @@ struct Message
 		color = FColor::White;
 	}
 
-	Message(FString iMessage, float iTime, FColor iColor) {
+	Message(FString iMessage = "DEFAULT MESSAGE", float iTime = 5.f, FColor iColor = FColor::White) {
 
 		message = iMessage;     
 		time = iTime;     
@@ -45,6 +45,8 @@ public:
 		virtual void DrawHUD() override;
 
 		void addMessage(Message msg);
-		void DrawMessages() ;
+		void DrawMessages();
+
+		FVector2D dimensions;
 	
 };

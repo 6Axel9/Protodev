@@ -31,7 +31,7 @@ void AMyHUD::DrawMessages()
 		// black backing
 		DrawRect(FLinearColor::Black, x, y, Canvas->SizeX, messageH);
 		// draw our message using the hudFont
-		DrawText(messages[c].message, messages[c].color, x + pad, y + pad, hudFont);
+		DrawText(messages[c].message, messages[c].color, messageH + x + pad, y + pad, hudFont);
 		// draw our icon using the texture
 		DrawTexture(messages[c].icon, x, y, messageH, messageH, 0, 0, 1, 1);
 		// reduce lifetime by the time that passed since last 

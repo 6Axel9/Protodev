@@ -1,9 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
-
+#include "Bullet.h"
 #include "GameFramework/Character.h"
 #include "Avatar.generated.h"
+
 
 UCLASS()
 class PROTODEV_API AAvatar : public ACharacter
@@ -13,6 +14,10 @@ class PROTODEV_API AAvatar : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AAvatar();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
+
+	ABullet* _bullet;
 
 protected:
 	// Called when the game starts or when spawned
@@ -29,7 +34,7 @@ public:
 	void MoveRight(float amount);
 	void Yaw(float amount); 
 	void Pitch(float amount);
-	//void Jumping(bool keyheld);
+	void Shoot();
 
 public:
 

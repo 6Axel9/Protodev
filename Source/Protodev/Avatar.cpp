@@ -18,14 +18,12 @@ AAvatar::AAvatar()
 void AAvatar::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
 void AAvatar::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -39,14 +37,13 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Strafe", this, &AAvatar::MoveRight);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
-	//InputComponent->BindAction("Jump", this, &AAvatar::Jumping);
-
+	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
 }
 
 void AAvatar::MoveForward(float amount)
 {
 	// Don't enter the body of this function if Controller is   // not set up yet, or if the amount to move is equal to 0   
-	if( Controller && amount )
+	if (Controller && amount)
 	{
 		FVector fwd = GetActorForwardVector();
 		// we call AddMovementInput to actually move the
@@ -67,7 +64,6 @@ void AAvatar::MoveRight(float amount)
 void AAvatar::Yaw(float amount)
 {
 	AddControllerYawInput(50 * amount * GetWorld()->GetDeltaSeconds());
-
 }
 
 void AAvatar::Pitch(float amount)
@@ -75,8 +71,6 @@ void AAvatar::Pitch(float amount)
 	AddControllerPitchInput(50 * amount * GetWorld()->GetDeltaSeconds());
 }
 
-//void AAvatar::Jumping(bool keyheld)
-//{
-//	AAvatar::Jump();
-//}
-//
+void AAvatar::Shoot()
+{
+}

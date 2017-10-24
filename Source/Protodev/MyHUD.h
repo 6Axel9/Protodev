@@ -8,6 +8,7 @@
 struct Message
 {
 	FString message;
+	UTexture2D* icon;
 	float time;
 	FColor color;
 
@@ -18,14 +19,13 @@ struct Message
 		color = FColor::White;
 	}
 
-	Message(FString iMessage = "DEFAULT MESSAGE", float iTime = 5.f, FColor iColor = FColor::White) {
+	Message(FString iMessage,UTexture2D* iIcon, float iTime, FColor iColor) {
 
 		message = iMessage;     
+		icon = iIcon;
 		time = iTime;     
 		color = iColor;
 	}
-
-
 
 };
 
@@ -46,6 +46,7 @@ public:
 
 		void addMessage(Message msg);
 		void DrawMessages();
+		void DrawHealthbar();
 
 		FVector2D dimensions;
 	

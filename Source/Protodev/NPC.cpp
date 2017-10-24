@@ -18,7 +18,6 @@ ANPC::ANPC()
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ANPC::Prox);
 
 	npcMessage = "HELLO IM AN AVATAR";
-
 }
 
 void ANPC::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -33,7 +32,7 @@ void ANPC::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	if (PController)
 	{
 		AMyHUD * hud = Cast<AMyHUD>(PController->GetHUD());     
-		hud->addMessage(Message(npcMessage, 5.f, FColor::White));
+		hud->addMessage(Message(npcMessage, npcIcon, 5.f, FColor::White));
 	}
 }
 

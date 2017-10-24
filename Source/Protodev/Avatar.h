@@ -30,4 +30,9 @@ public:
 	void Yaw(float amount); 
 	void Pitch(float amount);
 	//void Jumping(bool keyheld);
+
+public:
+
+	float Hp;
+	float MaxHp;
 };

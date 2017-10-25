@@ -73,4 +73,26 @@ void AAvatar::Pitch(float amount)
 
 void AAvatar::Shoot()
 {
+	if (BP_bullet)
+	{
+		FVector fwd = GetActorForwardVector() + FVector(0.0f,0.0f, 0.15f);
+		FVector nozzle = GetMesh()->GetBoneLocation("index_01_r");
+		nozzle += fwd * 150;
+		
+		ABullet* _blt = GetWorld()->SpawnActor<ABullet>(BP_bullet, nozzle, RootComponent->GetComponentRotation());
+		
+		if (_blt)
+		{
+			_blt->ProxSphere->AddImpulse(fwd*bullet_launch_impulse);
+		}
+
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Red, "BULLET NOT FOUND");
+		}
+	}
+
+
+	
 }
+

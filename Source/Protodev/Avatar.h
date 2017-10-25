@@ -15,9 +15,12 @@ public:
 	// Sets default values for this character's properties
 	AAvatar();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Projectile)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UClass* BP_bullet;
 
-	ABullet* _bullet;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	float bullet_launch_impulse;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,6 +37,7 @@ public:
 	void MoveRight(float amount);
 	void Yaw(float amount); 
 	void Pitch(float amount);
+
 	void Shoot();
 
 public:

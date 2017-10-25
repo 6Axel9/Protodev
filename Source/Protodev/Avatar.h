@@ -19,6 +19,9 @@ public:
 	UClass* BP_bullet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
+	UParticleSystemComponent* bullet_launch_sparks;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
 	float bullet_launch_impulse;
 
 

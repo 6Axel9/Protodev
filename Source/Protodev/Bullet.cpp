@@ -9,6 +9,7 @@ ABullet::ABullet()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
 	ProxSphere->AttachTo(RootComponent);
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ABullet::Prox);
@@ -25,17 +26,13 @@ void ABullet::BeginPlay()
 
 void ABullet::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
-
 	if (OtherComp != OtherActor->GetRootComponent())
 	{
 		return;
 	}
 
-
 	OtherActor->TakeDamage(damage, FDamageEvent(), NULL, this);
 	Destroy();
-
 }
 
 // Called every frame

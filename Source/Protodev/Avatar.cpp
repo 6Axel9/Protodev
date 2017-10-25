@@ -10,6 +10,9 @@ AAvatar::AAvatar()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bullet_launch_sparks = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shooting Particles"));
+	bullet_launch_sparks->AttachTo(RootComponent);
+
 	MaxHp = 100.0f;
 	Hp = 100.0f;
 }
@@ -75,15 +78,16 @@ void AAvatar::Shoot()
 {
 	if (BP_bullet)
 	{
-		FVector fwd = GetActorForwardVector() + FVector(0.0f,0.0f, 0.15f);
-		FVector nozzle = GetMesh()->GetBoneLocation("index_01_r");
-		nozzle += fwd * 150;
+		FVector fwd = GetActorForwardVector() + FVector(0.0f,0.0f, 0.1f);
+		FVector nozzle = GetMesh()->GetBoneLocation("index_03_r");
+		nozzle += fwd * 50.0f;
 		
 		ABullet* _blt = GetWorld()->SpawnActor<ABullet>(BP_bullet, nozzle, RootComponent->GetComponentRotation());
 		
 		if (_blt)
 		{
 			_blt->ProxSphere->AddImpulse(fwd*bullet_launch_impulse);
+			bullet_launch_sparks->ActivateSystem();
 		}
 
 		else
@@ -91,8 +95,5 @@ void AAvatar::Shoot()
 			GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Red, "BULLET NOT FOUND");
 		}
 	}
-
-
-	
 }
 

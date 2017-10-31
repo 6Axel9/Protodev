@@ -11,6 +11,9 @@ ANPC::ANPC()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	impact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
+	impact->AttachTo(RootComponent);
+
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
 	ProxSphere->AttachTo(RootComponent);
 	ProxSphere->SetSphereRadius(160.f);
@@ -57,3 +60,8 @@ void ANPC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+
+void ANPC::Explode()
+{
+	impact->ActivateSystem();
+}

@@ -2,6 +2,7 @@
 
 #include "Protodev.h"
 #include "Bullet.h"
+#include "NPC.h"
 
 
 // Sets default values
@@ -32,6 +33,14 @@ void ABullet::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherAct
 	}
 
 	OtherActor->TakeDamage(damage, FDamageEvent(), NULL, this);
+
+	ANPC* _npc = Cast<ANPC>(OtherActor);
+
+	if (_npc != nullptr)
+	{
+		_npc->Explode();
+	}
+
 	Destroy();
 }
 

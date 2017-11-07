@@ -2,7 +2,9 @@
 
 #include "Protodev.h"
 #include "Avatar.h"
-
+#include "PickupItem.h"
+#include "Bullet.h"
+#include "MyHUD.h"
 
 // Sets default values
 AAvatar::AAvatar()
@@ -13,6 +15,7 @@ AAvatar::AAvatar()
 	bullet_launch_sparks = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shooting Particles"));
 	bullet_launch_sparks->AttachTo(RootComponent);
 
+	inventoryShowing = false;
 	MaxHp = 100.0f;
 	Hp = 100.0f;
 }
@@ -41,6 +44,8 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
+	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
+	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 }
 
 void AAvatar::MoveForward(float amount)
@@ -97,3 +102,81 @@ void AAvatar::Shoot()
 	}
 }
 
+void AAvatar::ToggleInventory()
+{
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
+
+	// If inventory is displayed, undisplay it.
+	if (inventoryShowing)
+	{
+		hud->clearWidgets();
+		inventoryShowing = false;
+		PController->bShowMouseCursor = false;
+		return;
+	}
+
+
+	////////////////////////////////////////////////
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::White,
+			"Showing inventory...");
+	}
+	////////////////////////////////////////////////////////
+
+	// Otherwise, display the player's inventory
+	inventoryShowing = true;
+	PController->bShowMouseCursor = true;
+	for (TMap<FString, int>::TIterator it = Backpack.CreateIterator(); it; ++it)
+	{
+
+		// Combine string name of the item, with qty eg Cow x 5
+		FString fs = it->Key + FString::Printf(TEXT(" x %d"), it->Value);
+		UTexture2D* tex = NULL;
+		if (Icons.Find(it->Key))
+		{
+			tex = Icons[it->Key];
+			Widget w(Icon(fs, tex), Classes[it->Key]);
+			hud->addWidget(w);
+		}
+	}
+}
+
+void AAvatar::Pickup(APickupItem* item)
+{
+	if (Backpack.Contains(item->Name))
+	{
+		// the item was already in the pack.. so increase qty of it
+		Backpack[item->Name] += item->Quantity;
+	}
+	else
+	{
+		// the item wasn't in the pack before, just add it in now
+		Backpack.Add(item->Name, item->Quantity);
+
+		// record the a ref to the tex the first time it is picked up
+		Icons.Add(item->Name, item->Icon);
+
+		// for instantiation later
+		Classes.Add(item->Name, item->GetClass());
+	}
+}
+
+void AAvatar::Drop(UClass* className)
+{
+	GetWorld()->SpawnActor<AActor>(
+		className, GetActorLocation() + GetActorForwardVector() * 200 + FVector(0, 0, 200),
+		//GetMesh()->GetTransformMatrix().Rotator());
+		GetMesh()->GetComponentRotation());
+}
+
+void AAvatar::MouseClicked()
+{
+	if (inventoryShowing)
+	{
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
+		hud->MouseClicked();
+	}
+}

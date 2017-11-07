@@ -35,7 +35,7 @@ void ANPC::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	if (PController)
 	{
 		AMyHUD * hud = Cast<AMyHUD>(PController->GetHUD());     
-		hud->addMessage(Message(npcMessage, npcIcon, 5.f, FColor::White));
+		hud->addMessage(Message(npcMessage, npcIcon, 5.f, FColor::Black,FColor::White));
 	}
 }
 

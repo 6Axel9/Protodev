@@ -4,6 +4,54 @@
 #include "MyHUD.h"
 #include "Avatar.h"
 
+void AMyHUD::MouseClicked()
+{
+	FVector2D mouse;
+
+	APlayerController *PController = GetWorld()->GetFirstPlayerController();
+	PController->GetMousePosition(mouse.X, mouse.Y);
+	//debug( 0, FColor::Yellow,
+	//	FString::Printf( TEXT("mouse @ %f %f"), mouse.X, mouse.Y ) );
+	// go and see if hit any widgets
+	for (int c = 0; c < widgets.Num(); c++)
+	{
+		if (widgets[c].hit(mouse))
+		{
+			heldWidget = &widgets[c];
+			return;
+		}
+	}
+}
+
+void AMyHUD::MouseMoved()
+{
+	APlayerController *PController = GetWorld()->GetFirstPlayerController();
+	float time = PController->GetInputKeyTimeDown(EKeys::LeftMouseButton);
+
+	static FVector2D lastMouse;
+	FVector2D thisMouse, dMouse;
+	PController->GetMousePosition(thisMouse.X, thisMouse.Y);
+	dMouse = thisMouse - lastMouse;
+
+	if (time > 0.f && heldWidget)
+	{
+		// the mouse is being held down.
+		// move the widget by displacement amt
+		heldWidget->pos.X += dMouse.X;
+		heldWidget->pos.Y += dMouse.Y; // y inverted
+	}
+
+	lastMouse = thisMouse;
+}
+
+void AMyHUD::debug(int slot, FColor color, FString mess)
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(slot, 5.f, color, mess);
+	}
+}
+
 void AMyHUD::DrawHUD()
 {
 	
@@ -15,6 +63,7 @@ void AMyHUD::DrawHUD()
 
 	DrawMessages();
 	DrawHealthbar();
+	DrawWidgets();
 }
 
 void AMyHUD::DrawMessages()
@@ -28,10 +77,20 @@ void AMyHUD::DrawMessages()
 		GetTextSize(messages[c].message, outputWidth, outputHeight, hudFont, 1.f);
 		float messageH = outputHeight + 2.f*pad;
 		float x = 0.f, y = c*messageH;
+
+		if (messages[c].icon)
+		{
+			DrawTexture(messages[c].icon, x, y, messageH, messageH, 0, 0, 1, 1);
+		}
+		else
+		{
+			DrawRect(FLinearColor::Red, x, y, messageH, messageH);
+		}
+
 		// black backing
 		DrawRect(FLinearColor::Black, x, y, Canvas->SizeX, messageH);
 		// draw our message using the hudFont
-		DrawText(messages[c].message, messages[c].color, messageH + x + pad, y + pad, hudFont);
+		DrawText(messages[c].message, messages[c].frontColor, messageH + x + pad, y + pad, hudFont);
 		// draw our icon using the texture
 		DrawTexture(messages[c].icon, x, y, messageH, messageH, 0, 0, 1, 1);
 		// reduce lifetime by the time that passed since last 
@@ -57,8 +116,49 @@ void AMyHUD::DrawHealthbar()
 	DrawRect(FLinearColor(1 - percHp, percHp, 0, 1), Canvas->SizeX - barWidth - barMargin, Canvas->SizeY - barHeight - barMargin, barWidth*percHp, barHeight);
 }
 
+void AMyHUD::DrawWidgets()
+{
+	for (int c = 0; c < widgets.Num(); c++)
+	{
+		DrawTexture(widgets[c].icon.icon, widgets[c].pos.X, widgets[c].pos.Y, widgets[c].size.X, widgets[c].size.Y, 0, 0, 1, 1);
+		// draws relative to center.. don't want to use this version
+		//DrawText( icons[c].name, pos, hudFont, FVector2D(.6f, .6f), FColor::Yellow );
+		DrawText(widgets[c].icon.name, FLinearColor::Yellow,widgets[c].pos.X, widgets[c].pos.Y,hudFont, .6f, false);
+	}
+}
 
 void AMyHUD::addMessage(Message msg)
 {
 	messages.Add(msg);
+}
+
+void AMyHUD::addWidget(Widget widget)
+{
+	// find the pos of the widget based on the grid.
+	// draw the icons..
+	FVector2D start(200, 200), pad(12, 12);
+	widget.size = FVector2D(100, 100);
+	widget.pos = start;
+
+	// compute the position here
+	for (int c = 0; c < widgets.Num(); c++)
+	{
+		// Move the position to the right a bit.
+		widget.pos.X += widget.size.X + pad.X;
+
+		// If there is no more room to the right then
+		// jump to the next line
+		if (widget.pos.X + widget.size.X > dimensions.X)
+		{
+			widget.pos.X = start.X;
+			widget.pos.Y += widget.size.Y + pad.Y;
+		}
+	}
+
+	widgets.Add(widget);
+}
+
+void AMyHUD::clearWidgets()
+{
+	widgets.Empty();
 }

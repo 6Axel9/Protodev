@@ -6,7 +6,7 @@
 #include "Monster.generated.h"
 
 UCLASS()
-class GOLDENEGG_API AMonster : public ACharacter
+class PROTODEV_API AMonster : public ACharacter
 {
 	GENERATED_BODY()
 

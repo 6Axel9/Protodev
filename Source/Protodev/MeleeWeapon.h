@@ -6,7 +6,7 @@
 #include "MeleeWeapon.generated.h"
 
 UCLASS()
-class GOLDENEGG_API AMeleeWeapon : public AActor
+class PROTODEV_API AMeleeWeapon : public AActor
 {
 	GENERATED_BODY()
 	

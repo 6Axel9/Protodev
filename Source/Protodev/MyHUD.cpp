@@ -64,6 +64,7 @@ void AMyHUD::DrawHUD()
 	DrawMessages();
 	DrawHealthbar();
 	DrawWidgets();
+	DrawPointer();
 }
 
 void AMyHUD::DrawMessages()
@@ -125,6 +126,12 @@ void AMyHUD::DrawWidgets()
 		//DrawText( icons[c].name, pos, hudFont, FVector2D(.6f, .6f), FColor::Yellow );
 		DrawText(widgets[c].icon.name, FLinearColor::Yellow,widgets[c].pos.X, widgets[c].pos.Y,hudFont, .6f, false);
 	}
+}
+
+void AMyHUD::DrawPointer()
+{
+	float pointWidth = 5, pointHeight = 5;
+	DrawTexture(pointer, Canvas->SizeX/2 - pointWidth, Canvas->SizeY / 2 - pointHeight, pointWidth, pointHeight, 0, 0, 1, 1);
 }
 
 void AMyHUD::addMessage(Message msg)

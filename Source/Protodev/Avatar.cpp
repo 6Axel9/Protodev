@@ -83,15 +83,22 @@ void AAvatar::Shoot()
 {
 	if (BP_bullet)
 	{
-		FVector fwd = GetActorForwardVector() + FVector(0.0f,0.0f, 0.1f);
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		FVector fwd = PController->PlayerCameraManager->GetCameraRotation().Vector();
+		FVector target = fwd * 900.0f + PController->PlayerCameraManager->GetCameraLocation();
+
 		FVector nozzle = GetMesh()->GetBoneLocation("index_03_r");
 		nozzle += fwd * 50.0f;
-		
-		ABullet* _blt = GetWorld()->SpawnActor<ABullet>(BP_bullet, nozzle, RootComponent->GetComponentRotation());
+	
+		FVector dir = target- nozzle;
+
+		dir.Y -= 50.0f;
+
+		ABullet* _blt = GetWorld()->SpawnActor<ABullet>(BP_bullet, nozzle, fwd.Rotation());
 		
 		if (_blt)
 		{
-			_blt->ProxSphere->AddImpulse(fwd*bullet_launch_impulse);
+			_blt->ProxSphere->AddImpulse(dir.GetSafeNormal() * bullet_launch_impulse);
 			bullet_launch_sparks->ActivateSystem();
 		}
 

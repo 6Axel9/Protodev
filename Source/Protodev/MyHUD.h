@@ -91,6 +91,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HUDFont)
 	UFont* hudFont;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Pointer)
+	UTexture2D* pointer;
 	
 	TArray<Message> messages;
 	TArray<Widget> widgets;
@@ -105,6 +107,7 @@ public:
 	void DrawMessages();
 	void DrawHealthbar();
 	void DrawWidgets();
+	void DrawPointer();
 
 	void clearWidgets();
 

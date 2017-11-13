@@ -70,14 +70,14 @@ void AMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (BPMeleeWeapon)
-	{
-		MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
-		if (MeleeWeapon)
-		{
-			const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("weaponSocket");
-			//const UStaticMeshSocket* socket2 = MeleeWeapon->GetRootComponent()->getsocketb
-			socket->AttachActor(MeleeWeapon, GetMesh());
-		}
-	}
+	//if (BPMeleeWeapon)
+	//{
+	//	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
+	//	if (MeleeWeapon)
+	//	{
+	//		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("weaponSocket");
+	//		//const UStaticMeshSocket* socket2 = MeleeWeapon->GetRootComponent()->getsocketb
+	//		socket->AttachActor(MeleeWeapon, GetMesh());
+	//	}
+	//}
 }

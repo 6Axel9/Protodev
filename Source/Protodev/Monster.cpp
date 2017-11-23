@@ -18,10 +18,17 @@ AMonster::AMonster()
 	BaseAttackDamage = 1;
 	AttackTimeout = 1.5f;
 	TimeSinceLastStrike = 0;
+
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	CollisionBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	SightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
 	SightSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	AttackRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRangeSphere"));
 	AttackRangeSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	CollisionBox->SetBoxExtent(FVector(60.f,60.f,40.0f));
+	SightSphere->SetSphereRadius(1000.f);
+	AttackRangeSphere->SetSphereRadius(160.f);
 }
 
 // Called when the game starts or when spawned
@@ -41,18 +48,25 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar* avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	if (!avatar) return;
 
-	FVector toPlayer = avatar->GetActorLocation() - GetActorLocation();
+	FVector position = GetActorLocation();
+	FVector toPlayer = avatar->GetActorLocation() - position;
 	float DistanceToPlayer = toPlayer.Size();
 	toPlayer.Normalize();
 	
-
-	if (isInSightRange(DistanceToPlayer)) {
-		AddMovementInput(toPlayer, Speed*DeltaTime);
-
+	if (isInAttackRange(DistanceToPlayer))
+	{
 		FRotator toPlayerRotation = toPlayer.Rotation();
 		toPlayerRotation.Pitch = 0;
 		RootComponent->SetWorldRotation(toPlayerRotation);
 	}
+	else if (isInSightRange(DistanceToPlayer)) 
+	{
+		RootComponent->SetWorldLocation(position + FVector(toPlayer.X,toPlayer.Y,0.f) * Speed * DeltaTime);
+		FRotator toPlayerRotation = toPlayer.Rotation();
+		toPlayerRotation.Pitch = 0;
+		RootComponent->SetWorldRotation(toPlayerRotation);
+	}
+	
 	/*float test = SightSphere->GetScaledSphereRadius();
 	FString TheFloatStr = FString::SanitizeFloat(test);
 	if (GEngine)

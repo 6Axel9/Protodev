@@ -6,7 +6,7 @@
 #include "Monster.generated.h"
 
 UCLASS()
-class PROTODEV_API AMonster : public ACharacter
+class PROTODEV_API AMonster : public APawn
 {
 	GENERATED_BODY()
 
@@ -41,6 +41,14 @@ public:
 		float AttackTimeout;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float TimeSinceLastStrike;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
+		bool isInAttackRangeSphere;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
+		bool isInSightRangeSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
+		UBoxComponent* CollisionBox;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		USphereComponent* SightSphere;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
@@ -53,11 +61,13 @@ public:
 
 	inline bool isInSightRange(float d)
 	{
-		return d < SightSphere->GetScaledSphereRadius();
+		isInSightRangeSphere = d <SightSphere->GetScaledSphereRadius();
+		return isInSightRangeSphere;
 	}
 	inline bool isInAttackRange(float d)
 	{
-		return d < AttackRangeSphere->GetScaledSphereRadius();
+		isInAttackRangeSphere = d < AttackRangeSphere->GetScaledSphereRadius();
+		return isInAttackRangeSphere;
 	}
 	
 };

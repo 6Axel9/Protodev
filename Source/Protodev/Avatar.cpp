@@ -2,7 +2,7 @@
 #include "Avatar.h"
 #include "PickupItem.h"
 #include "Bullet.h"
-#include "MyHUD.h"
+#include "GUI.h"
 
 //========================================== Constructor
 AAvatar::AAvatar()
@@ -74,14 +74,34 @@ void AAvatar::MoveRight(float Amount)
 
 void AAvatar::Yaw(float Amount)
 {
+	//========================================== Get Mouse Movement 
+	if (InventoryShowing) 
+	{    
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+		gui->MouseMoved();  
+	}
 	//========================================== Rotate By MouseX
-	AddControllerYawInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
+	else
+	{
+		AddControllerYawInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void AAvatar::Pitch(float Amount)
 {
+	//========================================== Get Mouse Movement 
+	if (InventoryShowing)
+	{
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+		gui->MouseMoved();
+	}
 	//========================================== Rotate By MouseY
-	AddControllerPitchInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
+	else
+	{
+		AddControllerPitchInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void AAvatar::Shoot()
@@ -148,8 +168,8 @@ void AAvatar::MouseClicked()
 	if (InventoryShowing)
 	{
 		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
-		hud->MouseClicked();
+		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+		gui->MouseClicked();
 	}
 }
 
@@ -158,12 +178,12 @@ void AAvatar::ToggleInventory()
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 	//========================================== Cast Controller As HUD
-	AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 
 	//========================================== Clear If On Display
 	if (InventoryShowing)
 	{
-		hud->clearWidgets();
+		gui->ClearWidgets();
 		InventoryShowing = false;
 		PController->bShowMouseCursor = false;
 		return;
@@ -182,7 +202,7 @@ void AAvatar::ToggleInventory()
 			{
 				icon = Icons[it->Key];
 				Widget widget(Icon(sign, icon), Classes[it->Key]);
-				hud->addWidget(widget);
+				gui->AddWidget(widget);
 			}
 		}
 		InventoryShowing = true;

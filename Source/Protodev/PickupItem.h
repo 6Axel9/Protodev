@@ -5,7 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "PickupItem.generated.h"
 
-class AMyHUD;
+class AGUI;
 
 UCLASS()
 class PROTODEV_API APickupItem : public AActor

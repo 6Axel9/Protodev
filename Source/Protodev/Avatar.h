@@ -4,7 +4,7 @@
 
 class APickupItem;	
 class ABullet;
-class AMyHUD;
+class AGUI;
 
 UCLASS()
 class PROTODEV_API AAvatar : public ACharacter

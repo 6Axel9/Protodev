@@ -3,7 +3,7 @@
 #include "Protodev.h"
 #include "PickupItem.h"
 #include "Avatar.h"
-#include "MyHUD.h"
+#include "GUI.h"
 
 
 // Sets default values
@@ -55,8 +55,8 @@ void APickupItem::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* Othe
 	}
 
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
-	hud->addMessage(Message(FString("Picked up ") + FString::FromInt(Quantity) + FString(" ") + Name, Icon, 5.f, FColor::White, FColor::Black));
+	AGUI* hud = Cast<AGUI>(PController->GetHUD());
+	hud->AddMessage(Message(FString("Picked up ") + FString::FromInt(Quantity) + FString(" ") + Name, Icon, FColor::White, FColor::Black, 5.f));
 	
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 

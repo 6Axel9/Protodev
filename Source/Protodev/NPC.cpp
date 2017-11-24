@@ -3,7 +3,7 @@
 #include "Protodev.h"
 #include "Avatar.h"
 #include "NPC.h"
-#include "MyHUD.h"
+#include "GUI.h"
 
 
 // Sets default values
@@ -11,12 +11,12 @@ ANPC::ANPC()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
 	impact = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
-	impact->AttachTo(RootComponent);
+	impact->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
-	ProxSphere->AttachTo(RootComponent);
-	ProxSphere->SetSphereRadius(160.f);
+	ProxSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 	
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ANPC::Prox);
 
@@ -34,8 +34,8 @@ void ANPC::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor,
 
 	if (PController)
 	{
-		AMyHUD * hud = Cast<AMyHUD>(PController->GetHUD());     
-		hud->addMessage(Message(npcMessage, npcIcon, 5.f, FColor::Black,FColor::White));
+		AGUI * hud = Cast<AGUI>(PController->GetHUD());
+		hud->AddMessage(Message(npcMessage, npcIcon, FColor::Black,FColor::White, 5.f));
 	}
 }
 

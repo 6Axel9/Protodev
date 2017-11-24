@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "GameFramework/Character.h"
@@ -11,28 +9,26 @@ class PROTODEV_API AMonster : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+	//========================================== Constructor
 	AMonster();
 
 protected:
-	// Called when the game starts or when spawned
+	//========================================== Initialize
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
+	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
+	//========================================== Inputs CallBacks
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	//========================================== Late Initialization
 	virtual void PostInitializeComponents() override;
 
+	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float Speed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float HitPoints;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		int32 Experience;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		UClass* LootDropped;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
@@ -41,33 +37,26 @@ public:
 		float AttackTimeout;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float TimeSinceLastStrike;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		bool isInAttackRangeSphere;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		bool isInSightRangeSphere;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
+	//========================================== State Properties
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
+		bool isInAttackRange;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
+		bool isInSightRange;
+	//========================================== Colliders Properties
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Colliders)
 		UBoxComponent* CollisionBox;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		USphereComponent* SightSphere;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		USphereComponent* AttackRangeSphere;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MonsterProperties)
-		UClass* BPMeleeWeapon;
-
-	AActor* MeleeWeapon;
-
-	inline bool isInSightRange(float d)
-	{
-		isInSightRangeSphere = d <SightSphere->GetScaledSphereRadius();
-		return isInSightRangeSphere;
-	}
-	inline bool isInAttackRange(float d)
-	{
-		isInAttackRangeSphere = d < AttackRangeSphere->GetScaledSphereRadius();
-		return isInAttackRangeSphere;
-	}
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colliders)
+		USphereComponent* SightRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colliders)
+		USphereComponent* AttackRange;
+	//========================================== OnBeginOverlap CallBacks
+	UFUNCTION(BlueprintNativeEvent, Category = Collision)
+		void ProxSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION(BlueprintNativeEvent, Category = Collision)
+		void ProxAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//========================================== OnExitOverlap CallBacks
+	UFUNCTION(BlueprintNativeEvent, Category = Collision)
+		void OutSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION(BlueprintNativeEvent, Category = Collision)
+		void OutAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

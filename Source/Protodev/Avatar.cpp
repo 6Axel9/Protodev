@@ -1,189 +1,191 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Protodev.h"
 #include "Avatar.h"
 #include "PickupItem.h"
 #include "Bullet.h"
 #include "MyHUD.h"
 
-// Sets default values
+//========================================== Constructor
 AAvatar::AAvatar()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
+	//========================================== Create Sub-Component
+	BulletParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShotParticles"));
+	//========================================== Attach To Root (Default)
+	BulletParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 
-	bullet_launch_sparks = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shooting Particles"));
-	bullet_launch_sparks->AttachTo(RootComponent);
-
-	inventoryShowing = false;
-	MaxHp = 100.0f;
-	Hp = 100.0f;
+	LaunchImpulse = 55000.f;
+	MaxHitPoints = 100.f;
+	HitPoints = 100.f;
+	Speed = 50.f;
 }
 
-// Called when the game starts or when spawned
+//========================================== Initialize 
 void AAvatar::BeginPlay()
 {
+	//========================================== Call Parent Setup
 	Super::BeginPlay();
 }
 
-// Called every frame
+//========================================== Update
 void AAvatar::Tick(float DeltaTime)
 {
+	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
+//========================================== Inputs CallBacks
 void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	//========================================== Call Parent Setup
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	//========================================== Check Inputs
 	check(InputComponent);
-
+	//========================================== Inputs
 	InputComponent->BindAxis("Forward", this, &AAvatar::MoveForward);
 	InputComponent->BindAxis("Strafe", this, &AAvatar::MoveRight);
-	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
+	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
+	//========================================== Actions
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 }
 
-void AAvatar::MoveForward(float amount)
+void AAvatar::MoveForward(float Amount)
 {
-	// Don't enter the body of this function if Controller is   // not set up yet, or if the amount to move is equal to 0   
-	if (Controller && amount)
+	//========================================== Enter If Ready And Pressed
+	if (Controller && Amount)
 	{
-		FVector fwd = GetActorForwardVector();
-		// we call AddMovementInput to actually move the
-		// player by `amount` in the `fwd` direction
-		AddMovementInput(fwd, amount);
+		FVector forward = GetActorForwardVector();
+		AddMovementInput(forward, Amount);
 	}
 }
 
-void AAvatar::MoveRight(float amount)
+void AAvatar::MoveRight(float Amount)
 {
-	if (Controller && amount)
+	//========================================== Enter If Ready And Pressed
+	if (Controller && Amount)
 	{
 		FVector right = GetActorRightVector();
-		AddMovementInput(right, amount);
+		AddMovementInput(right, Amount);
 	}
 }
 
-void AAvatar::Yaw(float amount)
+void AAvatar::Yaw(float Amount)
 {
-	AddControllerYawInput(50 * amount * GetWorld()->GetDeltaSeconds());
+	//========================================== Rotate By MouseX
+	AddControllerYawInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
 }
 
-void AAvatar::Pitch(float amount)
+void AAvatar::Pitch(float Amount)
 {
-	AddControllerPitchInput(50 * amount * GetWorld()->GetDeltaSeconds());
+	//========================================== Rotate By MouseY
+	AddControllerPitchInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
 }
 
 void AAvatar::Shoot()
 {
-	if (BP_bullet)
+	//========================================== Get Controller From Character
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+
+	//========================================== Get Target Position & Direction
+	FVector position = PController->PlayerCameraManager->GetCameraLocation();
+	FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
+	FVector target = position + direction * 1000.0f;
+
+	//========================================== Get Nozzle Offset & Direction
+	FVector nozzlePos = GetMesh()->GetBoneLocation("index_03_r");
+	FVector nozzleDir = GetMesh()->GetBoneQuaternion("index_03_r").Vector();
+	FVector nozzleFire = nozzlePos + nozzleDir * 50.f;
+
+	//========================================== Set Bullet Offset & Direction
+	FVector raycast = (target - nozzleFire) + FVector(0.f,0.f,50.f);
+	raycast.Normalize();
+
+	//========================================== Spawn Bullet At Position
+	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(Bullet, nozzleFire, raycast.Rotation());
+		
+	if (bullet)
+	{
+		//========================================== Shoot Bullet By Impulse
+		BulletParticles->SetWorldLocation(nozzleFire);
+		bullet->ProxSphere->AddImpulse(raycast * LaunchImpulse);
+		BulletParticles->AddImpulse(raycast * LaunchImpulse);
+		BulletParticles->ActivateSystem();
+	}
+}
+
+void AAvatar::Pickup(APickupItem* Item)
+{
+	//========================================== Item Already Picked
+	if (Backpack.Contains(Item->Name))
+	{
+		//========================================== Increase Item Count
+		Backpack[Item->Name] += Item->Quantity;
+	}
+	//========================================== Item Unpicked
+	else
+	{
+		//========================================== Add New Item
+		Backpack.Add(Item->Name, Item->Quantity);
+		//========================================== Add New Icon
+		Icons.Add(Item->Name, Item->Icon);
+		//========================================== Add New Class
+		Classes.Add(Item->Name, Item->GetClass());
+	}
+}
+
+void AAvatar::Drop(UClass* Item)
+{
+	//========================================== Spawn New Item
+	//GetWorld()->SpawnActor<AActor>(Item, GetActorLocation() + GetActorForwardVector() * 200 + FVector(0, 0, 200), GetMesh()->GetComponentRotation());
+}
+
+void AAvatar::MouseClicked()
+{
+	//========================================== Get Mouse Click
+	if (InventoryShowing)
 	{
 		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		FVector fwd = PController->PlayerCameraManager->GetCameraRotation().Vector();
-		FVector target = fwd * 900.0f + PController->PlayerCameraManager->GetCameraLocation();
-
-		FVector nozzle = GetMesh()->GetBoneLocation("index_03_r");
-		nozzle += fwd * 50.0f;
-	
-		FVector dir = target- nozzle;
-
-		dir.Y -= 50.0f;
-
-		ABullet* _blt = GetWorld()->SpawnActor<ABullet>(BP_bullet, nozzle, fwd.Rotation());
-		
-		if (_blt)
-		{
-			_blt->ProxSphere->AddImpulse(dir.GetSafeNormal() * bullet_launch_impulse);
-			bullet_launch_sparks->ActivateSystem();
-		}
-
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Red, "BULLET NOT FOUND");
-		}
+		AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
+		hud->MouseClicked();
 	}
 }
 
 void AAvatar::ToggleInventory()
 {
+	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	//========================================== Cast Controller As HUD
 	AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
 
-	// If inventory is displayed, undisplay it.
-	if (inventoryShowing)
+	//========================================== Clear If On Display
+	if (InventoryShowing)
 	{
 		hud->clearWidgets();
-		inventoryShowing = false;
+		InventoryShowing = false;
 		PController->bShowMouseCursor = false;
 		return;
 	}
-
-
-	////////////////////////////////////////////////
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::White,
-			"Showing inventory...");
-	}
-	////////////////////////////////////////////////////////
-
-	// Otherwise, display the player's inventory
-	inventoryShowing = true;
-	PController->bShowMouseCursor = true;
-	for (TMap<FString, int>::TIterator it = Backpack.CreateIterator(); it; ++it)
-	{
-
-		// Combine string name of the item, with qty eg Cow x 5
-		FString fs = it->Key + FString::Printf(TEXT(" x %d"), it->Value);
-		UTexture2D* tex = NULL;
-		if (Icons.Find(it->Key))
-		{
-			tex = Icons[it->Key];
-			Widget w(Icon(fs, tex), Classes[it->Key]);
-			hud->addWidget(w);
-		}
-	}
-}
-
-void AAvatar::Pickup(APickupItem* item)
-{
-	if (Backpack.Contains(item->Name))
-	{
-		// the item was already in the pack.. so increase qty of it
-		Backpack[item->Name] += item->Quantity;
-	}
+	//========================================== Display If Not Showing
 	else
 	{
-		// the item wasn't in the pack before, just add it in now
-		Backpack.Add(item->Name, item->Quantity);
-
-		// record the a ref to the tex the first time it is picked up
-		Icons.Add(item->Name, item->Icon);
-
-		// for instantiation later
-		Classes.Add(item->Name, item->GetClass());
-	}
-}
-
-void AAvatar::Drop(UClass* className)
-{
-	GetWorld()->SpawnActor<AActor>(
-		className, GetActorLocation() + GetActorForwardVector() * 200 + FVector(0, 0, 200),
-		//GetMesh()->GetTransformMatrix().Rotator());
-		GetMesh()->GetComponentRotation());
-}
-
-void AAvatar::MouseClicked()
-{
-	if (inventoryShowing)
-	{
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		AMyHUD* hud = Cast<AMyHUD>(PController->GetHUD());
-		hud->MouseClicked();
+		//========================================== Loop Through Items
+		for (TMap<FString, int>::TIterator it = Backpack.CreateIterator(); it; ++it)
+		{
+			UTexture2D* icon = NULL;
+			//========================================== Name + Value
+			FString sign = it->Key + FString::Printf(TEXT(" x %d"), it->Value);
+			//========================================== Widget
+			if (Icons.Find(it->Key))
+			{
+				icon = Icons[it->Key];
+				Widget widget(Icon(sign, icon), Classes[it->Key]);
+				hud->addWidget(widget);
+			}
+		}
+		InventoryShowing = true;
+		PController->bShowMouseCursor = true;
 	}
 }

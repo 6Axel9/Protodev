@@ -1,97 +1,153 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Protodev.h"
 #include "Monster.h"
 #include "Avatar.h"
-#include "MeleeWeapon.h"
 
-// Sets default values
+//========================================== Constructor
 AMonster::AMonster()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
-
-	Speed = 20;
+	//========================================== Speed
+	Speed = 150;
+	//========================================== HP
 	HitPoints = 20;
-	Experience = 0;
+	//========================================== Drop
 	LootDropped = NULL;
+	//========================================== Damage
 	BaseAttackDamage = 1;
+	//========================================== CoolDown
 	AttackTimeout = 1.5f;
+	//========================================== Timer
 	TimeSinceLastStrike = 0;
 
+	//========================================== Create Sub-Component
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	CollisionBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	SightSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
-	SightSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	AttackRangeSphere = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRangeSphere"));
-	AttackRangeSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Change To Root-Component
+	RootComponent = CollisionBox;
 
-	CollisionBox->SetBoxExtent(FVector(60.f,60.f,40.0f));
-	SightSphere->SetSphereRadius(1000.f);
-	AttackRangeSphere->SetSphereRadius(160.f);
+	//========================================== Create Sub-Component
+	SightRange = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
+	//========================================== Attach To Root (Default)
+	SightRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
+
+	//========================================== Create Sub-Component
+	AttackRange = CreateDefaultSubobject<USphereComponent>(TEXT("AttackSphere"));
+	//========================================== Attach To Root (Default)
+	AttackRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
+
+	//========================================== Sight Sphere On Trigger CallBack
+	SightRange->OnComponentBeginOverlap.AddDynamic(this, &AMonster::ProxSight);
+	//========================================== Attack Sphere On Trigger CallBack
+	AttackRange->OnComponentBeginOverlap.AddDynamic(this, &AMonster::ProxAttack);
+
+	//========================================== Sight Sphere On Exit CallBack
+	SightRange->OnComponentEndOverlap.AddDynamic(this, &AMonster::OutSight);
+	//========================================== Attack Sphere On Exit CallBack
+	AttackRange->OnComponentEndOverlap.AddDynamic(this, &AMonster::OutAttack);
 }
 
-// Called when the game starts or when spawned
+//========================================== Initialize 
 void AMonster::BeginPlay()
 {
+	//========================================== Call Parent Setup
 	Super::BeginPlay();
 	
 }
 
-
-
-// Called every frame
+//========================================== Update
 void AMonster::Tick(float DeltaTime)
 {
+	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
 
-	AAvatar* avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	if (!avatar) return;
+	//========================================== Get Player Pawn As Avatar
+	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
-	FVector position = GetActorLocation();
-	FVector toPlayer = avatar->GetActorLocation() - position;
-	float DistanceToPlayer = toPlayer.Size();
-	toPlayer.Normalize();
-	
-	if (isInAttackRange(DistanceToPlayer))
+	//========================================== Get To Player Transformations
+	FVector toPlayerDirection = FVector(avatar->GetActorLocation() - GetActorLocation());
+	FRotator toPlayerRotation = FRotator(0.f, toPlayerDirection.Rotation().Yaw, toPlayerDirection.Rotation().Roll);
+	toPlayerDirection.Normalize();
+
+	//========================================== Rotate On Attack
+	if (isInAttackRange)
 	{
-		FRotator toPlayerRotation = toPlayer.Rotation();
-		toPlayerRotation.Pitch = 0;
 		RootComponent->SetWorldRotation(toPlayerRotation);
 	}
-	else if (isInSightRange(DistanceToPlayer)) 
+	//========================================== Follow On Sight
+	else if (isInSightRange)
 	{
-		RootComponent->SetWorldLocation(position + FVector(toPlayer.X,toPlayer.Y,0.f) * Speed * DeltaTime);
-		FRotator toPlayerRotation = toPlayer.Rotation();
-		toPlayerRotation.Pitch = 0;
-		RootComponent->SetWorldRotation(toPlayerRotation);
+		RootComponent->SetWorldLocationAndRotation(GetActorLocation() + toPlayerDirection * Speed * DeltaTime, toPlayerRotation);
 	}
-	
-	/*float test = SightSphere->GetScaledSphereRadius();
-	FString TheFloatStr = FString::SanitizeFloat(test);
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White, TheFloatStr);*/
 }
 
-// Called to bind functionality to input
+//========================================== Inputs CallBacks
 void AMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
+	//========================================== Call Parent Setup
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
 
+//========================================== Late Initialization
 void AMonster::PostInitializeComponents()
 {
+	//========================================== Call Parent Setup
 	Super::PostInitializeComponents();
 
-	//if (BPMeleeWeapon)
-	//{
-	//	MeleeWeapon = GetWorld()->SpawnActor<AMeleeWeapon>(BPMeleeWeapon, FVector(), FRotator());
-	//	if (MeleeWeapon)
-	//	{
-	//		const USkeletalMeshSocket* socket = GetMesh()->GetSocketByName("weaponSocket");
-	//		//const UStaticMeshSocket* socket2 = MeleeWeapon->GetRootComponent()->getsocketb
-	//		socket->AttachActor(MeleeWeapon, GetMesh());
-	//	}
-	//}
+}
+
+void AMonster::ProxSight_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	//========================================== Return If Not Avatar
+	if (Cast<AAvatar>(OtherActor) == nullptr)
+	{
+		return;
+	}
+	//========================================== Avatar On Sight Range
+	else
+	{
+		isInSightRange = true;
+	}
+}
+
+void AMonster::ProxAttack_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+{
+	//========================================== Return If Not Avatar
+	if (Cast<AAvatar>(OtherActor) == nullptr)
+	{
+		return;
+	}
+	//========================================== Avatar On Attack Range
+	else
+	{
+		isInAttackRange = true;
+	}
+}
+
+void AMonster::OutSight_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//========================================== Return If Not Avatar
+	if (Cast<AAvatar>(OtherActor) == nullptr)
+	{
+		return;
+	}
+	//========================================== Avatar Exit From Sight Range
+	else
+	{
+		isInSightRange = false;
+	}
+}
+
+void AMonster::OutAttack_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+{
+	//========================================== Return If Not Avatar
+	if (Cast<AAvatar>(OtherActor) == nullptr)
+	{
+		return;
+	}
+	//========================================== Avatar Exit From Attack Range
+	else
+	{
+		isInAttackRange = false;
+	}
 }

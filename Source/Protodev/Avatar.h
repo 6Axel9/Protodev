@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 #include "GameFramework/Character.h"
 #include "Avatar.generated.h"
 
-class APickupItem; // forward declare the APickupItem class	
+class APickupItem;	
 class ABullet;
-class AMyHUD; // forward declare the AMyHud class
+class AMyHUD;
 
 UCLASS()
 class PROTODEV_API AAvatar : public ACharacter
@@ -14,52 +12,50 @@ class PROTODEV_API AAvatar : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
+	//========================================== Constructor
 	AAvatar();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	UClass* BP_bullet;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	UParticleSystemComponent* bullet_launch_sparks;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	float bullet_launch_impulse;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerProperties)
-	float Hp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerProperties)
-	float MaxHp;
-
 protected:
-	// Called when the game starts or when spawned
+	//========================================== Initialize
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
+	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
+	//========================================== Inputs CallBacks
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Movements
-	void MoveForward(float amount);   
-	void MoveRight(float amount);
-	void Yaw(float amount); 
-	void Pitch(float amount);
+	//========================================== Weapon Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+		UClass* Bullet;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+		UParticleSystemComponent* BulletParticles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+		float LaunchImpulse;
+	//========================================== Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float HitPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float MaxHitPoints;
+
+	//========================================== Movements CallBacks
+	void MoveForward(float Amount);   
+	void MoveRight(float Amount);
+	void Pitch(float Amount);
+	void Yaw(float Amount);
 	void Shoot();
 
-	// Inventory
-	void Pickup(APickupItem *item);
+	//========================================== Inventory Commands
+	void Pickup(APickupItem *Item);
+	void Drop(UClass *Item);
 	void ToggleInventory();
 	void MouseClicked();
-	void Drop(UClass *className);
-
-	// A map for the backpack
+	
+	//========================================== Inventory Property
 	TMap<FString, int> Backpack;
-	// Individual maps for string name => Icon, Spell it casts, etc.
 	TMap<FString, UTexture2D*> Icons;
 	TMap<FString, UClass*> Classes;
-	bool inventoryShowing;
+	bool InventoryShowing;
 };

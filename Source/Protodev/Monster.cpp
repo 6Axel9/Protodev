@@ -1,5 +1,6 @@
 #include "Protodev.h"
 #include "Monster.h"
+#include "Bullet.h"
 #include "Avatar.h"
 
 //========================================== Constructor
@@ -34,6 +35,11 @@ AMonster::AMonster()
 	AttackRange = CreateDefaultSubobject<USphereComponent>(TEXT("AttackSphere"));
 	//========================================== Attach To Root (Default)
 	AttackRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
+
+	//========================================== Create Sub-Component
+	ImpactParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
+	//========================================== Attach To Root (Default)
+	ImpactParticles->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
 
 	//========================================== Sight Sphere On Trigger CallBack
 	SightRange->OnComponentBeginOverlap.AddDynamic(this, &AMonster::ProxSight);
@@ -72,6 +78,14 @@ void AMonster::Tick(float DeltaTime)
 	if (isInAttackRange)
 	{
 		RootComponent->SetWorldRotation(toPlayerRotation);
+		//========================================== Atta Timer     
+		TimeSinceLastStrike += DeltaTime;
+		//========================================== Remove Message     
+		if (TimeSinceLastStrike > AttackTimeout)
+		{
+			avatar->Damaged(this);
+			TimeSinceLastStrike = 0.f;
+		}
 	}
 	//========================================== Follow On Sight
 	else if (isInSightRange)
@@ -150,4 +164,22 @@ void AMonster::OutAttack_Implementation(UPrimitiveComponent * HitComp, AActor * 
 	{
 		isInAttackRange = false;
 	}
+}
+
+void AMonster::Damaged(AActor* OtherActor)
+{
+	//========================================== Get Actor As Monster
+	ABullet* bullet = Cast<ABullet>(OtherActor);
+	//========================================== Damaged
+	HitPoints -= bullet->Damage;
+	if (HitPoints < 0.f)
+	{
+		HitPoints = 0.f;
+		Destroy();
+	}
+}
+
+void AMonster::Explode()
+{
+	ImpactParticles->ActivateSystem();
 }

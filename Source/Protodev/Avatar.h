@@ -3,6 +3,7 @@
 #include "Avatar.generated.h"
 
 class APickupItem;	
+class AMonster;
 class ABullet;
 class AGUI;
 
@@ -52,6 +53,9 @@ public:
 	void Drop(UClass *Item);
 	void ToggleInventory();
 	void MouseClicked();
+
+	//========================================== Interactions
+	void Damaged(AActor* OtherActor);
 	
 	//========================================== Inventory Property
 	TMap<FString, int> Backpack;

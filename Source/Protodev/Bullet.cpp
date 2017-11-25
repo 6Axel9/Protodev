@@ -2,7 +2,7 @@
 
 #include "Protodev.h"
 #include "Bullet.h"
-#include "NPC.h"
+#include "Monster.h"
 
 
 // Sets default values
@@ -15,7 +15,7 @@ ABullet::ABullet()
 	ProxSphere->AttachTo(RootComponent);
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ABullet::Prox);
 
-	damage = 1;
+	Damage = 1;
 }
 
 // Called when the game starts or when spawned
@@ -32,15 +32,12 @@ void ABullet::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherAct
 		return;
 	}
 
-	OtherActor->TakeDamage(damage, FDamageEvent(), NULL, this);
-
-	ANPC* _npc = Cast<ANPC>(OtherActor);
-
-	if (_npc != nullptr)
+	AMonster* monster = Cast<AMonster>(OtherActor);
+	if (monster != nullptr)
 	{
-		_npc->Explode();
+		monster->Damaged(this);
+		monster->Explode();
 	}
-
 	Destroy();
 }
 

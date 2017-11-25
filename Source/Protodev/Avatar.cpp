@@ -1,6 +1,7 @@
 #include "Protodev.h"
 #include "Avatar.h"
 #include "PickupItem.h"
+#include "Monster.h"
 #include "Bullet.h"
 #include "GUI.h"
 
@@ -162,17 +163,6 @@ void AAvatar::Drop(UClass* Item)
 	//GetWorld()->SpawnActor<AActor>(Item, GetActorLocation() + GetActorForwardVector() * 200 + FVector(0, 0, 200), GetMesh()->GetComponentRotation());
 }
 
-void AAvatar::MouseClicked()
-{
-	//========================================== Get Mouse Click
-	if (InventoryShowing)
-	{
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
-		gui->MouseClicked();
-	}
-}
-
 void AAvatar::ToggleInventory()
 {
 	//========================================== Get Controller From Character
@@ -207,5 +197,28 @@ void AAvatar::ToggleInventory()
 		}
 		InventoryShowing = true;
 		PController->bShowMouseCursor = true;
+	}
+}
+
+void AAvatar::MouseClicked()
+{
+	//========================================== Get Mouse Click
+	if (InventoryShowing)
+	{
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+		gui->MouseClicked();
+	}
+}
+
+void AAvatar::Damaged(AActor* OtherActor)
+{
+	//========================================== Get Actor As Monster
+	AMonster* Enemy = Cast<AMonster>(OtherActor);
+	//========================================== Damaged
+	HitPoints -= Enemy->BaseAttackDamage;
+	if (HitPoints < 0.f)
+	{
+		HitPoints = 0.f;
 	}
 }

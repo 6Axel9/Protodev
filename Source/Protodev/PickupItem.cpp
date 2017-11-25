@@ -26,7 +26,7 @@ APickupItem::APickupItem()
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ProxSphere"));
 	// The bounding sphere follows the mesh, so we attach the ProxSphere
 	// to the mesh object here.
-	ProxSphere->AttachTo(Mesh);
+	ProxSphere->AttachToComponent(Mesh, FAttachmentTransformRules::KeepWorldTransform);
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
 
 }

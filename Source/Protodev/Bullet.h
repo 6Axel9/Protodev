@@ -15,7 +15,7 @@ public:
 	ABullet();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Properties)
-	float damage;
+	float Damage;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Collision)
 	USphereComponent* ProxSphere;

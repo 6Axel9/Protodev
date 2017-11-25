@@ -49,6 +49,8 @@ public:
 		USphereComponent* SightRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colliders)
 		USphereComponent* AttackRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particles)
+		UParticleSystemComponent* ImpactParticles;
 	//========================================== OnBeginOverlap CallBacks
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void ProxSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -59,4 +61,8 @@ public:
 		void OutSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void OutAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	//========================================== Interactions
+	void Damaged(AActor* OtherActor);
+	void Explode();
 };

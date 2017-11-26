@@ -19,16 +19,13 @@ APickupItem::APickupItem()
 	// drive the positioning of the object. The reason for that is
 	// we want the unique shape of the mesh to determine the object's
 	// behavior in the world, not the bounding sphere.
-	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	RootComponent = Mesh;
-	Mesh->SetSimulatePhysics(true);
-
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ProxSphere"));
-	// The bounding sphere follows the mesh, so we attach the ProxSphere
-	// to the mesh object here.
-	ProxSphere->AttachToComponent(Mesh, FAttachmentTransformRules::KeepWorldTransform);
+	//========================================== Change To Root-Component
+	RootComponent = ProxSphere;
+	
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
 
+	ProxSphere->SetSimulatePhysics(true);
 }
 
 // Called when the game starts or when spawned
@@ -43,6 +40,9 @@ void APickupItem::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
+	angle += DeltaTime*5.f;
+
+	AddActorWorldOffset(FVector(0.f, 0.f, sin(angle)*0.25f));
 }
 
 //void APickupItem::Prox_Implementation(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

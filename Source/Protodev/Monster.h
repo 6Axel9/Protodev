@@ -64,5 +64,4 @@ public:
 
 	//========================================== Interactions
 	void Damaged(AActor* OtherActor);
-	void Explode();
 };

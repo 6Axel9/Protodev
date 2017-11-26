@@ -116,9 +116,9 @@ void AAvatar::Shoot()
 	FVector target = position + direction * 1000.0f;
 
 	//========================================== Get Nozzle Offset & Direction
-	FVector nozzlePos = GetMesh()->GetBoneLocation("index_03_r");
-	FVector nozzleDir = GetMesh()->GetBoneQuaternion("index_03_r").Vector();
-	FVector nozzleFire = nozzlePos + nozzleDir * 50.f;
+	FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
+	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_L_Gun").Vector();
+	FVector nozzleFire = nozzlePos + nozzleDir * 80.f;
 
 	//========================================== Set Bullet Offset & Direction
 	FVector raycast = (target - nozzleFire) + FVector(0.f,0.f,50.f);
@@ -217,6 +217,7 @@ void AAvatar::Damaged(AActor* OtherActor)
 	AMonster* Enemy = Cast<AMonster>(OtherActor);
 	//========================================== Damaged
 	HitPoints -= Enemy->BaseAttackDamage;
+	//========================================== Died
 	if (HitPoints < 0.f)
 	{
 		HitPoints = 0.f;

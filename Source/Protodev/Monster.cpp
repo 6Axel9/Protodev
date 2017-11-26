@@ -170,16 +170,13 @@ void AMonster::Damaged(AActor* OtherActor)
 {
 	//========================================== Get Actor As Monster
 	ABullet* bullet = Cast<ABullet>(OtherActor);
-	//========================================== Damaged
+	//========================================== Damaged At Location
+	ImpactParticles->SetWorldLocation(bullet->GetActorLocation());
+	ImpactParticles->ActivateSystem();
 	HitPoints -= bullet->Damage;
+	//========================================== Destroy Object
 	if (HitPoints < 0.f)
 	{
-		HitPoints = 0.f;
 		Destroy();
 	}
-}
-
-void AMonster::Explode()
-{
-	ImpactParticles->ActivateSystem();
 }

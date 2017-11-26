@@ -3,6 +3,7 @@
 #include "Protodev.h"
 #include "Bullet.h"
 #include "Monster.h"
+#include "Interactive.h"
 
 
 // Sets default values
@@ -12,7 +13,8 @@ ABullet::ABullet()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
-	ProxSphere->AttachTo(RootComponent);
+	ProxSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ABullet::Prox);
 
 	Damage = 1;
@@ -31,12 +33,16 @@ void ABullet::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherAct
 	{
 		return;
 	}
+	AInteractive* obstacle = Cast<AInteractive>(OtherActor);
+	if (obstacle != nullptr)
+	{
+		obstacle->Damaged(this);
+	}
 
 	AMonster* monster = Cast<AMonster>(OtherActor);
 	if (monster != nullptr)
 	{
 		monster->Damaged(this);
-		monster->Explode();
 	}
 	Destroy();
 }

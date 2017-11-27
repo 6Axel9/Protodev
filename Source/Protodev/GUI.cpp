@@ -1,10 +1,39 @@
 #include "Protodev.h"
 #include "Avatar.h"
 #include "GUI.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+
+AGUI::AGUI(){
+	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+}
 
 void AGUI::DrawHUD()
 {
-	//========================================== Call Parent Setup
+	if(ActiveWidget == EWidgets::MainMenu){
+		if(Widget){
+			Widget->RemoveFromViewport();
+		}
+		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
+		Widget->AddToViewport();
+	}
+	if(ActiveWidget == EWidgets::InGameHUD){
+		if(Widget){
+			Widget->RemoveFromViewport();
+		}
+		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
+		Widget->AddToViewport();
+	}
+	if(ActiveWidget == EWidgets::PauseMenu){
+		if(PlayerController){
+			PlayerController->bShowMouseCursor = true;
+		}
+		if(Widget){
+			Widget->RemoveFromViewport();
+		}
+		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
+		Widget->AddToViewport();
+	}
+	/*//========================================== Call Parent Setup
 	Super::DrawHUD();
 	//========================================== Set Interface Area	
 	Dimensions.X = Canvas->SizeX;
@@ -13,10 +42,10 @@ void AGUI::DrawHUD()
 	DrawHealthbar();
 	DrawMessages();
 	DrawWidgets();
-	DrawPointer();
+	DrawPointer();*/
 }
 
-void AGUI::DrawHealthbar()
+/*void AGUI::DrawHealthbar()
 {
 	//========================================== Get Player Pawn As Avatar
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
@@ -162,4 +191,8 @@ void AGUI::MouseMoved()
 	}
 
 	lastMouse = thisMouse;
+}*/
+
+void AGUI::SetActiveWidget(EWidgets Widget){
+	ActiveWidget = Widget;
 }

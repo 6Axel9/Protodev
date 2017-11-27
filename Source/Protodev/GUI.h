@@ -3,6 +3,13 @@
 #include "GameFramework/HUD.h"
 #include "GUI.generated.h"
 
+UENUM(BlueprintType)
+enum class EWidgets: uint8{
+	MainMenu		UMETA(DisplayName="Main Menu"),
+	InGameHUD		UMETA(DisplayName="In-Game HUD"),
+	PauseMenu		UMETA(DisplayName="Pause Menu"),
+};
+
 //========================================== Display Hud Message
 struct Message
 {
@@ -61,7 +68,7 @@ struct Icon
 };
 
 //========================================== Display Hud Widget
-struct Widget
+/*struct Widget
 {
 	//========================================== Properties
 	Icon icon;
@@ -83,7 +90,7 @@ struct Widget
 	{
 		return Mouse.X > left() && Mouse.X < right() && Mouse.Y > top() && Mouse.Y < bottom();
 	}
-};
+};*/
 
 UCLASS()
 class PROTODEV_API AGUI : public AHUD
@@ -94,6 +101,8 @@ public:
 	//========================================== Render
 	virtual void DrawHUD() override;
 
+	AGUI();
+
 	//========================================== Hud Propeties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hud)
 		UFont* Font;
@@ -102,22 +111,35 @@ public:
 
 	//========================================== Hud Containers
 	TArray<Message> Messages;
-	TArray<Widget> Widgets;
+	//TArray<Widget> Widgets;
 	FVector2D Dimensions;
-	Widget* Held;
+	//Widget* Held;
+	APlayerController* PlayerController;
+
+	//========================================== Widgets
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
+		TSubclassOf<class UUserWidget> MainMenuWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
+		TSubclassOf<class UUserWidget> InGameHUDWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
+		TSubclassOf<class UUserWidget> PauseMenuWidget;
+	EWidgets ActiveWidget;
+	class UUserWidget* Widget;
+
+	void SetActiveWidget(EWidgets Widget);
 
 	//========================================== Add Hud Dynamically
-	void AddMessage(Message iMessage);
-	void AddWidget(Widget iWidget);
+	//void AddMessage(Message iMessage);
+	//void AddWidget(Widget iWidget);
 	//========================================== Delete Hud Dynamically
-	void ClearWidgets();
+	//void ClearWidgets();
 	//========================================== Render GUI
-	void DrawHealthbar();
-	void DrawMessages();
-	void DrawWidgets();
-	void DrawPointer();
+	//void DrawHealthbar();
+	//void DrawMessages();
+	//void DrawWidgets();
+	//void DrawPointer();
 	
 	//========================================== Mouse Inputs
-	void MouseClicked();
-	void MouseMoved();
+	//void MouseClicked();
+	//void MouseMoved();
 };

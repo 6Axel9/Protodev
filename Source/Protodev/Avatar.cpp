@@ -13,7 +13,7 @@ AAvatar::AAvatar()
 	//========================================== Create Sub-Component
 	BulletParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShotParticles"));
 	//========================================== Attach To Root (Default)
-	BulletParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	BulletParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 
 	LaunchImpulse = 55000.f;
 	MaxHitPoints = 100.f;

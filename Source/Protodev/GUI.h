@@ -123,7 +123,9 @@ public:
 		TSubclassOf<class UUserWidget> InGameHUDWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 		TSubclassOf<class UUserWidget> PauseMenuWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 	EWidgets ActiveWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 	class UUserWidget* Widget;
 
 	void SetActiveWidget(EWidgets Widget);

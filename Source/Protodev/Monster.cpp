@@ -29,17 +29,17 @@ AMonster::AMonster()
 	//========================================== Create Sub-Component
 	SightRange = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
 	//========================================== Attach To Root (Default)
-	SightRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
+	SightRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
 
 	//========================================== Create Sub-Component
 	AttackRange = CreateDefaultSubobject<USphereComponent>(TEXT("AttackSphere"));
 	//========================================== Attach To Root (Default)
-	AttackRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
+	AttackRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
 
 	//========================================== Create Sub-Component
 	ImpactParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
 	//========================================== Attach To Root (Default)
-	ImpactParticles->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
+	ImpactParticles->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepWorldTransform);
 
 	//========================================== Sight Sphere On Trigger CallBack
 	SightRange->OnComponentBeginOverlap.AddDynamic(this, &AMonster::ProxSight);

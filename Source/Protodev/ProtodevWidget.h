@@ -23,4 +23,8 @@ public:
 		void ActivateInGameHUDWidget();
 	UFUNCTION(BlueprintCallable, Category="Set")
 		void ActivatePauseMenuWidget();
+	UFUNCTION(BlueprintCallable, Category = "Set")
+		void LoadLevel();
+	UFUNCTION(BlueprintCallable, Category = "Set")
+		void QuitGame();
 };

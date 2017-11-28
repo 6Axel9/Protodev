@@ -18,7 +18,7 @@ AInteractive::AInteractive()
 	//========================================== Create Sub-Component
 	ImpactParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
 	//========================================== Attach To Root (Default)
-	ImpactParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	ImpactParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
 
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &AInteractive::Prox);
 

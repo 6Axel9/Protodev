@@ -37,7 +37,7 @@ void AInteractive::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* Oth
 	if (PController)
 	{
 		AGUI * hud = Cast<AGUI>(PController->GetHUD());
-		hud->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
+		//hud->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
 	}
 }
 

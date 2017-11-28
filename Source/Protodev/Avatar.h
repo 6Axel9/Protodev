@@ -62,4 +62,6 @@ public:
 	TMap<FString, UTexture2D*> Icons;
 	TMap<FString, UClass*> Classes;
 	bool InventoryShowing;
+
+	void PauseGame();
 };

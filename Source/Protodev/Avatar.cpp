@@ -51,6 +51,7 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
+	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
 }
 
 void AAvatar::MoveForward(float Amount)
@@ -221,5 +222,16 @@ void AAvatar::Damaged(AActor* OtherActor)
 	if (HitPoints < 0.f)
 	{
 		HitPoints = 0.f;
+	}
+}
+
+void AAvatar::PauseGame() {
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
+	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
+		GUI->ActiveWidget = EWidgets::PauseMenu;
+	}
+	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
+		GUI->ActiveWidget = EWidgets::InGameHUD;
 	}
 }

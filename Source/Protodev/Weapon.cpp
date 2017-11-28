@@ -18,7 +18,7 @@ AWeapon::AWeapon()
 	RootComponent = Mesh;
 
 	ProxBox = CreateDefaultSubobject<UBoxComponent>(TEXT("ProxBox"));
-	ProxBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProxBox->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	ProxBox->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::Prox);
 }

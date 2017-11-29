@@ -1,55 +1,73 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Protodev.h"
 #include "Bullet.h"
 #include "Monster.h"
 #include "Interactive.h"
 
-
-// Sets default values
+//========================================== Constructor
 ABullet::ABullet()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
-
-	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
-	ProxSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-	
-	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ABullet::Prox);
-
+	//========================================== Damage
 	Damage = 1;
+
+	//========================================== Create Sub-Component
+	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity Sphere"));
+	//========================================== Change To Root-Component
+	RootComponent = ProxSphere;
+
+	//========================================== Create Sub-Component
+	StaticMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
+	//========================================== Change To Root-Component
+	StaticMesh->AttachToComponent(ProxSphere, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	ImpactParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
+	//========================================== Attach To Root (Default)
+	ImpactParticles->AttachToComponent(ProxSphere, FAttachmentTransformRules::KeepRelativeTransform);
+	
+	//========================================== Prox Sphere On Hit CallBack
+	ProxSphere->OnComponentHit.AddDynamic(this, &ABullet::OnHit);
+	//========================================== Particles Death CallBack
+	ImpactParticles->OnSystemFinished.AddDynamic(this, &ABullet::OnFinish);
 }
 
-// Called when the game starts or when spawned
+//========================================== Initialize 
 void ABullet::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-
-void ABullet::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
-{
-	if (OtherComp != OtherActor->GetRootComponent())
-	{
-		return;
-	}
-	AInteractive* obstacle = Cast<AInteractive>(OtherActor);
-	if (obstacle != nullptr)
-	{
-		obstacle->Damaged(this);
-	}
-
-	AMonster* monster = Cast<AMonster>(OtherActor);
-	if (monster != nullptr)
-	{
-		monster->Damaged(this);
-	}
-	Destroy();
-}
-
-// Called every frame
+//========================================== Update
 void ABullet::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
+void ABullet::OnHit_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, FVector NormalImpulse, const FHitResult & Hit)
+{
+	//========================================== Damaging Obstacles
+	AInteractive* obstacle = Cast<AInteractive>(OtherActor);
+	if (obstacle != nullptr)
+	{
+		obstacle->Damaged(this);
+	}
+	//========================================== Damaging Monster
+	AMonster* monster = Cast<AMonster>(OtherActor);
+	if (monster != nullptr)
+	{
+		monster->Damaged(this);
+	}
+	//========================================== Releasing Particles
+	ImpactParticles->ActivateSystem();
+	ImpactParticles->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	//========================================== Set Components Off
+	StaticMesh->SetHiddenInGame(true);
+	SetActorEnableCollision(false);
+}
+
+void ABullet::OnFinish_Implementation(UParticleSystemComponent* PSystem)
+{
+	//========================================== Destroy On Particles Death
+	Destroy();
+}

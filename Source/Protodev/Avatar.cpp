@@ -10,15 +10,19 @@ AAvatar::AAvatar()
 {
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
-	//========================================== Create Sub-Component
-	BulletParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShotParticles"));
-	//========================================== Attach To Root (Default)
-	BulletParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
-
+	//========================================== Launch Strenght
 	LaunchImpulse = 55000.f;
+	//========================================== MaxHealth
 	MaxHitPoints = 100.f;
+	//========================================== Health
 	HitPoints = 100.f;
+	//========================================== Speed
 	Speed = 50.f;
+
+	//========================================== Create Sub-Component
+	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
+	//========================================== Attach To Root (Default)
+	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize 
@@ -119,7 +123,7 @@ void AAvatar::Shoot()
 	//========================================== Get Nozzle Offset & Direction
 	FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
 	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_L_Gun").Vector();
-	FVector nozzleFire = nozzlePos + nozzleDir * 80.f;
+	FVector nozzleFire = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
 
 	//========================================== Set Bullet Offset & Direction
 	FVector raycast = (target - nozzleFire) + FVector(0.f,0.f,50.f);
@@ -131,10 +135,8 @@ void AAvatar::Shoot()
 	if (bullet)
 	{
 		//========================================== Shoot Bullet By Impulse
-		BulletParticles->SetWorldLocation(nozzleFire);
 		bullet->ProxSphere->AddImpulse(raycast * LaunchImpulse);
-		BulletParticles->AddImpulse(raycast * LaunchImpulse);
-		BulletParticles->ActivateSystem();
+		ShotParticles->ActivateSystem();
 	}
 }
 

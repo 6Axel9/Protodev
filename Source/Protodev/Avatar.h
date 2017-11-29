@@ -30,7 +30,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Bullet;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
-		UParticleSystemComponent* BulletParticles;
+		UParticleSystemComponent* ShotParticles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		float LaunchImpulse;
 	//========================================== Properties

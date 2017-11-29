@@ -1,68 +1,64 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #include "Protodev.h"
 #include "PickupItem.h"
 #include "Avatar.h"
 #include "GUI.h"
 
-
-// Sets default values
+//========================================== Constructor
 APickupItem::APickupItem()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
-
+	//========================================== Name
 	Name = "UNKNOWN ITEM";
+	//========================================== Quantity
 	Quantity = 0;
 
-	// For pickup items, we want the MESH to simulate the physics and
-	// drive the positioning of the object. The reason for that is
-	// we want the unique shape of the mesh to determine the object's
-	// behavior in the world, not the bounding sphere.
+	//========================================== Create Sub-Component
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ProxSphere"));
 	//========================================== Change To Root-Component
 	RootComponent = ProxSphere;
 	
+	//========================================== Prox Sphere On Trigger CallBack
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
-
-	ProxSphere->SetSimulatePhysics(true);
 }
 
-// Called when the game starts or when spawned
+//========================================== Initialize
 void APickupItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
+//========================================== Update
 void APickupItem::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	angle += DeltaTime*5.f;
+	Angle += DeltaTime*5.f;
 
-	AddActorWorldOffset(FVector(0.f, 0.f, sin(angle)*0.25f));
+	AddActorWorldOffset(FVector(0.f, 0.f, sin(Angle)*0.25f));
 }
 
-//void APickupItem::Prox_Implementation(AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 void APickupItem::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	// if the overlapped actor is NOT the player, just return.
+	//========================================== Return If Not Avatar
 	if (Cast<AAvatar>(OtherActor) == nullptr)
 	{
-		return; // go back, nothing to do here.
+		return;
 	}
 
+	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AGUI* hud = Cast<AGUI>(PController->GetHUD());
+	//========================================== Cast Controller As HUD
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	//hud->AddMessage(Message(FString("Picked up ") + FString::FromInt(Quantity) + FString(" ") + Name, Icon, FColor::White, FColor::Black, 5.f));
 	
+	//========================================== Get Player Pawn As Avatar
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
-	// Notice use of keyword this! That is how _this_ Pickup can refer to itself.
+	//========================================== Pick Up Item
 	avatar->Pickup(this);
 
-	// delete the pickup item from the level once it is picked up
+	//========================================== Destroy Current
 	Destroy();
 }

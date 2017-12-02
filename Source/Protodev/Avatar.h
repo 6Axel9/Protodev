@@ -21,6 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 	//========================================== Inputs CallBacks
@@ -33,6 +34,9 @@ public:
 		UParticleSystemComponent* BulletParticles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		float LaunchImpulse;
+	
+	UPROPERTY(EditAnywhere , BlueprintReadWrite, Category = Bullet)
+		UParticleSystem* laser_particles;
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float Speed;
@@ -47,6 +51,8 @@ public:
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void Shoot();
+
+	void Shoot_Laser();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);

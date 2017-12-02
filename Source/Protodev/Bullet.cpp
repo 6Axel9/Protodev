@@ -13,7 +13,7 @@ ABullet::ABullet()
 	PrimaryActorTick.bCanEverTick = true;
 
 	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Proximity sphere"));
-	ProxSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepWorldTransform);
+	ProxSphere->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	
 	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &ABullet::Prox);
 

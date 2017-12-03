@@ -29,6 +29,10 @@ public:
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Bullet;
+	
+
+		UClass* Laser;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UParticleSystemComponent* ShotParticles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
@@ -47,6 +51,7 @@ public:
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void Shoot();
+	void Laser();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);

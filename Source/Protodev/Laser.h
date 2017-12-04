@@ -14,8 +14,6 @@ public:
 	//========================================== Constructor
 	ALaser();
 
-	USceneComponent* _root;
-
 	//========================================== Properties
 	UPROPERTY(EditAnywhere)
 		UParticleSystemComponent* laser_particles;
@@ -37,7 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void shoot(FVector Position, FRotator Direction);
+	void shoot(FVector Position, FVector Direction);
 
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
@@ -48,4 +46,6 @@ public:
 		bool isStatic;
 	
 	bool shooting;
+	FVector startPos;
+	FVector endPos;
 };

@@ -24,8 +24,6 @@ AAvatar::AAvatar()
 	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
 	//========================================== Attach To Root (Default)
 	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-	Laser = new ALaser;
 }
 
 //========================================== Initialize 
@@ -40,11 +38,6 @@ void AAvatar::Tick(float DeltaTime)
 {
 	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
-
-	if (!laser->shooting())
-	{
-		laser->Speed = 0.f;
-	}
 }
 
 //========================================== Inputs CallBacks
@@ -61,7 +54,7 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	//========================================== Actions
 	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
-	InputComponent->BindAction("Laser", IE_Pressed, this, &AAvatar::Laser);
+	InputComponent->BindAction("ShootLaser", IE_Pressed, this, &AAvatar::ShootLaser);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
@@ -149,7 +142,7 @@ void AAvatar::Shoot()
 	}
 }
 
-void AAvatar::Laser()
+void AAvatar::ShootLaser()
 {
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
@@ -160,17 +153,19 @@ void AAvatar::Laser()
 	FVector target = position + direction * 100.0f;
 
 	//========================================== Get Nozzle Offset & Direction
-	FVector nozzlePos = GetMesh()->GetBoneLocation("J_R_Gun");
-	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_R_Gun").Vector();
-	FVector laserBeam = nozzlePos - (ShotParticles->GetComponentLocation() - nozzlePos);
+	FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
+	FVector laserBeam = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
 	//========================================== Set Bullet Offset & Direction
 	FVector raycast = (target - laserBeam) + FVector(0.f, 0.f, 50.f);
 	raycast.Normalize();
 
-	if (laser)
+	//========================================== Spawn Bullet At Position
+	ALaser* curr = GetWorld()->SpawnActor<ALaser>(Laser, laserBeam, raycast.Rotation());
+
+
+	if (curr)
 	{
-		laser->shoot(nozzlePos, raycast.Rotation());
-		laser->shooting = true;
+		curr->shoot(nozzlePos, raycast.Rotation().Vector());
 	}
 }
 

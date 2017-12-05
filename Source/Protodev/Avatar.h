@@ -43,14 +43,17 @@ public:
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float MaxHitPoints;
-
+	//========================================== State Properties
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
+		bool isInShooting;
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void Shoot();
-	void ShootLaser();
+	void LaserOn();
+	void LaserOff();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
@@ -68,4 +71,5 @@ public:
 	bool InventoryShowing;
 
 	void PauseGame();
+
 };

@@ -27,6 +27,16 @@ AMonster::AMonster()
 	RootComponent = CollisionBox;
 
 	//========================================== Create Sub-Component
+	CollisionBoxSphere1 = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere1"));
+	//========================================== Attach To Root (Default)
+	CollisionBoxSphere1->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	CollisionBoxSphere2 = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere2"));
+	//========================================== Attach To Root (Default)
+	CollisionBoxSphere2->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
 	SightRange = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
 	//========================================== Attach To Root (Default)
 	SightRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);

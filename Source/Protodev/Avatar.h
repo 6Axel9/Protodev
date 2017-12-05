@@ -1,6 +1,8 @@
 #pragma once
 #include "GameFramework/Character.h"
+#include "Laser.h"
 #include "Avatar.generated.h"
+
 
 class APickupItem;	
 class AMonster;
@@ -63,6 +65,8 @@ public:
 	//========================================== Interactions
 	void Damaged(AActor* OtherActor);
 	
+	ALaser* _laser;
+
 	//========================================== Inventory Property
 	TMap<FString, int> Backpack;
 	TMap<FString, UTexture2D*> Icons;

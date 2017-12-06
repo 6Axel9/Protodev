@@ -27,16 +27,6 @@ AMonster::AMonster()
 	RootComponent = CollisionBox;
 
 	//========================================== Create Sub-Component
-	CollisionBoxSphere1 = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere1"));
-	//========================================== Attach To Root (Default)
-	CollisionBoxSphere1->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Sub-Component
-	CollisionBoxSphere2 = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionSphere2"));
-	//========================================== Attach To Root (Default)
-	CollisionBoxSphere2->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Sub-Component
 	SightRange = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
 	//========================================== Attach To Root (Default)
 	SightRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
@@ -75,10 +65,10 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
-	FVector toPlayerDirection = FVector(avatar->GetActorLocation() - GetActorLocation());
-	FRotator toPlayerRotation = FRotator(0.f, toPlayerDirection.Rotation().Yaw, toPlayerDirection.Rotation().Roll);
+	FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
+	FRotator toPlayerRotation = toPlayerDirection.Rotation();
 	toPlayerDirection.Normalize();
-
+	toPlayerRotation.Pitch = 0.f;
 	//========================================== Rotate On Attack
 	if (isInAttackRange)
 	{
@@ -95,7 +85,8 @@ void AMonster::Tick(float DeltaTime)
 	//========================================== Follow On Sight
 	else if (isInSightRange)
 	{
-		RootComponent->SetWorldLocationAndRotation(GetActorLocation() + toPlayerDirection * Speed * DeltaTime, toPlayerRotation);
+		RootComponent->AddWorldOffset(toPlayerDirection * Speed * DeltaTime);
+		RootComponent->SetWorldRotation(toPlayerRotation);
 	}
 }
 

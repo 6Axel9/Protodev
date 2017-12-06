@@ -45,10 +45,6 @@ public:
 	//========================================== Colliders Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
 		UBoxComponent* CollisionBox;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
-		USphereComponent* CollisionBoxSphere1;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
-		USphereComponent* CollisionBoxSphere2;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		USphereComponent* SightRange;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)

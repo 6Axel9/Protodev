@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ // Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,8 +13,6 @@ class PROTODEV_API ALaser : public AActor
 public:	
 	//========================================== Constructor
 	ALaser();
-
-	USceneComponent* _root;
 
 	//========================================== Properties
 	UPROPERTY(EditAnywhere)
@@ -33,11 +31,21 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void shoot(FVector Position, FVector Direction);
+
+	//========================================== Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float Speed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float Acceleration;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		bool isStatic;
 	
-	
+	bool shooting;
+	FVector startPos;
+	FVector endPos;
 };

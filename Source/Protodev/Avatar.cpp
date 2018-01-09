@@ -1,27 +1,29 @@
 #include "Protodev.h"
 #include "Avatar.h"
 #include "PickupItem.h"
+#include "Laser.h"
 #include "Monster.h"
 #include "Bullet.h"
 #include "GUI.h"
-#include "Laser.h"
-
 
 //========================================== Constructor
 AAvatar::AAvatar()
 {
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
-	//========================================== Create Sub-Component
-	BulletParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ShotParticles"));
-	//========================================== Attach To Root (Default)
-	BulletParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-
+	//========================================== Launch Strenght
 	LaunchImpulse = 55000.f;
+	//========================================== MaxHealth
 	MaxHitPoints = 100.f;
+	//========================================== Health
 	HitPoints = 100.f;
+	//========================================== Speed
 	Speed = 50.f;
+
+	//========================================== Create Sub-Component
+	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
+	//========================================== Attach To Root (Default)
+	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize 
@@ -29,6 +31,7 @@ void AAvatar::BeginPlay()
 {
 	//========================================== Call Parent Setup
 	Super::BeginPlay();
+
 }
 
 //========================================== Update
@@ -36,6 +39,40 @@ void AAvatar::Tick(float DeltaTime)
 {
 	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
+
+	if (isInShooting)
+	{
+		//========================================== Get Controller From Character
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+
+		//========================================== Get Target Position & Direction
+		FVector position = PController->PlayerCameraManager->GetCameraLocation();
+		FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
+		FVector target = position + direction * 100.0f;
+
+		//========================================== Get Nozzle Offset & Direction
+		FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
+		FVector laserFire = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
+		//========================================== Set Bullet Offset & Direction
+		FVector raycast = (target - laserFire) + FVector(0.f, 0.f, 50.f);
+		raycast.Normalize();
+
+		static ALaser* oldLaser = NULL;
+
+		if (oldLaser)
+		{
+			oldLaser->Destroy();
+		}
+		ALaser* laser = GetWorld()->SpawnActor<ALaser>(Laser, laserFire, GetActorRotation());
+
+
+		oldLaser = laser;
+		//========================================== Spawn Bullet At Position
+		if (laser)
+		{
+			laser->shoot(laserFire, raycast.Rotation().Vector());
+		}
+	}
 }
 
 //========================================== Inputs CallBacks
@@ -51,9 +88,12 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	//========================================== Actions
-	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot_Laser);
+	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
+	InputComponent->BindAction("ShootLaser", IE_Pressed, this, &AAvatar::LaserOn);
+	InputComponent->BindAction("ShootLaser", IE_Released, this, &AAvatar::LaserOff);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
+	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
 }
 
 void AAvatar::MoveForward(float Amount)
@@ -121,7 +161,7 @@ void AAvatar::Shoot()
 	//========================================== Get Nozzle Offset & Direction
 	FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
 	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_L_Gun").Vector();
-	FVector nozzleFire = nozzlePos + nozzleDir * 80.f;
+	FVector nozzleFire = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
 
 	//========================================== Set Bullet Offset & Direction
 	FVector raycast = (target - nozzleFire) + FVector(0.f,0.f,50.f);
@@ -129,45 +169,24 @@ void AAvatar::Shoot()
 
 	//========================================== Spawn Bullet At Position
 	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(Bullet, nozzleFire, raycast.Rotation());
-		
+
 	if (bullet)
 	{
 		//========================================== Shoot Bullet By Impulse
-		BulletParticles->SetWorldLocation(nozzleFire);
 		bullet->ProxSphere->AddImpulse(raycast * LaunchImpulse);
-		BulletParticles->AddImpulse(raycast * LaunchImpulse);
-		BulletParticles->ActivateSystem();
+		ShotParticles->ActivateSystem();
 	}
 }
 
-
-void AAvatar::Shoot_Laser()
+void AAvatar::LaserOn()
 {
-	//========================================== Get Controller From Character
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-
-	//========================================== Get Target Position & Direction
-	FVector position = PController->PlayerCameraManager->GetCameraLocation();
-	FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
-	FVector target = position + direction * 1000.0f;
-
-	//========================================== Get Nozzle Offset & Direction
-	FVector nozzlePos = GetMesh()->GetBoneLocation("J_R_Gun");
-	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_R_Gun").Vector();
-	FVector nozzleFire = nozzlePos - nozzleDir * 80.f;
-
-	//========================================== Set Bullet Offset & Direction
-	FVector raycast = (target - nozzleFire);
-	
-	FRotator rot = nozzleDir.ToOrientationRotator();
-	
-	FVector location = PController->PlayerCameraManager->GetCameraLocation();
-
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), laser_particles, nozzleFire, raycast.Rotation(), true);
-
+	isInShooting = true;
 }
 
-
+void AAvatar::LaserOff()
+{
+	isInShooting = false;
+}
 
 void AAvatar::Pickup(APickupItem* Item)
 {
@@ -253,5 +272,16 @@ void AAvatar::Damaged(AActor* OtherActor)
 	if (HitPoints < 0.f)
 	{
 		HitPoints = 0.f;
+	}
+}
+
+void AAvatar::PauseGame() {
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
+	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
+		GUI->ActiveWidget = EWidgets::PauseMenu;
+	}
+	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
+		GUI->ActiveWidget = EWidgets::InGameHUD;
 	}
 }

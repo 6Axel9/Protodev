@@ -2,6 +2,7 @@
 #include "Avatar.h"
 #include "GUI.h"
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
+#include "Runtime/Engine/Classes/Engine/Engine.h"
 
 AGUI::AGUI(){
 	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
@@ -10,6 +11,8 @@ AGUI::AGUI(){
 void AGUI::DrawHUD()
 {
 	if(ActiveWidget == EWidgets::MainMenu){
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "main menu");
 		if(Widget){
 			Widget->RemoveFromViewport();
 		}
@@ -17,6 +20,8 @@ void AGUI::DrawHUD()
 		Widget->AddToViewport();
 	}
 	if(ActiveWidget == EWidgets::InGameHUD){
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "in game");
 		if(Widget){
 			Widget->RemoveFromViewport();
 		}
@@ -24,6 +29,8 @@ void AGUI::DrawHUD()
 		Widget->AddToViewport();
 	}
 	if(ActiveWidget == EWidgets::PauseMenu){
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "pause menu");
 		if(PlayerController){
 			PlayerController->bShowMouseCursor = true;
 		}
@@ -33,6 +40,7 @@ void AGUI::DrawHUD()
 		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
 		Widget->AddToViewport();
 	}
+	
 	/*//========================================== Call Parent Setup
 	Super::DrawHUD();
 	//========================================== Set Interface Area	

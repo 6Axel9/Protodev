@@ -15,7 +15,7 @@ class PROTODEV_API UProtodevWidget : public UUserWidget
 	
 public:
 
-
+	//class AGUI* GUI;
 
 	UFUNCTION(BlueprintCallable, Category="Set")
 		void ActivateMainMenuWidget();

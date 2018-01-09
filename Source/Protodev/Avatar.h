@@ -33,7 +33,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Bullet;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
-		UParticleSystemComponent* BulletParticles;
+		UClass* Laser;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+		UParticleSystemComponent* ShotParticles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		float LaunchImpulse;
 	
@@ -46,13 +49,17 @@ public:
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float MaxHitPoints;
-
+	//========================================== State Properties
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
+		bool isInShooting;
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void Shoot();
+	void LaserOn();
+	void LaserOff();
 
 	void Shoot_Laser();
 
@@ -72,4 +79,7 @@ public:
 	TMap<FString, UTexture2D*> Icons;
 	TMap<FString, UClass*> Classes;
 	bool InventoryShowing;
+
+	void PauseGame();
+
 };

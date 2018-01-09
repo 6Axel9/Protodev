@@ -36,11 +36,6 @@ AMonster::AMonster()
 	//========================================== Attach To Root (Default)
 	AttackRange->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
 
-	//========================================== Create Sub-Component
-	ImpactParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Impact Particles"));
-	//========================================== Attach To Root (Default)
-	ImpactParticles->AttachToComponent(CollisionBox, FAttachmentTransformRules::KeepRelativeTransform);
-
 	//========================================== Sight Sphere On Trigger CallBack
 	SightRange->OnComponentBeginOverlap.AddDynamic(this, &AMonster::ProxSight);
 	//========================================== Attack Sphere On Trigger CallBack
@@ -70,10 +65,10 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
-	FVector toPlayerDirection = FVector(avatar->GetActorLocation() - GetActorLocation());
-	FRotator toPlayerRotation = FRotator(0.f, toPlayerDirection.Rotation().Yaw, toPlayerDirection.Rotation().Roll);
+	FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
+	FRotator toPlayerRotation = toPlayerDirection.Rotation();
 	toPlayerDirection.Normalize();
-
+	toPlayerRotation.Pitch = 0.f;
 	//========================================== Rotate On Attack
 	if (isInAttackRange)
 	{
@@ -90,7 +85,8 @@ void AMonster::Tick(float DeltaTime)
 	//========================================== Follow On Sight
 	else if (isInSightRange)
 	{
-		RootComponent->SetWorldLocationAndRotation(GetActorLocation() + toPlayerDirection * Speed * DeltaTime, toPlayerRotation);
+		RootComponent->AddWorldOffset(toPlayerDirection * Speed * DeltaTime);
+		RootComponent->SetWorldRotation(toPlayerRotation);
 	}
 }
 
@@ -171,8 +167,6 @@ void AMonster::Damaged(AActor* OtherActor)
 	//========================================== Get Actor As Monster
 	ABullet* bullet = Cast<ABullet>(OtherActor);
 	//========================================== Damaged At Location
-	ImpactParticles->SetWorldLocation(bullet->GetActorLocation());
-	ImpactParticles->ActivateSystem();
 	HitPoints -= bullet->Damage;
 	//========================================== Destroy Object
 	if (HitPoints < 0.f)

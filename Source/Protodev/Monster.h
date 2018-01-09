@@ -43,14 +43,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
 		bool isInSightRange;
 	//========================================== Colliders Properties
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Colliders)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
 		UBoxComponent* CollisionBox;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colliders)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		USphereComponent* SightRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Colliders)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		USphereComponent* AttackRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particles)
-		UParticleSystemComponent* ImpactParticles;
 	//========================================== OnBeginOverlap CallBacks
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void ProxSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -61,7 +59,6 @@ public:
 		void OutSight(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void OutAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
 	//========================================== Interactions
 	void Damaged(AActor* OtherActor);
 };

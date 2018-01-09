@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "GameFramework/Actor.h"
@@ -23,14 +21,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//========================================== Properties
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveMessage)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
 		FString Action;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = InteractiveMessage)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
 		UTexture2D* Button;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Colliders)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 		UBoxComponent* CollisionBox;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Particles)
-		UParticleSystemComponent* ImpactParticles;
 	//========================================== OnBeginOverlap CallBacks
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void Prox(class UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);

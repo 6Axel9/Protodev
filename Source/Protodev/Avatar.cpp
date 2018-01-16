@@ -139,7 +139,7 @@ void AAvatar::Pitch(float Amount)
 	{
 		APlayerController* PController = GetWorld()->GetFirstPlayerController();
 		AGUI* gui = Cast<AGUI>(PController->GetHUD());
-		//gui->MouseMoved();
+		gui->MouseMoved();
 	}
 	//========================================== Rotate By MouseY
 	else
@@ -224,7 +224,7 @@ void AAvatar::ToggleInventory()
 	//========================================== Clear If On Display
 	if (InventoryShowing)
 	{
-		//gui->ClearWidgets();
+		gui->ClearWidgets();
 		InventoryShowing = false;
 		PController->bShowMouseCursor = false;
 		return;
@@ -242,8 +242,8 @@ void AAvatar::ToggleInventory()
 			if (Icons.Find(it->Key))
 			{
 				icon = Icons[it->Key];
-				//Widget widget(Icon(sign, icon), Classes[it->Key]);
-				//gui->AddWidget(widget);
+				Widget widget(Icon(sign, icon), Classes[it->Key]);
+				gui->AddWidget(widget);
 			}
 		}
 		InventoryShowing = true;

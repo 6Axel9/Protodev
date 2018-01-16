@@ -46,7 +46,7 @@ void AInteractive::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
-	//gui->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
+	gui->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
 }
 
 void AInteractive::Damaged(AActor* OtherActor)

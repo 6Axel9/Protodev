@@ -68,7 +68,7 @@ struct Icon
 };
 
 //========================================== Display Hud Widget
-/*struct Widget
+struct Widget
 {
 	//========================================== Properties
 	Icon icon;
@@ -90,7 +90,7 @@ struct Icon
 	{
 		return Mouse.X > left() && Mouse.X < right() && Mouse.Y > top() && Mouse.Y < bottom();
 	}
-};*/
+};
 
 UCLASS()
 class PROTODEV_API AGUI : public AHUD
@@ -111,9 +111,9 @@ public:
 
 	//========================================== Hud Containers
 	TArray<Message> Messages;
-	//TArray<Widget> Widgets;
+	TArray<Widget> Widgets;
 	FVector2D Dimensions;
-	//Widget* Held;
+	Widget* Held;
 	APlayerController* PlayerController;
 
 	//========================================== Widgets
@@ -126,22 +126,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 	EWidgets ActiveWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-	class UUserWidget* Widget;
+	class UUserWidget* BP_widget;
 
 	void SetActiveWidget(EWidgets Widget);
 
 	//========================================== Add Hud Dynamically
-	//void AddMessage(Message iMessage);
-	//void AddWidget(Widget iWidget);
+	void AddMessage(Message iMessage);
+	void AddWidget(Widget iWidget);
 	//========================================== Delete Hud Dynamically
-	//void ClearWidgets();
+	void ClearWidgets();
 	//========================================== Render GUI
-	//void DrawHealthbar();
-	//void DrawMessages();
-	//void DrawWidgets();
-	//void DrawPointer();
+	void DrawHealthbar();
+	void DrawMessages();
+	void DrawWidgets();
+	void DrawPointer();
 	
 	//========================================== Mouse Inputs
-	//void MouseClicked();
-	//void MouseMoved();
+	void MouseClicked();
+	void MouseMoved();
 };

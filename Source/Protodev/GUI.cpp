@@ -13,20 +13,20 @@ void AGUI::DrawHUD()
 	if(ActiveWidget == EWidgets::MainMenu){
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "main menu");
-		if(Widget){
-			Widget->RemoveFromViewport();
+		if(BP_widget){
+			BP_widget->RemoveFromViewport();
 		}
-		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
-		Widget->AddToViewport();
+		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
+		BP_widget->AddToViewport();
 	}
 	if(ActiveWidget == EWidgets::InGameHUD){
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "in game");
-		if(Widget){
-			Widget->RemoveFromViewport();
+		if(BP_widget){
+			BP_widget->RemoveFromViewport();
 		}
-		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
-		Widget->AddToViewport();
+		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
+		BP_widget->AddToViewport();
 	}
 	if(ActiveWidget == EWidgets::PauseMenu){
 		if (GEngine)
@@ -34,14 +34,14 @@ void AGUI::DrawHUD()
 		if(PlayerController){
 			PlayerController->bShowMouseCursor = true;
 		}
-		if(Widget){
-			Widget->RemoveFromViewport();
+		if(BP_widget){
+			BP_widget->RemoveFromViewport();
 		}
-		Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
-		Widget->AddToViewport();
+		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
+		BP_widget->AddToViewport();
 	}
 	
-	/*//========================================== Call Parent Setup
+	//========================================== Call Parent Setup
 	Super::DrawHUD();
 	//========================================== Set Interface Area	
 	Dimensions.X = Canvas->SizeX;
@@ -50,10 +50,10 @@ void AGUI::DrawHUD()
 	DrawHealthbar();
 	DrawMessages();
 	DrawWidgets();
-	DrawPointer();*/
+	DrawPointer();
 }
 
-/*void AGUI::DrawHealthbar()
+void AGUI::DrawHealthbar()
 {
 	//========================================== Get Player Pawn As Avatar
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
@@ -199,7 +199,7 @@ void AGUI::MouseMoved()
 	}
 
 	lastMouse = thisMouse;
-}*/
+}
 
 void AGUI::SetActiveWidget(EWidgets Widget){
 	ActiveWidget = Widget;

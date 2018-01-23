@@ -29,6 +29,31 @@ public:
 	//========================================== Inputs CallBacks
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	//========================================== Component Properties
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* MainBody;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* LeftTracks;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* RightTracks;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* UpperBody;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* WindScreen;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* InteriorBody;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* LeftFan;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* RightFan;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* LeftArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* LeftBarrel;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* RightArm;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* RightBarrel;
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Bullet;

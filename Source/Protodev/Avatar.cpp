@@ -22,6 +22,62 @@ AAvatar::AAvatar()
 	Speed = 50.f;
 
 	//========================================== Create Sub-Component
+	MainBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MainBody"));
+	//========================================== Change To Root-Component
+	MainBody->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	LeftTracks = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftTracks"));
+	//========================================== Change To Root-Component
+	LeftTracks->AttachToComponent(MainBody, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	RightTracks = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightTracks"));
+	//========================================== Change To Root-Component
+	RightTracks->AttachToComponent(MainBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	UpperBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("UpperBody"));
+	//========================================== Change To Root-Component
+	UpperBody->AttachToComponent(MainBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	WindScreen = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WindScreen"));
+	//========================================== Change To Root-Component
+	WindScreen->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	InteriorBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InteriorBody"));
+	//========================================== Change To Root-Component
+	InteriorBody->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	LeftFan = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftFan"));
+	//========================================== Change To Root-Component
+	LeftFan->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	RightFan = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightFan"));
+	//========================================== Change To Root-Component
+	RightFan->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	LeftArm = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftArm"));
+	//========================================== Change To Root-Component
+	LeftArm->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	LeftBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftBarrel"));
+	//========================================== Change To Root-Component
+	LeftBarrel->AttachToComponent(LeftArm, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	RightArm = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightArm"));
+	//========================================== Change To Root-Component
+	RightArm->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	RightBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightBarrel"));
+	//========================================== Change To Root-Component
+	RightBarrel->AttachToComponent(RightArm, FAttachmentTransformRules::KeepRelativeTransform);
+
+
+
+	//========================================== Create Sub-Component
 	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
 	//========================================== Attach To Root (Default)
 	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);

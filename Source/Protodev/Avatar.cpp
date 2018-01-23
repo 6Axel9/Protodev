@@ -5,6 +5,7 @@
 #include "Monster.h"
 #include "Bullet.h"
 #include "GUI.h"
+#include "ObjectivesComponent.h"
 
 //========================================== Constructor
 AAvatar::AAvatar()
@@ -24,6 +25,8 @@ AAvatar::AAvatar()
 	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
 	//========================================== Attach To Root (Default)
 	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Objectives Component
+	ObjectiveComponent = CreateDefaultSubobject<UObjectivesComponent>("Objective Component");
 }
 
 //========================================== Initialize 
@@ -94,6 +97,7 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
+	InputComponent->BindAction("Objectives", IE_Pressed, this, &AAvatar::ToggleObjectives);
 }
 
 void AAvatar::MoveForward(float Amount)
@@ -282,6 +286,17 @@ void AAvatar::PauseGame() {
 		GUI->ActiveWidget = EWidgets::PauseMenu;
 	}
 	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
+		GUI->ActiveWidget = EWidgets::InGameHUD;
+	}
+}
+
+void AAvatar::ToggleObjectives() {
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
+	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
+		GUI->ActiveWidget = EWidgets::ObjectiveMenu;
+	}
+	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
 		GUI->ActiveWidget = EWidgets::InGameHUD;
 	}
 }

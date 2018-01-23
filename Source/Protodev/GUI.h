@@ -8,6 +8,7 @@ enum class EWidgets: uint8{
 	MainMenu		UMETA(DisplayName="Main Menu"),
 	InGameHUD		UMETA(DisplayName="In-Game HUD"),
 	PauseMenu		UMETA(DisplayName="Pause Menu"),
+	ObjectiveMenu	UMETA(DisplayName="Objective Menu"),
 };
 
 //========================================== Display Hud Message
@@ -123,6 +124,8 @@ public:
 		TSubclassOf<class UUserWidget> InGameHUDWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 		TSubclassOf<class UUserWidget> PauseMenuWidget;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
+		TSubclassOf<class UUserWidget> ObjectivesWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 	EWidgets ActiveWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)

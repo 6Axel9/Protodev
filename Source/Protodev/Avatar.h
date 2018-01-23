@@ -49,6 +49,9 @@ public:
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float MaxHitPoints;
+	//========================================== Objective Component
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		class UObjectivesComponent* ObjectiveComponent;
 	//========================================== State Properties
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
 		bool isInShooting;
@@ -81,5 +84,8 @@ public:
 	bool InventoryShowing;
 
 	void PauseGame();
+
+	//========================================== Objective Commands
+	void ToggleObjectives();
 
 };

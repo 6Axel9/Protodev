@@ -6,7 +6,7 @@
 //========================================== Constructor
 AStorageDrive::AStorageDrive()
 {
-	Name = "StorageDrive";
+	Name = "Storage Drive";
 
 }
 

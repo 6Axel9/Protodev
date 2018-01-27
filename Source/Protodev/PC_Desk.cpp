@@ -54,7 +54,7 @@ void APC_Desk::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 		return;
 	}
 	//========================================== Return If Not Avatar
-	if (avatar->BackpackCheck("StorageDrive"))
+	if (avatar->BackpackCheck("Storage Drive"))
 	{
 		Action = "You installed the new Driver already!";
 		triggered = true;

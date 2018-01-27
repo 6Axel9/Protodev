@@ -24,12 +24,11 @@ protected:
 
 public:
 
-	UPROPERTY(EditAnywhere, category = "Meshes")
-		UStaticMeshComponent* _Broken_mesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+		UStaticMeshComponent* BrokenMesh;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+		UStaticMeshComponent* FixedMesh;
 
-	//========================================== Mesh for when is fixed
-	UPROPERTY(EditAnywhere, category = "Meshes")
-		UStaticMeshComponent* _Fixed_mesh;
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 

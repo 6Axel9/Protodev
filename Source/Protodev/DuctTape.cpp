@@ -8,7 +8,7 @@
 //========================================== Constructor
 ADuctTape::ADuctTape()
 {
-	Name = "DuckTape";
+	Name = "DuctTape";
 }
 
 //========================================== Initialize

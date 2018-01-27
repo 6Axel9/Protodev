@@ -15,19 +15,13 @@ AFluxCapacitor::AFluxCapacitor()
 	Action = "The flux capacitor is broken, find a way to fix it!";
 
 	//========================================== Create Sub-Component
-	_Broken_mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Broken mesh"));
-	//========================================== Attach To Root (Default)
-	_Broken_mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-
-
+	FixedMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Fixed"));
+	//========================================== Change To Root-Component
+	FixedMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	//========================================== Create Sub-Component
-	_Fixed_mesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Fixed mesh"));
-	//========================================== Attach To Root (Default)
-	_Fixed_mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-	_Broken_mesh->SetHiddenInGame(true);
-	_Fixed_mesh->SetHiddenInGame(true);
+	BrokenMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Broken"));
+	//========================================== Change To Root-Component
+	BrokenMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize
@@ -42,23 +36,34 @@ void AFluxCapacitor::Tick(float DeltaTime)
 {
 	if (!triggered)
 	{
-		_Broken_mesh->SetHiddenInGame(false);		
+		BrokenMesh->SetHiddenInGame(false);
+		FixedMesh->SetHiddenInGame(true);
 	}
 	else
 	{
-		_Broken_mesh->SetHiddenInGame(true);
-		_Fixed_mesh->SetHiddenInGame(false);
+		BrokenMesh->SetHiddenInGame(true);
+		FixedMesh->SetHiddenInGame(false);
 	}
 
 }
 
 void AFluxCapacitor::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	//========================================== Return If Not Avatar
-	if (Cast<AAvatar>(OtherActor) != nullptr)
+
+
+	AAvatar* avatar = Cast<AAvatar>(OtherActor);
+	if (avatar == nullptr)
 	{
-		Action = "You fixed the flux capacitor already!";
-		triggered = true;
+		return;
+	}
+	//========================================== Return If Not Avatar
+	if (avatar != nullptr)
+	{
+		if (avatar->BackpackCheck("DuctTape"))
+		{
+			Action = "You fixed the flux capacitor already!";
+			triggered = true;
+		}
 	}
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();

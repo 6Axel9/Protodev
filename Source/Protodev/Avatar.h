@@ -9,6 +9,8 @@ class AMonster;
 class ABullet;
 class AGUI;
 
+
+
 UCLASS()
 class PROTODEV_API AAvatar : public ACharacter
 {
@@ -23,7 +25,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	
+
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 	//========================================== Inputs CallBacks
@@ -95,6 +97,7 @@ public:
 	void Pickup(APickupItem *Item);
 	void Drop(UClass *Item);
 	void ToggleInventory();
+	bool BackpackCheck(FString name);
 	void MouseClicked();
 
 	//========================================== Interactions

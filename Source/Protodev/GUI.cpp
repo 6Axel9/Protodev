@@ -165,6 +165,22 @@ void AGUI::AddWidget(Widget iWidget)
 	}
 	//========================================== Add To Widget Container
 	Widgets.Add(iWidget);
+
+}
+
+
+bool AGUI::CheckItemByName(FString name)
+{
+
+	//========================================== Make Room For New Widget
+	for (int c = 0; c < Widgets.Num(); c++)
+	{
+		if (Widgets[c].icon.name == name)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void AGUI::ClearWidgets()

@@ -132,6 +132,7 @@ void AAvatar::Tick(float DeltaTime)
 			laser->shoot(laserFire, raycast.Rotation().Vector());
 		}
 	}
+
 }
 
 //========================================== Inputs CallBacks
@@ -266,6 +267,7 @@ void AAvatar::Pickup(APickupItem* Item)
 		//========================================== Add New Class
 		Classes.Add(Item->Name, Item->GetClass());
 	}
+
 }
 
 void AAvatar::Drop(UClass* Item)
@@ -309,6 +311,21 @@ void AAvatar::ToggleInventory()
 		InventoryShowing = true;
 		PController->bShowMouseCursor = true;
 	}
+}
+
+bool AAvatar::BackpackCheck(FString name)
+{
+	//========================================== Make Room For New Widget
+	for (auto const &tag : Backpack)
+	{
+		if (tag.Key == name)
+		{
+			return true;
+		}
+
+	}
+
+	return false;
 }
 
 void AAvatar::MouseClicked()

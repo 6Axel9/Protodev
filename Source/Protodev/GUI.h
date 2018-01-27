@@ -3,6 +3,7 @@
 #include "GameFramework/HUD.h"
 #include "GUI.generated.h"
 
+
 UENUM(BlueprintType)
 enum class EWidgets: uint8{
 	MainMenu		UMETA(DisplayName="Main Menu"),
@@ -136,6 +137,7 @@ public:
 	//========================================== Add Hud Dynamically
 	void AddMessage(Message iMessage);
 	void AddWidget(Widget iWidget);
+	bool CheckItemByName(FString name);
 	//========================================== Delete Hud Dynamically
 	void ClearWidgets();
 	//========================================== Render GUI

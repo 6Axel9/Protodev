@@ -3,6 +3,8 @@
 #include "Avatar.h"
 #include "GUI.h"
 
+
+
 //========================================== Constructor
 APickupItem::APickupItem()
 {
@@ -14,12 +16,12 @@ APickupItem::APickupItem()
 	Quantity = 0;
 
 	//========================================== Create Sub-Component
-	ProxSphere = CreateDefaultSubobject<USphereComponent>(TEXT("ProxSphere"));
+	ProxQuad = CreateDefaultSubobject<UBoxComponent>(TEXT("ProxQuad"));
 	//========================================== Change To Root-Component
-	RootComponent = ProxSphere;
-	
+	RootComponent = ProxQuad;
+
 	//========================================== Prox Sphere On Trigger CallBack
-	ProxSphere->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
+	ProxQuad->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
 }
 
 //========================================== Initialize
@@ -34,9 +36,6 @@ void APickupItem::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
 
-	Angle += DeltaTime*5.f;
-
-	AddActorWorldOffset(FVector(0.f, 0.f, sin(Angle)*0.25f));
 }
 
 void APickupItem::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)

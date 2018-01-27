@@ -13,7 +13,7 @@ APickupItem::APickupItem()
 	//========================================== Name
 	Name = "UNKNOWN ITEM";
 	//========================================== Quantity
-	Quantity = 0;
+	Quantity = 1;
 
 	//========================================== Create Sub-Component
 	ProxQuad = CreateDefaultSubobject<UBoxComponent>(TEXT("ProxQuad"));

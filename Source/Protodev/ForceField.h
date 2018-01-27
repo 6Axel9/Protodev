@@ -28,13 +28,6 @@ public:
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 
-	////========================================== Properties
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
-	//	bool PlayerCanEnter;
-
-
-	////========================================== CanEnter
-	//void TriggerCanEnter();
 
 
 	

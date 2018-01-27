@@ -15,8 +15,10 @@ public:
 protected:
 	//========================================== Initialize
 	virtual void BeginPlay() override;
+	bool triggered;
 
 public:	
+
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 

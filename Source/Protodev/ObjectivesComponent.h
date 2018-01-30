@@ -62,8 +62,10 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	FObjective ContactStarfleet;
+	TArray<FObjective*> ListOfObjectives;
+	FObjective* ContactStarfleet;
 
 	void CreateContactStarfleetObjective();
 	
+	TArray<FObjective*>* GetList();
 };

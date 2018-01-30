@@ -10,12 +10,16 @@
  */
 
 
-
 UCLASS()
 class PROTODEV_API UObjectivesWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-		void DisplayObjective();
-	
+public:
+	UFUNCTION(BlueprintCallable)
+	void DisplayObjective();
+	UFUNCTION(BlueprintCallable)
+	bool GetObjective(int num);
+	//UFUNCTION(BlueprintCallable)
+	//void SetObjectiveColour(class FText* objectiveText);
 };

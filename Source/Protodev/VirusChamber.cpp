@@ -6,11 +6,6 @@
 #include "GUI.h"
 #include "VirusChamber.h"
 
-
-
-
-
-
 //========================================== Constructor
 AVirusChamber::AVirusChamber()
 {

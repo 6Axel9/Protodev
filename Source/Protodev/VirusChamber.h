@@ -28,11 +28,11 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		USkeletalMeshComponent* mesh;
 		
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawner)
-		UAnimationAsset * animation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
+		UAnimationAsset* animation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawner)
-		UClass * SpawnedObject;
+		UClass* SpawnedObject;
 
 
 	//========================================== Update

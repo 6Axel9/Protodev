@@ -2,43 +2,43 @@
 
 #pragma once
 
-#include "GameFramework/Actor.h"
+#include "Interactive.h"
 #include "Weapon.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class PROTODEV_API AWeapon : public AActor
+class PROTODEV_API AWeapon : public AInteractive
 {
 	GENERATED_BODY()
 	
-public:	
-	// Sets default values for this actor's properties
-	AWeapon();
+	
+
+		AWeapon();
+
 
 protected:
-	// Called when the game starts or when spawned
+	//========================================== Initialize
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
+	float timeSinceCollect;
+
+public:
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+		USkeletalMeshComponent* mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
+		UAnimationAsset* animation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawner)
+		UClass* SpawnedObject;
+
+
+	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = MeleeWeapon)
-		float AttackDamage;
+	virtual void shoot();
 
-	TArray<AActor*> ThingsHit;
-
-	bool Swinging;
-
-	class AMonster* WeaponHolder;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MeleeWeapon)
-		UBoxComponent* ProxBox;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category = MeleeWeapon)
-		UStaticMeshComponent* Mesh;
-	UFUNCTION(BlueprintNativeEvent, Category = Collision)
-		void Prox(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
-
-	void Swing();
-	void Rest();
-	
 };

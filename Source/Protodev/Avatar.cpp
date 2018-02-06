@@ -41,15 +41,6 @@ AAvatar::AAvatar()
 	UpperBody->AttachToComponent(MainBody, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//========================================== Create Sub-Component
-	WindScreen = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WindScreen"));
-	//========================================== Change To Root-Component
-	WindScreen->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
-	//========================================== Create Sub-Component
-	InteriorBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InteriorBody"));
-	//========================================== Change To Root-Component
-	InteriorBody->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Sub-Component
 	LeftFan = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftFan"));
 	//========================================== Change To Root-Component
 	LeftFan->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);

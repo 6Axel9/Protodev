@@ -41,10 +41,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* UpperBody;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* WindScreen;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* InteriorBody;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* LeftFan;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* RightFan;

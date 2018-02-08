@@ -44,22 +44,51 @@ public:
 		UStaticMeshComponent* LeftFan;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* RightFan;
+	//========================================== GutlingGun Properties
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* LeftArm;
+		UStaticMeshComponent* R_GutlingGun;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* LeftBarrel;
+		UStaticMeshComponent* L_GutlingGun;
+
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* RightArm;
+		UStaticMeshComponent* L_Barrel;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		UStaticMeshComponent* RightBarrel;
+		UStaticMeshComponent* R_Barrel;
+
+
+	//========================================== RocketLauncher Properties
+
+	/*FUTURE
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* R_RocketLauncher;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* L_RocketLauncher;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		USkinnedMeshComponent* R_Cannon;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		USkinnedMeshComponent* L_Cannon;*/
+
+
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Bullet;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		UClass* Laser;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
-		UParticleSystemComponent* ShotParticles;
+		UParticleSystemComponent* R_ShotParticles;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+		UParticleSystemComponent* L_ShotParticles;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
 		float LaunchImpulse;
 	
@@ -83,7 +112,7 @@ public:
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
-	void Shoot();
+	void ShootGutlingGun();
 	void LaserOn();
 	void LaserOff();
 

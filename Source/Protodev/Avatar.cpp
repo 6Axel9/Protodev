@@ -50,28 +50,34 @@ AAvatar::AAvatar()
 	RightFan->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//========================================== Create Sub-Component
-	LeftArm = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftArm"));
+	L_GutlingGun = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("L_GutlingGun"));
 	//========================================== Change To Root-Component
-	LeftArm->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	L_GutlingGun->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
 	//========================================== Create Sub-Component
-	LeftBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftBarrel"));
+	L_Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("L_Barrel"));
 	//========================================== Change To Root-Component
-	LeftBarrel->AttachToComponent(LeftArm, FAttachmentTransformRules::KeepRelativeTransform);
+	L_Barrel->AttachToComponent(L_GutlingGun, FAttachmentTransformRules::KeepRelativeTransform);
 	//========================================== Create Sub-Component
-	RightArm = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightArm"));
+	R_GutlingGun = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_GutlingGun"));
 	//========================================== Change To Root-Component
-	RightArm->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+	R_GutlingGun->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
 	//========================================== Create Sub-Component
-	RightBarrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightBarrel"));
+	R_Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_Barrel"));
 	//========================================== Change To Root-Component
-	RightBarrel->AttachToComponent(RightArm, FAttachmentTransformRules::KeepRelativeTransform);
+	R_Barrel->AttachToComponent(R_GutlingGun, FAttachmentTransformRules::KeepRelativeTransform);
 
 
 
 	//========================================== Create Sub-Component
-	ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Shot Particles"));
+	R_ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("R_ShotParticles"));
 	//========================================== Attach To Root (Default)
-	ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	R_ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	L_ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("L_ShotParticles"));
+	//========================================== Attach To Root (Default)
+	L_ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
 	//========================================== Create Objectives Component
 	ObjectiveComponent = CreateDefaultSubobject<UObjectivesComponent>("Objective Component");
 }
@@ -92,36 +98,36 @@ void AAvatar::Tick(float DeltaTime)
 
 	if (isInShooting)
 	{
-		//========================================== Get Controller From Character
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		////========================================== Get Controller From Character
+		//APlayerController* PController = GetWorld()->GetFirstPlayerController();
 
-		//========================================== Get Target Position & Direction
-		FVector position = PController->PlayerCameraManager->GetCameraLocation();
-		FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
-		FVector target = position + direction * 100.0f;
+		////========================================== Get Target Position & Direction
+		//FVector position = PController->PlayerCameraManager->GetCameraLocation();
+		//FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
+		//FVector target = position + direction * 100.0f;
 
-		//========================================== Get Nozzle Offset & Direction
-		FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
-		FVector laserFire = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
-		//========================================== Set Bullet Offset & Direction
-		FVector raycast = (target - laserFire) + FVector(0.f, 0.f, 50.f);
-		raycast.Normalize();
+		////========================================== Get Nozzle Offset & Direction
+		//FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
+		//FVector laserFire = nozzlePos + (R_ShotParticles->GetComponentLocation() - nozzlePos);
+		////========================================== Set Bullet Offset & Direction
+		//FVector raycast = (target - laserFire) + FVector(0.f, 0.f, 50.f);
+		//raycast.Normalize();
 
-		static ALaser* oldLaser = NULL;
+		//static ALaser* oldLaser = NULL;
 
-		if (oldLaser)
-		{
-			oldLaser->Destroy();
-		}
-		ALaser* laser = GetWorld()->SpawnActor<ALaser>(Laser, laserFire, GetActorRotation());
+		//if (oldLaser)
+		//{
+		//	oldLaser->Destroy();
+		//}
+		//ALaser* laser = GetWorld()->SpawnActor<ALaser>(Laser, laserFire, GetActorRotation());
 
 
-		oldLaser = laser;
-		//========================================== Spawn Bullet At Position
-		if (laser)
-		{
-			laser->shoot(laserFire, raycast.Rotation().Vector());
-		}
+		//oldLaser = laser;
+		////========================================== Spawn Bullet At Position
+		//if (laser)
+		//{
+		//	laser->ShootGutlingGun(laserFire, raycast.Rotation().Vector());
+		//}
 	}
 
 }
@@ -139,7 +145,7 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	//========================================== Actions
-	InputComponent->BindAction("Shoot", IE_Pressed, this, &AAvatar::Shoot);
+	InputComponent->BindAction("ShootGutlingGun", IE_Repeat, this, &AAvatar::ShootGutlingGun);
 	InputComponent->BindAction("ShootLaser", IE_Pressed, this, &AAvatar::LaserOn);
 	InputComponent->BindAction("ShootLaser", IE_Released, this, &AAvatar::LaserOff);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
@@ -153,7 +159,7 @@ void AAvatar::MoveForward(float Amount)
 	//========================================== Enter If Ready And Pressed
 	if (Controller && Amount)
 	{
-		FVector forward = GetActorForwardVector();
+		FVector forward = GetActorForwardVector() * 10;
 		AddMovementInput(forward, Amount);
 	}
 }
@@ -200,7 +206,7 @@ void AAvatar::Pitch(float Amount)
 	}
 }
 
-void AAvatar::Shoot()
+void AAvatar::ShootGutlingGun()
 {
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
@@ -208,25 +214,38 @@ void AAvatar::Shoot()
 	//========================================== Get Target Position & Direction
 	FVector position = PController->PlayerCameraManager->GetCameraLocation();
 	FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
-	FVector target = position + direction * 1000.0f;
+	FVector rightdirection = FVector::CrossProduct(direction, direction.UpVector);
+	FVector R_target = (position + direction * 1000.0f) - (rightdirection * 100);
+	FVector L_target = (position + direction * 1000.0f) + (rightdirection * 100);
+
 
 	//========================================== Get Nozzle Offset & Direction
-	FVector nozzlePos = GetMesh()->GetBoneLocation("J_L_Gun");
-	FVector nozzleDir = GetMesh()->GetBoneQuaternion("J_L_Gun").Vector();
-	FVector nozzleFire = nozzlePos + (ShotParticles->GetComponentLocation() - nozzlePos);
+	FVector nozzlePos = FVector(0.0f);
+	FVector nozzleDir = FVector(0.0f);
+
+	FVector R_nozzleFire = nozzlePos + (R_ShotParticles->GetComponentLocation() - nozzlePos);
+	FVector L_nozzleFire = nozzlePos + (L_ShotParticles->GetComponentLocation() + nozzlePos);
 
 	//========================================== Set Bullet Offset & Direction
-	FVector raycast = (target - nozzleFire) + FVector(0.f,0.f,50.f);
-	raycast.Normalize();
+	FVector R_raycast = (R_target - R_nozzleFire);
+	R_raycast.Normalize();
+
+	FVector L_raycast = (L_target - L_nozzleFire);
+	L_raycast.Normalize();
 
 	//========================================== Spawn Bullet At Position
-	ABullet* bullet = GetWorld()->SpawnActor<ABullet>(Bullet, nozzleFire, raycast.Rotation());
+	ABullet* R_bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_raycast.Rotation());
+	ABullet* L_bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_raycast.Rotation());
 
-	if (bullet)
+
+	if (R_bullet && L_bullet)
 	{
-		//========================================== Shoot Bullet By Impulse
-		bullet->ProxSphere->AddImpulse(raycast * LaunchImpulse);
-		ShotParticles->ActivateSystem();
+		//========================================== ShootGutlingGun Bullet By Impulse
+		R_bullet->ProxSphere->AddImpulse(R_raycast * LaunchImpulse);
+		R_ShotParticles->ActivateSystem();
+		//========================================== ShootGutlingGun Bullet By Impulse
+		L_bullet->ProxSphere->AddImpulse(L_raycast * LaunchImpulse);
+		L_ShotParticles->ActivateSystem();
 	}
 }
 

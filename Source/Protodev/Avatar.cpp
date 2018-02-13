@@ -13,7 +13,7 @@ AAvatar::AAvatar()
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
 	//========================================== Launch Strenght
-	LaunchImpulse = 55000.f;
+	LaunchImpulse = 175000.f;
 	//========================================== MaxHealth
 	MaxHitPoints = 100.f;
 	//========================================== Health
@@ -159,7 +159,7 @@ void AAvatar::MoveForward(float Amount)
 	//========================================== Enter If Ready And Pressed
 	if (Controller && Amount)
 	{
-		FVector forward = GetActorForwardVector() * 10;
+		FVector forward = GetActorForwardVector();
 		AddMovementInput(forward, Amount);
 	}
 }

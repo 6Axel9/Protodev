@@ -89,9 +89,7 @@ public:
 		UParticleSystemComponent* L_ShotParticles;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
-		float LaunchImpulse;
-	
+
 	UPROPERTY(EditAnywhere , BlueprintReadWrite, Category = Bullet)
 		UParticleSystem* laser_particles;
 	//========================================== Properties
@@ -126,6 +124,7 @@ public:
 	void MouseClicked();
 
 	//========================================== Interactions
+	float LaunchImpulse;
 	void Damaged(AActor* OtherActor);
 	
 	ALaser* _laser;

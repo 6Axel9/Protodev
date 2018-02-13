@@ -76,22 +76,21 @@ public:
 
 
 	//========================================== Weapon Properties
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UClass* Bullet;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
-		UClass* Laser;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
+		UClass* Rocket;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UParticleSystemComponent* R_ShotParticles;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Bullet)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UParticleSystemComponent* L_ShotParticles;
 
 
-
-	UPROPERTY(EditAnywhere , BlueprintReadWrite, Category = Bullet)
-		UParticleSystem* laser_particles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
+		float LaunchImpulse;
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float Speed;
@@ -102,19 +101,14 @@ public:
 	//========================================== Objective Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		class UObjectivesComponent* ObjectiveComponent;
-	//========================================== State Properties
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
-		bool isInShooting;
+	
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void ShootGutlingGun();
-	void LaserOn();
-	void LaserOff();
-
-	void Shoot_Laser();
+	void ToggleParticles();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
@@ -126,8 +120,7 @@ public:
 	//========================================== Interactions
 	float LaunchImpulse;
 	void Damaged(AActor* OtherActor);
-	
-	ALaser* _laser;
+	bool isInShooting;
 
 	//========================================== Inventory Property
 	TMap<FString, int> Backpack;

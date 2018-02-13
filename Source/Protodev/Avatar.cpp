@@ -145,9 +145,9 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	//========================================== Actions
+	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleParticles);
+	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleParticles);
 	InputComponent->BindAction("ShootGutlingGun", IE_Repeat, this, &AAvatar::ShootGutlingGun);
-	InputComponent->BindAction("ShootLaser", IE_Pressed, this, &AAvatar::LaserOn);
-	InputComponent->BindAction("ShootLaser", IE_Released, this, &AAvatar::LaserOff);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
@@ -242,21 +242,25 @@ void AAvatar::ShootGutlingGun()
 	{
 		//========================================== ShootGutlingGun Bullet By Impulse
 		R_bullet->ProxSphere->AddImpulse(R_raycast * LaunchImpulse);
-		R_ShotParticles->ActivateSystem();
 		//========================================== ShootGutlingGun Bullet By Impulse
 		L_bullet->ProxSphere->AddImpulse(L_raycast * LaunchImpulse);
-		L_ShotParticles->ActivateSystem();
 	}
 }
 
-void AAvatar::LaserOn()
+void AAvatar::ToggleParticles()
 {
-	isInShooting = true;
-}
+	isInShooting = !isInShooting;
 
-void AAvatar::LaserOff()
-{
-	isInShooting = false;
+	if (isInShooting)
+	{
+		R_ShotParticles->ActivateSystem();
+		L_ShotParticles->ActivateSystem();
+	}
+	else
+	{
+		R_ShotParticles->DeactivateSystem();
+		L_ShotParticles->DeactivateSystem();
+	}
 }
 
 void AAvatar::Pickup(APickupItem* Item)

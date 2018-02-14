@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Protodev.h"
-#include "PickUpItem.h"
 #include "Spawner.h"
 
 
@@ -17,8 +16,6 @@ ASpawner::ASpawner()
 void ASpawner::BeginPlay()
 {
 	Super::BeginPlay();
-	APickupItem * _pickupitem = GetWorld()->SpawnActor<APickupItem>(SpawnedObject, GetActorLocation(), GetActorRotation());
-
 
 }
 

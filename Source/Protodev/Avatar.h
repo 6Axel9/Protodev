@@ -89,8 +89,6 @@ public:
 		UParticleSystemComponent* L_ShotParticles;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
-		float LaunchImpulse;
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float Speed;

@@ -21,11 +21,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawner)
 		UClass * SpawnedObject;
 
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	
 	
 };

@@ -141,7 +141,10 @@ void AGUI::DrawPointer()
 void AGUI::AddMessage(Message iMessage)
 {
 	//========================================== Add To Message Container
+
 	Messages.Add(iMessage);
+	
+
 }
 
 void AGUI::AddWidget(Widget iWidget)

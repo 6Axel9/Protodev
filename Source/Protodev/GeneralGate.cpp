@@ -16,7 +16,10 @@ AGeneralGate::AGeneralGate()
 	mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	//========================================== Change To Root-Component
 	mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	
+	//
+	////========================================== Attack Sphere On Exit CallBack
+	//CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AGeneralGate::OutProx);
+
 	//========================================== Create Sub-Component
 	staticmesh1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ClosedMesh"));
 	//========================================== Change To Root-Component
@@ -44,12 +47,18 @@ void AGeneralGate::Tick(float DeltaTime)
 
 	if (triggered && timeSinceCollect <= 2)
 	{
-
 		//========================================== Atta Timer     
 		timeSinceCollect += DeltaTime;
 
 		staticmesh1->SetHiddenInGame(true);
 		mesh->SetHiddenInGame(false);
+		SetActorEnableCollision(false);
+	}
+
+	else if (timeSinceCollect > 2)
+	{
+		timeSinceCollect = 0;
+		SetActorEnableCollision(true);
 
 	}
 
@@ -70,6 +79,7 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		if (avatar->BackpackCheck("ID CARD"))
 		{
 			Action = "Welcome!";
+			mesh->GlobalAnimRateScale = 1;
 			mesh->PlayAnimation(animation, false);
 			triggered = true;
 
@@ -83,5 +93,27 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
 }
 
+//
+//void AGeneralGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
+//{
+//	AAvatar* avatar = Cast<AAvatar>(OtherActor);
+//	if (avatar == nullptr)
+//	{
+//		return;
+//	}
+//	//========================================== Avatar Exit From Sight Range
+//	else
+//	{
+//		if (avatar->BackpackCheck("ID CARD"))
+//		{
+//			Action = "Bye!";
+//			
+//			mesh->GlobalAnimRateScale = -1;
+//			mesh->PlayAnimation(animation, false);
+//			triggered = false;
+//
+//		}
+//	}
+//}
 
 

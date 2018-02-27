@@ -56,21 +56,17 @@ public:
 		UStaticMeshComponent* L_Barrel;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* R_Barrel;
-
-
 	//========================================== RocketLauncher Properties
 
 	/*FUTURE
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* R_RocketLauncher;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* L_RocketLauncher;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		USkinnedMeshComponent* R_Cannon;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		USkinnedMeshComponent* L_Cannon;*/
 
@@ -78,17 +74,18 @@ public:
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UClass* Bullet;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UClass* Rocket;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UParticleSystemComponent* R_ShotParticles;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UParticleSystemComponent* L_ShotParticles;
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float Speed;
@@ -105,20 +102,25 @@ public:
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
-	void ShootGutlingGun();
 	void ToggleParticles();
+	void ShootWeapon();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
 	void Drop(UClass *Item);
 	void ToggleInventory();
 	bool BackpackCheck(FString name);
+	int BackpackQuantity(FString name);
 	void MouseClicked();
 
 	//========================================== Interactions
 	float LaunchImpulse;
 	void Damaged(AActor* OtherActor);
 	bool isInShooting;
+	FString CurrentWeapon;
+	FVector Velocity;
+	float MaxSpeed;
+	float PawnYaw;
 
 	//========================================== Inventory Property
 	TMap<FString, int> Backpack;

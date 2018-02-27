@@ -9,7 +9,7 @@ AMonster::AMonster()
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
 	//========================================== Speed
-	Speed = 150;
+	Speed = 75;
 	//========================================== HP
 	HitPoints = 20;
 	//========================================== Drop
@@ -65,28 +65,40 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
-	FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
-	FRotator toPlayerRotation = toPlayerDirection.Rotation();
-	toPlayerDirection.Normalize();
-	toPlayerRotation.Pitch = 0.f;
-	//========================================== Rotate On Attack
-	if (isInAttackRange)
+	if (isInAttackRange || isInSightRange) //do your math only if you need
 	{
-		RootComponent->SetWorldRotation(toPlayerRotation);
-		//========================================== Atta Timer     
-		TimeSinceLastStrike += DeltaTime;
-		//========================================== Remove Message     
-		if (TimeSinceLastStrike > AttackTimeout)
+		FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
+
+		float distance = toPlayerDirection.Size();
+		float deceleration = distance / 50;
+
+		float new_speed = Speed * deceleration;
+
+		toPlayerDirection.Normalize();
+		FVector desired_velocity = toPlayerDirection * (new_speed * DeltaTime);
+
+		desired_velocity.Normalize();
+		FRotator toPlayerRotation = desired_velocity.Rotation();
+
+		//========================================== Rotate On Attack
+		if (isInAttackRange)
 		{
-			avatar->Damaged(this);
-			TimeSinceLastStrike = 0.f;
+			RootComponent->SetWorldRotation(toPlayerRotation);
+			//========================================== Atta Timer     
+			TimeSinceLastStrike += DeltaTime;
+			//========================================== Remove Message     
+			if (TimeSinceLastStrike > AttackTimeout)
+			{
+				avatar->Damaged(this);
+				TimeSinceLastStrike = 0.f;
+			}
 		}
-	}
-	//========================================== Follow On Sight
-	else if (isInSightRange)
-	{
-		RootComponent->AddWorldOffset(toPlayerDirection * Speed * DeltaTime);
-		RootComponent->SetWorldRotation(toPlayerRotation);
+		//========================================== Follow On Sight
+		else if (isInSightRange)
+		{
+			RootComponent->AddWorldOffset(toPlayerDirection * Speed * DeltaTime);
+			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), 0.05));
+		}
 	}
 }
 

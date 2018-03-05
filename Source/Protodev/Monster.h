@@ -26,7 +26,9 @@ public:
 
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
-		float Speed;
+		float RotationSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
+		float MovementSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)

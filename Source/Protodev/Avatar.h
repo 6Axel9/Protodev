@@ -82,13 +82,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UParticleSystemComponent* L_ShotParticles;
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
-		float Speed;
+		float RotationSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float CameraSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
@@ -103,7 +101,6 @@ public:
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void ToggleParticles();
-	void ShootWeapon();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
@@ -114,13 +111,11 @@ public:
 	void MouseClicked();
 
 	//========================================== Interactions
-	float LaunchImpulse;
 	void Damaged(AActor* OtherActor);
-	bool isInShooting;
 	FString CurrentWeapon;
-	FVector Velocity;
-	float MaxSpeed;
-	float PawnYaw;
+	float LaunchImpulse;
+	bool isInShooting;
+	
 
 	//========================================== Inventory Property
 	TMap<FString, int> Backpack;

@@ -9,17 +9,19 @@ AMonster::AMonster()
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
 	//========================================== Speed
-	Speed = 75;
+	RotationSpeed = 5.f;
+	//========================================== Speed
+	MovementSpeed = 500.f;
 	//========================================== HP
-	HitPoints = 20;
+	HitPoints = 20.f;
 	//========================================== Drop
 	LootDropped = NULL;
 	//========================================== Damage
-	BaseAttackDamage = 1;
+	BaseAttackDamage = 1.f;
 	//========================================== CoolDown
 	AttackTimeout = 1.5f;
 	//========================================== Timer
-	TimeSinceLastStrike = 0;
+	TimeSinceLastStrike = 0.f;
 
 	//========================================== Create Sub-Component
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
@@ -70,9 +72,9 @@ void AMonster::Tick(float DeltaTime)
 		FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
 
 		float distance = toPlayerDirection.Size();
-		float deceleration = distance / 50;
+		float deceleration = distance / 50.f;
 
-		float new_speed = Speed * deceleration;
+		float new_speed = MovementSpeed * deceleration;
 
 		toPlayerDirection.Normalize();
 		FVector desired_velocity = toPlayerDirection * (new_speed * DeltaTime);
@@ -96,8 +98,8 @@ void AMonster::Tick(float DeltaTime)
 		//========================================== Follow On Sight
 		else if (isInSightRange)
 		{
-			RootComponent->AddWorldOffset(toPlayerDirection * Speed * DeltaTime);
-			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), 0.05));
+			RootComponent->AddWorldOffset(toPlayerDirection * MovementSpeed * DeltaTime);
+			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), RotationSpeed * DeltaTime));
 		}
 	}
 }

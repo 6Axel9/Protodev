@@ -21,8 +21,9 @@ AAvatar::AAvatar()
 	//========================================== Health
 	HitPoints = 100.f;
 	//========================================== Speed
-	MaxSpeed = 1000.f;
-	Speed = 200.f;
+	RotationSpeed = 4.f;
+	//========================================== Speed
+	CameraSpeed = 200.f;
 
 	//========================================== Create Sub-Component
 	MainBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MainBody"));
@@ -93,7 +94,8 @@ void AAvatar::BeginPlay()
 //========================================== Update
 void AAvatar::Tick(float DeltaTime)
 {
-	AddActorWorldOffset(Velocity * MaxSpeed * DeltaTime);
+	//========================================== Call Parent Setup
+	Super::Tick(DeltaTime);
 
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
@@ -104,9 +106,8 @@ void AAvatar::Tick(float DeltaTime)
 	FVector direction = rotation.Vector();
 	rotation.Pitch = 0.0f;
 
-	GetRootComponent()->SetWorldRotation(rotation);
+	RootComponent->SetWorldRotation(FMath::Lerp(RootComponent->GetComponentRotation().Quaternion(), rotation.Quaternion(), RotationSpeed * DeltaTime));
 
-	
 	if (!BackpackCheck(CurrentWeapon))
 	{
 		L_GutlingGun->SetHiddenInGame(true, true);
@@ -114,35 +115,65 @@ void AAvatar::Tick(float DeltaTime)
 	}
 	else
 	{
-		//========================================== Call Parent Setup
-		Super::Tick(DeltaTime);
+		FVector rightdirection = FVector::CrossProduct(direction, direction.UpVector);
 
+		//========================================== Get Gun Target
 		FVector L_target = (position + direction * 1000.0f);
 		FVector R_target = (position + direction * 1000.0f);
+		//========================================== Get Ammo Target
+		FVector L_Ammo_target = L_target + (rightdirection * 50);
+		FVector R_Ammo_target = R_target - (rightdirection * 50);
 
-		//========================================== Get Gun Offset & Direction
+		//========================================== Get Gun Offset
 		FVector L_Attachment = L_GutlingGun->GetComponentLocation();
 		FVector R_Attachment = R_GutlingGun->GetComponentLocation();
+		//========================================== Get Nozzle Offset
+		FVector L_nozzleFire = L_Attachment + L_GutlingGun->GetComponentRotation().Vector() * 150;
+		FVector R_nozzleFire = R_Attachment + R_GutlingGun->GetComponentRotation().Vector() * 150;
+
+		//========================================== Set Gun/Ammo Direction
+		FVector L_raycast = (L_target - L_Attachment);
+		FVector R_raycast = (R_target - R_Attachment);
+		FVector L_Ammo_raycast = (L_Ammo_target - L_Attachment);
+		FVector R_Ammo_raycast = (R_Ammo_target - R_Attachment);
+		L_raycast.Normalize();
+		R_raycast.Normalize();
+		L_Ammo_raycast.Normalize();
+		R_Ammo_raycast.Normalize();
 
 		if (CurrentWeapon == "GUTLING GUN")
 		{
 			if (Backpack[CurrentWeapon] > 0)
 			{
+				ABullet* L_Bullet;
+				//========================================== Visualize Weapon
 				L_GutlingGun->SetHiddenInGame(false, true);
-				//========================================== Set Gun Offset & Direction
-				FVector L_raycast = (L_target - L_Attachment);
-				L_raycast.Normalize();
-
+				//========================================== Adjust Weapon Rotation
 				L_GutlingGun->SetWorldRotation(L_raycast.Rotation());
+
+				if (isInShooting)
+				{
+					//========================================== Spawn Bullets
+					L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
+					//========================================== Shoot Bullet By Impulse
+					L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+				}
 			}
 			if (Backpack[CurrentWeapon] == 2)
 			{
+				ABullet* R_Bullet;
+				//========================================== Visualize Weapon
 				R_GutlingGun->SetHiddenInGame(false, true);
-				//========================================== Set Gun Offset & Direction
-				FVector R_raycast = (R_target - R_Attachment);
-				R_raycast.Normalize();
-
+				//========================================== Adjust Weapon Rotation
 				R_GutlingGun->SetWorldRotation(R_raycast.Rotation());
+
+				if (isInShooting)
+				{
+					//========================================== Spawn Bullets
+					R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
+					//========================================== Shoot Bullet By Impulse
+					R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+				}
 			}
 		}
 		if (CurrentWeapon == "ROCKET LAUNCHER")
@@ -174,7 +205,6 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//========================================== Actions
 	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleParticles);
 	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleParticles);
-	InputComponent->BindAction("ShootWeapon", IE_Repeat, this, &AAvatar::ShootWeapon);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
@@ -203,125 +233,33 @@ void AAvatar::MoveRight(float Amount)
 
 void AAvatar::Yaw(float Amount)
 {
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	//========================================== Get Mouse Movement 
 	if (InventoryShowing) 
-	{    
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+	{   
 		gui->MouseMoved();  
 	}
 	//========================================== Rotate By MouseX
 	else
 	{
-		AddControllerYawInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
+		AddControllerYawInput(CameraSpeed * Amount * GetWorld()->GetDeltaSeconds());
 	}
 }
 
 void AAvatar::Pitch(float Amount)
 {
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	//========================================== Get Mouse Movement 
 	if (InventoryShowing)
 	{
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
 		gui->MouseMoved();
 	}
 	//========================================== Rotate By MouseY
 	else
 	{
-		AddControllerPitchInput(Speed * Amount * GetWorld()->GetDeltaSeconds());
-	}
-}
-
-void AAvatar::ShootWeapon()
-{
-	if (!BackpackCheck(CurrentWeapon))
-	{
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
-
-		FString message = "YOU FIRST NEED A WEAPON TO SHOOT!!";
-
-		gui->AddMessage(Message(message, Button, FColor::Black, FColor::White, 5.f));
-	}
-	else
-	{
-		//========================================== Get Controller From Character
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-
-		//========================================== Get Target Position & Direction
-		FVector position = PController->PlayerCameraManager->GetCameraLocation();
-		FVector direction = PController->PlayerCameraManager->GetCameraRotation().Vector();
-		FVector rightdirection = FVector::CrossProduct(direction, direction.UpVector);
-		FVector R_target = (position + direction * 1000.0f) - (rightdirection * 100);
-		FVector L_target = (position + direction * 1000.0f) + (rightdirection * 100);
-
-
-		//========================================== Get Nozzle Offset & Direction
-		FVector R_nozzleFire = R_ShotParticles->GetComponentLocation();
-		FVector L_nozzleFire = L_ShotParticles->GetComponentLocation();
-
-		//========================================== Set Bullet Offset & Direction
-		FVector R_raycast = (R_target - R_nozzleFire);
-		R_raycast.Normalize();
-		FVector L_raycast = (L_target - L_nozzleFire);
-		L_raycast.Normalize();
-
-		
-		//========================================== Spawn Ammo At Position
-		if (CurrentWeapon == "GUTLING GUN")
-		{
-			ABullet* L_bullet;
-			ABullet* R_bullet;
-
-			if (Backpack[CurrentWeapon] > 0)
-			{
-				L_bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_raycast.Rotation());
-				if (L_bullet)
-				{
-					//========================================== ShootGutlingGun Bullet By Impulse
-					L_bullet->ProxSphere->AddImpulse(L_raycast * LaunchImpulse);
-				}
-			}
-			if (Backpack[CurrentWeapon] == 2)
-			{
-				R_bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_raycast.Rotation());
-				if (R_bullet)
-				{
-					//========================================== ShootGutlingGun Bullet By Impulse
-					R_bullet->ProxSphere->AddImpulse(R_raycast * LaunchImpulse);
-				}
-			}
-		}
-		if (CurrentWeapon == "ROCKET LAUNCHER")
-		{
-			APlayerController* PController = GetWorld()->GetFirstPlayerController();
-			AGUI* gui = Cast<AGUI>(PController->GetHUD());
-
-			FString message = "Shooting Rockets!!";
-
-			gui->AddMessage(Message(message, Button, FColor::Black, FColor::White, 5.f));
-
-			//ARocket* L_rocket;
-			//ARocket* R_rocket;
-
-			//if (Backpack[currentWeapon] > 0)
-			//{
-			//	L_rocket = GetWorld()->SpawnActor<ARocket>(Rocket, L_nozzleFire, L_raycast.Rotation());
-			//	if (L_rocket)
-			//	{
-			//		//========================================== ShootGutlingGun Rocket By Impulse
-			//		L_rocket->ProxSphere->AddImpulse(L_raycast * LaunchImpulse);
-			//	}
-			//}
-			//if (Backpack[currentWeapon] == 2)
-			//{
-			//	R_rocket = GetWorld()->SpawnActor<ARocket>(Rocket, R_nozzleFire, R_raycast.Rotation());
-			//	if (R_rocket)
-			//	{
-			//		//========================================== ShootGutlingGun Rocket By Impulse
-			//		R_rocket->ProxSphere->AddImpulse(R_raycast * LaunchImpulse);
-			//	}
-			//}
-		}
+		AddControllerPitchInput(CameraSpeed * Amount * GetWorld()->GetDeltaSeconds());
 	}
 }
 

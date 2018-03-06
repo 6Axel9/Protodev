@@ -421,3 +421,7 @@ void AAvatar::ToggleObjectives() {
 		GUI->ActiveWidget = EWidgets::InGameHUD;
 	}
 }
+
+UObjectivesComponent* AAvatar::GetObjectiveComponent() {
+	return ObjectiveComponent;
+}

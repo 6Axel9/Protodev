@@ -405,9 +405,15 @@ void AAvatar::PauseGame() {
 	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
 	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
 		GUI->ActiveWidget = EWidgets::PauseMenu;
+		GUI->DrawPauseMenu();
 	}
 	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
 		GUI->ActiveWidget = EWidgets::InGameHUD;
+		GUI->DrawInGame();
+	}
+	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
+		GUI->ActiveWidget = EWidgets::PauseMenu;
+		GUI->DrawPauseMenu();
 	}
 }
 
@@ -416,9 +422,11 @@ void AAvatar::ToggleObjectives() {
 	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
 	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
 		GUI->ActiveWidget = EWidgets::ObjectiveMenu;
+		GUI->DrawObjectives();
 	}
 	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
 		GUI->ActiveWidget = EWidgets::InGameHUD;
+		GUI->DrawInGame();
 	}
 }
 

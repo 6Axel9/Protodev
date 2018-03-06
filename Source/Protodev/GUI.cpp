@@ -10,7 +10,7 @@ AGUI::AGUI(){
 
 void AGUI::DrawHUD()
 {
-	if(ActiveWidget == EWidgets::MainMenu){
+	/*if(ActiveWidget == EWidgets::MainMenu){
 		if (GEngine)
 			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "main menu");
 		if(BP_widget){
@@ -51,7 +51,7 @@ void AGUI::DrawHUD()
 		}
 		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), ObjectivesWidget);
 		BP_widget->AddToViewport();
-	}
+	}*/
 	
 	//========================================== Call Parent Setup
 	Super::DrawHUD();
@@ -234,4 +234,39 @@ void AGUI::MouseMoved()
 
 void AGUI::SetActiveWidget(EWidgets Widget){
 	ActiveWidget = Widget;
+}
+
+void AGUI::DrawObjectives() {
+	if (BP_widget) {
+		BP_widget->RemoveFromViewport();
+	}
+	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), ObjectivesWidget);
+	BP_widget->AddToViewport();
+	PlayerController->bShowMouseCursor = true;
+}
+void AGUI::DrawMainMenu() {
+	if (BP_widget) {
+		BP_widget->RemoveFromViewport();
+	}
+	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
+	BP_widget->AddToViewport();
+	PlayerController->bShowMouseCursor = true;
+}
+
+void AGUI::DrawInGame() {
+	if (BP_widget) {
+		BP_widget->RemoveFromViewport();
+	}
+	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
+	BP_widget->AddToViewport();
+	PlayerController->bShowMouseCursor = false;
+}
+
+void AGUI::DrawPauseMenu() {
+	if (BP_widget) {
+		BP_widget->RemoveFromViewport();
+	}
+	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
+	BP_widget->AddToViewport();
+	PlayerController->bShowMouseCursor = true;
 }

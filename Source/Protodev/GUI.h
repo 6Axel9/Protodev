@@ -145,6 +145,10 @@ public:
 	void DrawMessages();
 	void DrawWidgets();
 	void DrawPointer();
+	void DrawObjectives();
+	void DrawMainMenu();
+	void DrawInGame();
+	void DrawPauseMenu();
 	
 	//========================================== Mouse Inputs
 	void MouseClicked();

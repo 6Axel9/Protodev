@@ -10,13 +10,15 @@ UObjective::UObjective(){
 void UObjective::SetObjectiveName(FString Name) {
 	ObjectiveName = Name;
 }
-void UObjective::AddParts(int NumberOfParts) {
-	for (int i = 0; i < NumberOfParts; i++) {
-		Parts.Add(NewObject<UObjectivePart>(UObjectivePart::StaticClass()));
-	}
-}
+
 void UObjective::CompleteObjective() {
 	Completed = true;
 }
 
+void UObjective::NewPart(FString partDescription){
+	Parts.Add(FString(partDescription));
+}
 
+void UObjective::SetActivePart(FString activePart){
+	ActivePart = activePart;
+}

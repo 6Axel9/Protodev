@@ -4,6 +4,8 @@
 #include "PC_Desk.h"
 #include "Avatar.h"
 #include "GUI.h"
+#include "ObjectivesComponent.h"
+#include "Objective.h"
 
 //========================================== Constructor
 APC_Desk::APC_Desk()
@@ -56,7 +58,10 @@ void APC_Desk::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 	//========================================== Return If Not Avatar
 	if (avatar->BackpackCheck("Storage Drive"))
 	{
-		Action = "You installed the new Driver already!";
+		//================================ Checks if resolve war with words objective is on part 3 and if it is sets it to part 4;
+		if(avatar->ObjectiveComponent->ResolveWarWithWords->ActivePart == avatar->ObjectiveComponent->ResolveWarWithWords->Parts[2]){
+			avatar->ObjectiveComponent->ResolveWarWithWords->SetActivePart(avatar->ObjectiveComponent->ResolveWarWithWords->Parts[3]);
+		}
 		triggered = true;
 	}
 	//========================================== Get Controller From Character

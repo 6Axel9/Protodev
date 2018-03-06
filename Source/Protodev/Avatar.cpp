@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "GUI.h"
 #include "ObjectivesComponent.h"
+#include "Objective.h"
 
 //========================================== Constructor
 AAvatar::AAvatar()
@@ -281,6 +282,14 @@ void AAvatar::ToggleParticles()
 
 void AAvatar::Pickup(APickupItem* Item)
 {
+	//========================================== Actives resolve war with words objective when ID Card is picked up and the objective doesn't exist
+	if (Item->Name == "ID Card" && !ObjectiveComponent->ResolveWarWithWords){
+		ObjectiveComponent->StartResolveWarWithWordsObjective();
+	}
+	//========================================== Updates resolve war with words objective to part 3 when Storage Drive is picked up and the objective is currently on part 2
+	if (Item->Name == "Storage Drive" && ObjectiveComponent->ResolveWarWithWords->ActivePart == ObjectiveComponent->ResolveWarWithWords->Parts[1]){
+		ObjectiveComponent->ResolveWarWithWords->SetActivePart(ObjectiveComponent->ResolveWarWithWords->Parts[2]);
+	}
 	if (Item->Name == "GUTLING GUN" || Item->Name == "ROCKET LAUNCHER")
 	{
 		CurrentWeapon = Item->Name;

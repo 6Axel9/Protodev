@@ -26,6 +26,7 @@ public:
 	//TArray<bool> testarray;
 	class UObjective* ContactStarfleet;
 	class UObjective* ResolveWarWithWords;
+	TArray<FString> ResolveWarWithWordsParts;
 
 	void StartContactStarfleetObjective();
 	void StartResolveWarWithWordsObjective();

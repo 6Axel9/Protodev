@@ -17,9 +17,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool Completed;
 	UPROPERTY(BlueprintReadWrite)
-	TArray<FString> PathDescription;
+	FString PartDescription;
 
 	UObjectivePart();
-	void AddPath(FString Description);
+	void SetPartDescription(FString Description);
 	void CompletePart();
 };

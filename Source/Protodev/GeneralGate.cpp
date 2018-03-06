@@ -5,7 +5,8 @@
 #include "Avatar.h"
 #include "GUI.h"
 #include "GeneralGate.h"
-
+#include "ObjectivesComponent.h"
+#include "Objective.h"
 
 //========================================== Constructor
 AGeneralGate::AGeneralGate()
@@ -78,6 +79,10 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		
 		if (avatar->BackpackCheck("ID CARD"))
 		{
+			//================================ Checks if resolve war with words objective is on part 1 and if it is sets it to part 2;
+			if(avatar->ObjectiveComponent->ResolveWarWithWords->ActivePart == avatar->ObjectiveComponent->ResolveWarWithWords->Parts[0]){
+				avatar->ObjectiveComponent->ResolveWarWithWords->SetActivePart(avatar->ObjectiveComponent->ResolveWarWithWords->Parts[1]);
+			}
 			Action = "Welcome!";
 			mesh->GlobalAnimRateScale = 1;
 			mesh->PlayAnimation(animation, false);

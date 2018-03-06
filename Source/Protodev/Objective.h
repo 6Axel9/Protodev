@@ -13,14 +13,17 @@ class PROTODEV_API UObjective : public UObject
 	
 public:
 	UPROPERTY(BlueprintReadWrite)
-	FString ObjectiveName;
+		FString ObjectiveName;
 	UPROPERTY(BlueprintReadWrite)
-	TArray<UObjectivePart*> Parts;
+		TArray<FString> Parts;
 	UPROPERTY(BlueprintReadWrite)
-	bool Completed;
+		FString ActivePart;
+	UPROPERTY(BlueprintReadWrite)
+		bool Completed;
 
 	UObjective();
 	void SetObjectiveName(FString Name);
-	void AddParts(int NumberOfParts);
+	void NewPart(FString partDescription);
+	void SetActivePart(FString activePart);
 	void CompleteObjective();
 };

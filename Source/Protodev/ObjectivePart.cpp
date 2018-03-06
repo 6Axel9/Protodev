@@ -7,8 +7,8 @@ UObjectivePart::UObjectivePart(){
 	Completed = false;
 }
 
-void UObjectivePart::AddPath(FString Description) {
-	PathDescription.Add(Description);
+void UObjectivePart::SetPartDescription(FString Description) {
+	PartDescription = Description;
 };
 
 void UObjectivePart::CompletePart() {

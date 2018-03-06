@@ -23,9 +23,9 @@ void UObjectivesComponent::BeginPlay()
 
 	// ...
 
-	StartContactStarfleetObjective();
-	StartResolveWarWithWordsObjective();
-	ContactStarfleet->Parts[0]->CompletePart();
+	//StartContactStarfleetObjective();
+	//StartResolveWarWithWordsObjective();
+	//ContactStarfleet->Parts[0]->CompletePart();
 }
 
 
@@ -38,7 +38,7 @@ void UObjectivesComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 }
 
 void UObjectivesComponent::StartContactStarfleetObjective() {
-	ContactStarfleet = NewObject<UObjective>(this, UObjective::StaticClass());
+	/*ContactStarfleet = NewObject<UObjective>(this, UObjective::StaticClass());
 	ContactStarfleet->SetObjectiveName("Contact the Starfleet to send a rescue ship");
 	ContactStarfleet->AddParts(3);
 	ContactStarfleet->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds");
@@ -47,18 +47,22 @@ void UObjectivesComponent::StartContactStarfleetObjective() {
 	ContactStarfleet->Parts[1]->AddPath("B: Locate the battery charger unit inside the mod-base and install the battery pack into it");
 	ContactStarfleet->Parts[2]->AddPath("A: Fend of large enemy waves for 1 min until the rescue ship arrives");
 	ContactStarfleet->Parts[2]->AddPath("B: Clear the infested landing pad");
-	ListOfObjectives.Add(ContactStarfleet);
+	ListOfObjectives.Add(ContactStarfleet);*/
 }
 
 void UObjectivesComponent::StartResolveWarWithWordsObjective() {
 	ResolveWarWithWords = NewObject<UObjective>(this, UObjective::StaticClass());
 	ResolveWarWithWords->SetObjectiveName("Resolve the war with words");
-	ResolveWarWithWords->AddParts(3);
-	ResolveWarWithWords->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds");
+	ResolveWarWithWords->NewPart("Use the ID card to access the modular base");
+	ResolveWarWithWords->NewPart("Locate and collect the Hard Drive");
+	ResolveWarWithWords->NewPart("Locate the Computer inside the mod-base and install the Hard Drive into it");
+	ResolveWarWithWords->NewPart("Face-time the leader");
+	ResolveWarWithWords->SetActivePart(ResolveWarWithWords->Parts[0]);
+	/*ResolveWarWithWords->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds");
 	ResolveWarWithWords->Parts[0]->AddPath("B: Use the ID card to access the modular base");
 	ResolveWarWithWords->Parts[1]->AddPath("A: Locate and collect the Hard Drive");
 	ResolveWarWithWords->Parts[1]->AddPath("B: Locate the Computer inside the mod-base and install the Hard Drive into it");
-	ResolveWarWithWords->Parts[2]->AddPath("Face-time the leader");
+	ResolveWarWithWords->Parts[2]->AddPath("Face-time the leader");*/
 	ListOfObjectives.Add(ResolveWarWithWords);
 }
 

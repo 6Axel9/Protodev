@@ -94,7 +94,7 @@ public:
 	//========================================== Objective Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		class UObjectivesComponent* ObjectiveComponent;
-	
+		class UObjectivesComponent* GetObjectiveComponent();
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);

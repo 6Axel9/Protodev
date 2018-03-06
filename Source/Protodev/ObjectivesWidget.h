@@ -2,12 +2,13 @@
 
 #pragma once
 
+//#include "ObjectivesComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "ObjectivesWidget.generated.h"
 
 /**
- * 
- */
+* 
+*/
 
 
 UCLASS()
@@ -16,10 +17,19 @@ class PROTODEV_API UObjectivesWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	//UFUNCTION(BlueprintCallable)
+		//int32 GetObjectiveListSize();
 	UFUNCTION(BlueprintCallable)
-	void DisplayObjective();
+		class UObjectivesComponent* GetObjectiveComponent();
+
 	UFUNCTION(BlueprintCallable)
-	bool GetObjective(int num);
+		void DisplayObjective();
+	UFUNCTION(BlueprintCallable)
+		FString GetObjective(int num);
+	UFUNCTION(BlueprintCallable)
+		void UpdateObjectiveList();
+	//UFUNCTION(BlueprintCallable)
+	//TArray<FObjective*>* GetList();
 	//UFUNCTION(BlueprintCallable)
 	//void SetObjectiveColour(class FText* objectiveText);
 };

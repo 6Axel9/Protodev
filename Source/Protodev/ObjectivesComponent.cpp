@@ -2,6 +2,7 @@
 
 #include "Protodev.h"
 #include "ObjectivesComponent.h"
+#include "Objective.h"
 
 
 // Sets default values for this component's properties
@@ -21,8 +22,10 @@ void UObjectivesComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-	CreateContactStarfleetObjective();
+
+	StartContactStarfleetObjective();
+	StartResolveWarWithWordsObjective();
+	ContactStarfleet->Parts[0]->CompletePart();
 }
 
 
@@ -34,19 +37,39 @@ void UObjectivesComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	// ...
 }
 
-void UObjectivesComponent::CreateContactStarfleetObjective() {
-	ContactStarfleet = new FObjective;
-	ContactStarfleet->SetObjectiveName("Contact the Starfleet to send a rescue ship.");
+void UObjectivesComponent::StartContactStarfleetObjective() {
+	ContactStarfleet = NewObject<UObjective>(this, UObjective::StaticClass());
+	ContactStarfleet->SetObjectiveName("Contact the Starfleet to send a rescue ship");
 	ContactStarfleet->AddParts(3);
-	ContactStarfleet->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds (not in the modular part of the base because the ID card unlocks the modular base).");
-	ContactStarfleet->Parts[0]->AddPath("B: Use the ID card to access the modular base.");
-	ContactStarfleet->Parts[1]->AddPath("A: Locate and collect the battery pack (from a randomized location).");
-	ContactStarfleet->Parts[1]->AddPath("B: Locate the battery charger unit inside the mod-base and install the battery pack into it. This activates the big radar in the compound (cut-scene).");
-	ContactStarfleet->Parts[2]->AddPath("A: Fend of large enemy waves for 1 min until the rescue ship arrives.");
-	ContactStarfleet->Parts[2]->AddPath("B: Clear the infested landing pad.");
+	ContactStarfleet->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds");
+	ContactStarfleet->Parts[0]->AddPath("B: Use the ID card to access the modular base");
+	ContactStarfleet->Parts[1]->AddPath("A: Locate and collect the battery pack");
+	ContactStarfleet->Parts[1]->AddPath("B: Locate the battery charger unit inside the mod-base and install the battery pack into it");
+	ContactStarfleet->Parts[2]->AddPath("A: Fend of large enemy waves for 1 min until the rescue ship arrives");
+	ContactStarfleet->Parts[2]->AddPath("B: Clear the infested landing pad");
 	ListOfObjectives.Add(ContactStarfleet);
 }
 
-TArray<FObjective*>* UObjectivesComponent::GetList() {
-	return &ListOfObjectives;
+void UObjectivesComponent::StartResolveWarWithWordsObjective() {
+	ResolveWarWithWords = NewObject<UObjective>(this, UObjective::StaticClass());
+	ResolveWarWithWords->SetObjectiveName("Resolve the war with words");
+	ResolveWarWithWords->AddParts(3);
+	ResolveWarWithWords->Parts[0]->AddPath("A: Locate and collect the ID from a randomized location within the compound grounds");
+	ResolveWarWithWords->Parts[0]->AddPath("B: Use the ID card to access the modular base");
+	ResolveWarWithWords->Parts[1]->AddPath("A: Locate and collect the Hard Drive");
+	ResolveWarWithWords->Parts[1]->AddPath("B: Locate the Computer inside the mod-base and install the Hard Drive into it");
+	ResolveWarWithWords->Parts[2]->AddPath("Face-time the leader");
+	ListOfObjectives.Add(ResolveWarWithWords);
 }
+
+TArray<UObjective*> UObjectivesComponent::GetList() {
+	return ListOfObjectives;
+}
+
+//FObjective UObjectivesComponent::GetList(int num) {
+	//return ListOfObjectives[num - 1];
+//}
+
+//TArray<bool>* UObjectivesComponent::GetList2(){
+	//return &testarray;
+//}

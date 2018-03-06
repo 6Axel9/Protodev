@@ -5,47 +5,7 @@
 #include "Components/ActorComponent.h"
 #include "ObjectivesComponent.generated.h"
 
-USTRUCT(BlueprintType)
-struct FObjectivePart {
-	GENERATED_BODY()
-
-	TArray<bool> Completed;
-	TArray<FString> PathDescription;
-
-	void AddPath(FString Description) {
-		PathDescription.Add(Description);
-		Completed.Add(false);
-	};
-	void CompletePart() {
-		Completed[0] = true;
-	}
-	void CompletePart(int Path) {
-		Completed[Path - 1] = true;
-	}
-};
-
-USTRUCT(BlueprintType)
-struct FObjective {
-	GENERATED_BODY()
-
-	FString ObjectiveName;
-	TArray<FObjectivePart*> Parts;
-	bool Completed;
-
-	void SetObjectiveName(FString Name) {
-		ObjectiveName = Name;
-	}
-	void AddParts(int NumberOfParts) {
-		for (int i = 0; i < NumberOfParts; i++) {
-			Parts.Add(new FObjectivePart);
-		}
-	}
-	void CompleteObjective() {
-		Completed = true;
-	}
-};
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(BlueprintType)
 class PROTODEV_API UObjectivesComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -62,10 +22,16 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	TArray<FObjective*> ListOfObjectives;
-	FObjective* ContactStarfleet;
+	TArray<class UObjective*> ListOfObjectives;
+	//TArray<bool> testarray;
+	class UObjective* ContactStarfleet;
+	class UObjective* ResolveWarWithWords;
 
-	void CreateContactStarfleetObjective();
-	
-	TArray<FObjective*>* GetList();
+	void StartContactStarfleetObjective();
+	void StartResolveWarWithWordsObjective();
+	UFUNCTION(BlueprintCallable)
+		TArray<UObjective*> GetList();
+	//UFUNCTION(BlueprintCallable)
+		//TArray<bool>* GetList2();
+	//FObjective GetList(int num);
 };

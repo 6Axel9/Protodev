@@ -79,9 +79,21 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		
 		if (avatar->BackpackCheck("ID CARD"))
 		{
+			//================================ Checks if contact starfleet objective is on part 1 and if it is sets it to part 2;
+			if(avatar->ObjectiveComponent->ContactStarfleet->ActivePart == avatar->ObjectiveComponent->ContactStarfleet->Parts[0]){
+				avatar->ObjectiveComponent->ContactStarfleet->SetActivePart(avatar->ObjectiveComponent->ContactStarfleet->Parts[1]);
+			}
 			//================================ Checks if resolve war with words objective is on part 1 and if it is sets it to part 2;
 			if(avatar->ObjectiveComponent->ResolveWarWithWords->ActivePart == avatar->ObjectiveComponent->ResolveWarWithWords->Parts[0]){
 				avatar->ObjectiveComponent->ResolveWarWithWords->SetActivePart(avatar->ObjectiveComponent->ResolveWarWithWords->Parts[1]);
+			}
+			//================================ Checks if fix your ship and fly off objective is on part 1 and if it is sets it to part 2;
+			if(avatar->ObjectiveComponent->FixYourShip->ActivePart == avatar->ObjectiveComponent->FixYourShip->Parts[0]){
+				avatar->ObjectiveComponent->FixYourShip->SetActivePart(avatar->ObjectiveComponent->FixYourShip->Parts[1]);
+			}
+			//================================ Checks if poo on a stick objective is on part 1 and if it is sets it to part 2;
+			if(avatar->ObjectiveComponent->PooOnAStick->ActivePart == avatar->ObjectiveComponent->PooOnAStick->Parts[0]){
+				avatar->ObjectiveComponent->PooOnAStick->SetActivePart(avatar->ObjectiveComponent->PooOnAStick->Parts[1]);
 			}
 			Action = "Welcome!";
 			mesh->GlobalAnimRateScale = 1;

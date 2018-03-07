@@ -282,9 +282,25 @@ void AAvatar::ToggleParticles()
 
 void AAvatar::Pickup(APickupItem* Item)
 {
+	//========================================== Actives contact starfleet objective when ID Card is picked up and the objective doesn't exist
+	if (Item->Name == "ID Card" && !ObjectiveComponent->ContactStarfleet){
+		ObjectiveComponent->StartContactStarfleetObjective();
+	}
 	//========================================== Actives resolve war with words objective when ID Card is picked up and the objective doesn't exist
 	if (Item->Name == "ID Card" && !ObjectiveComponent->ResolveWarWithWords){
 		ObjectiveComponent->StartResolveWarWithWordsObjective();
+	}
+	//========================================== Actives fix your ship and fly off objective when ID Card is picked up and the objective doesn't exist
+	if (Item->Name == "ID Card" && !ObjectiveComponent->FixYourShip){
+		ObjectiveComponent->StartFixYourShipObjective();
+	}
+	//========================================== Actives poo on a stick objective when ID Card is picked up and the objective doesn't exist
+	if (Item->Name == "ID Card" && !ObjectiveComponent->PooOnAStick){
+		ObjectiveComponent->StartPooOnAStickObjective();
+	}
+	//========================================== Updates contact starfleet objective to part 3 when Battery Pack is picked up and the objective is currently on part 2
+	if (Item->Name == "Battery Pack" && ObjectiveComponent->ContactStarfleet->ActivePart == ObjectiveComponent->ContactStarfleet->Parts[1]){
+		ObjectiveComponent->ContactStarfleet->SetActivePart(ObjectiveComponent->ContactStarfleet->Parts[2]);
 	}
 	//========================================== Updates resolve war with words objective to part 3 when Storage Drive is picked up and the objective is currently on part 2
 	if (Item->Name == "Storage Drive" && ObjectiveComponent->ResolveWarWithWords->ActivePart == ObjectiveComponent->ResolveWarWithWords->Parts[1]){

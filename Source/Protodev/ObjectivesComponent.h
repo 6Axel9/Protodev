@@ -23,13 +23,23 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	TArray<class UObjective*> ListOfObjectives;
-	//TArray<bool> testarray;
 	class UObjective* ContactStarfleet;
+	class UObjective* KillAllEnemies;
 	class UObjective* ResolveWarWithWords;
-	TArray<FString> ResolveWarWithWordsParts;
+	class UObjective* FindAPrototypeWeapon;
+	class UObjective* FixYourShip;
+	class UObjective* InfectTheBugs;
+	class UObjective* PooOnAStick;
+	class UObjective* EscapeInTheSecretShip;
 
 	void StartContactStarfleetObjective();
+	void StartKillAllEnemiesObjective();
 	void StartResolveWarWithWordsObjective();
+	void StartFindAPrototypeWeaponObjective();
+	void StartFixYourShipObjective();
+	void StartInfectTheBugsObjective();
+	void StartPooOnAStickObjective();
+	void StartEscapeInTheSecretShipObjective();
 	UFUNCTION(BlueprintCallable)
 		TArray<UObjective*> GetList();
 	//UFUNCTION(BlueprintCallable)

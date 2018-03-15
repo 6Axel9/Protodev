@@ -4,55 +4,8 @@
 #include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "Runtime/Engine/Classes/Engine/Engine.h"
 
-AGUI::AGUI(){
-	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
-}
-
 void AGUI::DrawHUD()
 {
-	/*if(ActiveWidget == EWidgets::MainMenu){
-		if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "main menu");
-		if(BP_widget){
-			BP_widget->RemoveFromViewport();
-		}
-		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
-		BP_widget->AddToViewport();
-	}
-	if(ActiveWidget == EWidgets::InGameHUD){
-		if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "in game");
-		if(BP_widget){
-			BP_widget->RemoveFromViewport();
-		}
-		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
-		BP_widget->AddToViewport();
-	}
-	if(ActiveWidget == EWidgets::PauseMenu){
-		if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "pause menu");
-		if(PlayerController){
-			PlayerController->bShowMouseCursor = true;
-		}
-		if(BP_widget){
-			BP_widget->RemoveFromViewport();
-		}
-		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
-		BP_widget->AddToViewport();
-	}
-	if (ActiveWidget == EWidgets::ObjectiveMenu) {
-		if (GEngine)
-			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::White, "objective menu");
-		if (PlayerController) {
-			PlayerController->bShowMouseCursor = true;
-		}
-		if (BP_widget) {
-			BP_widget->RemoveFromViewport();
-		}
-		BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), ObjectivesWidget);
-		BP_widget->AddToViewport();
-	}*/
-	
 	//========================================== Call Parent Setup
 	Super::DrawHUD();
 	//========================================== Set Interface Area	
@@ -61,6 +14,7 @@ void AGUI::DrawHUD()
 	//========================================== Draw Interface Components
 	DrawHealthbar();
 	DrawMessages();
+	DrawObjectives();
 	DrawWidgets();
 	DrawPointer();
 }
@@ -119,6 +73,27 @@ void AGUI::DrawMessages()
 	}
 }
 
+void AGUI::DrawObjectives()
+{
+	//========================================== Output Messages
+	for (int c = Objectives.Num() - 1; c >= 0; c--)
+	{
+		//========================================== Background Size
+		float Width, Height, Pad = 10.f;
+		//========================================== Text Size
+		GetTextSize(Objectives[c].message, Width, Height, Font, 1.f);
+		//========================================== Set Message Size
+		float messageH = Height + 2.f * Pad;
+		float messageW = Width;
+		float posX = 0.f, posY = c * messageH;
+
+		//========================================== Draw Hud Background
+		DrawTexture(Hud, posX, posY, messageW, messageH, 0.f, 0.f, 1.f, 1.f);
+		//========================================== Draw Message Text
+		DrawText(Objectives[c].message, Objectives[c].frontColor, messageH + posX + Pad, posY + Pad, Font);
+	}
+}
+
 void AGUI::DrawWidgets()
 {
 	//========================================== Output Widgets
@@ -141,10 +116,7 @@ void AGUI::DrawPointer()
 void AGUI::AddMessage(Message iMessage)
 {
 	//========================================== Add To Message Container
-
 	Messages.Add(iMessage);
-	
-
 }
 
 void AGUI::AddWidget(Widget iWidget)
@@ -168,28 +140,24 @@ void AGUI::AddWidget(Widget iWidget)
 	}
 	//========================================== Add To Widget Container
 	Widgets.Add(iWidget);
-
 }
 
-
-bool AGUI::CheckItemByName(FString name)
+void AGUI::AddObjective(Message iMessage)
 {
-
-	//========================================== Make Room For New Widget
-	for (int c = 0; c < Widgets.Num(); c++)
-	{
-		if (Widgets[c].icon.name == name)
-		{
-			return true;
-		}
-	}
-	return false;
+	//========================================== Add To Message Container
+	Objectives.Add(iMessage);
 }
 
 void AGUI::ClearWidgets()
 {
 	//========================================== Empty Widget Container
 	Widgets.Empty();
+}
+
+void AGUI::ClearObjectives()
+{
+	//========================================== Empty Widget Container
+	Objectives.Empty();
 }
 
 void AGUI::MouseClicked()
@@ -232,41 +200,7 @@ void AGUI::MouseMoved()
 	lastMouse = thisMouse;
 }
 
-void AGUI::SetActiveWidget(EWidgets Widget){
+void AGUI::SetActiveWidget(EWidgets Widget)
+{
 	ActiveWidget = Widget;
-}
-
-void AGUI::DrawObjectives() {
-	if (BP_widget) {
-		BP_widget->RemoveFromViewport();
-	}
-	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), ObjectivesWidget);
-	BP_widget->AddToViewport();
-	PlayerController->bShowMouseCursor = true;
-}
-void AGUI::DrawMainMenu() {
-	if (BP_widget) {
-		BP_widget->RemoveFromViewport();
-	}
-	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), MainMenuWidget);
-	BP_widget->AddToViewport();
-	PlayerController->bShowMouseCursor = true;
-}
-
-void AGUI::DrawInGame() {
-	if (BP_widget) {
-		BP_widget->RemoveFromViewport();
-	}
-	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), InGameHUDWidget);
-	BP_widget->AddToViewport();
-	PlayerController->bShowMouseCursor = false;
-}
-
-void AGUI::DrawPauseMenu() {
-	if (BP_widget) {
-		BP_widget->RemoveFromViewport();
-	}
-	BP_widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), PauseMenuWidget);
-	BP_widget->AddToViewport();
-	PlayerController->bShowMouseCursor = true;
 }

@@ -208,8 +208,6 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleParticles);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
-	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
-	InputComponent->BindAction("Objectives", IE_Pressed, this, &AAvatar::ToggleObjectives);
 }
 
 void AAvatar::MoveForward(float Amount)
@@ -282,6 +280,14 @@ void AAvatar::ToggleParticles()
 
 void AAvatar::Pickup(APickupItem* Item)
 {
+	//========================================== Get Controller From Character
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	//========================================== Cast Controller As HUD
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
+
+	Message objective("Collect Your POOOOOOO!!!!!", FColor::Emerald);
+	gui->AddObjective(objective);
+
 	//========================================== Actives contact starfleet objective when ID Card is picked up and the objective doesn't exist
 	if (Item->Name == "ID Card" && !ObjectiveComponent->ContactStarfleet){
 		ObjectiveComponent->StartContactStarfleetObjective();
@@ -422,36 +428,6 @@ void AAvatar::Damaged(AActor* OtherActor)
 	if (HitPoints < 0.f)
 	{
 		HitPoints = 0.f;
-	}
-}
-
-void AAvatar::PauseGame() {
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
-	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
-		GUI->ActiveWidget = EWidgets::PauseMenu;
-		GUI->DrawPauseMenu();
-	}
-	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
-		GUI->ActiveWidget = EWidgets::InGameHUD;
-		GUI->DrawInGame();
-	}
-	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
-		GUI->ActiveWidget = EWidgets::PauseMenu;
-		GUI->DrawPauseMenu();
-	}
-}
-
-void AAvatar::ToggleObjectives() {
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
-	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
-		GUI->ActiveWidget = EWidgets::ObjectiveMenu;
-		GUI->DrawObjectives();
-	}
-	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
-		GUI->ActiveWidget = EWidgets::InGameHUD;
-		GUI->DrawInGame();
 	}
 }
 

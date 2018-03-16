@@ -4,8 +4,6 @@
 #include "PC_Desk.h"
 #include "Avatar.h"
 #include "GUI.h"
-#include "ObjectivesComponent.h"
-#include "Objective.h"
 
 //========================================== Constructor
 APC_Desk::APC_Desk()
@@ -56,12 +54,11 @@ void APC_Desk::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 		return;
 	}
 	//========================================== Return If Not Avatar
-	if (avatar->BackpackCheck("Storage Drive"))
+	if (avatar->Backpack.Contains("Storage Drive"))
 	{
-		//================================ Checks if resolve war with words objective is on part 3 and if it is sets it to part 4;
-		if(avatar->ObjectiveComponent->ResolveWarWithWords->ActivePart == avatar->ObjectiveComponent->ResolveWarWithWords->Parts[2]){
-			avatar->ObjectiveComponent->ResolveWarWithWords->SetActivePart(avatar->ObjectiveComponent->ResolveWarWithWords->Parts[3]);
-		}
+		avatar->Part["ResolveWarWithWords"] = "Reach the Landing Pad";
+		avatar->Backpack.Remove("Storage Drive");
+
 		triggered = true;
 	}
 	//========================================== Get Controller From Character

@@ -1,12 +1,9 @@
 #include "Protodev.h"
 #include "Avatar.h"
 #include "PickupItem.h"
-#include "Laser.h"
 #include "Monster.h"
 #include "Bullet.h"
 #include "GUI.h"
-#include "ObjectivesComponent.h"
-#include "Objective.h"
 
 //========================================== Constructor
 AAvatar::AAvatar()
@@ -80,9 +77,6 @@ AAvatar::AAvatar()
 	L_ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("L_ShotParticles"));
 	//========================================== Attach To Root (Default)
 	L_ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Objectives Component
-	ObjectiveComponent = CreateDefaultSubobject<UObjectivesComponent>("Objective Component");
 }
 
 //========================================== Initialize 
@@ -98,6 +92,13 @@ void AAvatar::Tick(float DeltaTime)
 	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
 
+
+	if (CurrentObjectives.Num() > 0)
+	{
+		CurrentDescription = Descriptions[CurrentObjectives[CurrentIndex]];
+		CurrentPart = Part[CurrentObjectives[CurrentIndex]];
+	}
+
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 
@@ -109,7 +110,7 @@ void AAvatar::Tick(float DeltaTime)
 
 	RootComponent->SetWorldRotation(FMath::Lerp(RootComponent->GetComponentRotation().Quaternion(), rotation.Quaternion(), RotationSpeed * DeltaTime));
 
-	if (!BackpackCheck(CurrentWeapon))
+	if (!Backpack.Contains(CurrentWeapon))
 	{
 		L_GutlingGun->SetHiddenInGame(true, true);
 		R_GutlingGun->SetHiddenInGame(true, true);
@@ -142,6 +143,7 @@ void AAvatar::Tick(float DeltaTime)
 		L_Ammo_raycast.Normalize();
 		R_Ammo_raycast.Normalize();
 
+		//========================================== Loop Through Items
 		if (CurrentWeapon == "GUTLING GUN")
 		{
 			if (Backpack[CurrentWeapon] > 0)
@@ -204,12 +206,12 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	InputComponent->BindAxis("Pitch", this, &AAvatar::Pitch);
 	InputComponent->BindAxis("Yaw", this, &AAvatar::Yaw);
 	//========================================== Actions
+	InputComponent->BindAction("ObjectivesScrollR", IE_Pressed, this, &AAvatar::ScrollRight);
+	InputComponent->BindAction("ObjectivesScrollL", IE_Pressed, this, &AAvatar::ScrollLeft);
 	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleParticles);
 	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleParticles);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
-	InputComponent->BindAction("Pause", IE_Pressed, this, &AAvatar::PauseGame);
-	InputComponent->BindAction("Objectives", IE_Pressed, this, &AAvatar::ToggleObjectives);
 }
 
 void AAvatar::MoveForward(float Amount)
@@ -220,6 +222,7 @@ void AAvatar::MoveForward(float Amount)
 		FVector forward = GetActorForwardVector();
 		AddMovementInput(forward, Amount);
 	}
+	
 }
 
 void AAvatar::MoveRight(float Amount)
@@ -230,6 +233,7 @@ void AAvatar::MoveRight(float Amount)
 		FVector right = GetActorRightVector();
 		AddMovementInput(right, Amount);
 	}
+	
 }
 
 void AAvatar::Yaw(float Amount)
@@ -280,32 +284,72 @@ void AAvatar::ToggleParticles()
 	}
 }
 
+void AAvatar::ScrollLeft()
+{
+	if (CurrentIndex < 1)
+	{
+		CurrentIndex = CurrentObjectives.Num() - 1;
+	}
+	else
+	{
+		CurrentIndex--;
+	}
+}
+
+void AAvatar::ScrollRight()
+{
+	if (CurrentIndex > CurrentObjectives.Num() - 2)
+	{
+		CurrentIndex = 0;
+	}
+	else
+	{
+		CurrentIndex++;
+	}
+}
+
 void AAvatar::Pickup(APickupItem* Item)
 {
-	//========================================== Actives contact starfleet objective when ID Card is picked up and the objective doesn't exist
-	if (Item->Name == "ID Card" && !ObjectiveComponent->ContactStarfleet){
-		ObjectiveComponent->StartContactStarfleetObjective();
+	//========================================== Get Controller From Character
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	//========================================== Cast Controller As HUD
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
+
+	//========================================== Actives ID Card Related Objectives
+	if (Item->Name == "ID Card")
+	{
+		CurrentObjectives.Add("ContactStarFleet");
+		CurrentObjectives.Add("ResolveWarWithWords");
+		CurrentObjectives.Add("FixYourShip&Leave");
+		Missions.Add("ContactStarFleet"   , 0);
+		Missions.Add("ResolveWarWithWords", 0); 
+		Missions.Add("FixYourShip&Leave"  , 0);
+		Descriptions.Add("ContactStarFleet"	  , "Find a way to contact the StarFleet for a rescue party ");
+		Descriptions.Add("ResolveWarWithWords", "Find a way to resolve the conflict without violence");
+		Descriptions.Add("FixYourShip&Leave"  , "Find a way to fix your damaged Spaceship and leave");
+		Part.Add("ContactStarFleet"	  , "-> Use the ID Card to access the Compound \n-> Locate the Battery Pack");
+		Part.Add("ResolveWarWithWords", "-> Use the ID Card to access the Compound \n-> Locate the Storage Drive");
+		Part.Add("FixYourShip&Leave"  , "-> Use the ID Card to access the Compound \n-> Locate the Flux Capacitor");
 	}
-	//========================================== Actives resolve war with words objective when ID Card is picked up and the objective doesn't exist
-	if (Item->Name == "ID Card" && !ObjectiveComponent->ResolveWarWithWords){
-		ObjectiveComponent->StartResolveWarWithWordsObjective();
+	//========================================== Updates Battery Pack Related Mission ( Contact StarFleet )
+	if (Item->Name == "Battery Pack")
+	{
+		Missions["ContactStarFleet"]++;
+		Part["ContactStarFleet"] = "-> Enter the Modular Base \n-> Locate the Charging Unit where to slot-in the Battery Pack";
 	}
-	//========================================== Actives fix your ship and fly off objective when ID Card is picked up and the objective doesn't exist
-	if (Item->Name == "ID Card" && !ObjectiveComponent->FixYourShip){
-		ObjectiveComponent->StartFixYourShipObjective();
+	//========================================== Updates Storage Drive Related Mission ( Peacefull Resolution )
+	if (Item->Name == "Storage Drive")
+	{
+		Missions["ResolveWarWithWords"]++;
+		Part["ResolveWarWithWords"] = "-> Enter the Modular Base \n-> Locate the Computer where to slot-in the Storage Drive";
 	}
-	//========================================== Actives poo on a stick objective when ID Card is picked up and the objective doesn't exist
-	if (Item->Name == "ID Card" && !ObjectiveComponent->PooOnAStick){
-		ObjectiveComponent->StartPooOnAStickObjective();
+	//========================================== Updates Storage Drive Related Mission ( Fix Your Ship )
+	if (Item->Name == "Flux Capacitor")
+	{
+		Missions["FixYourShip&Leave"]++;
+		Part["FixYourShip&Leave"] = "-> Keep searching for Duct Tape \n-> Repair Book before leaving";
 	}
-	//========================================== Updates contact starfleet objective to part 3 when Battery Pack is picked up and the objective is currently on part 2
-	if (Item->Name == "Battery Pack" && ObjectiveComponent->ContactStarfleet->ActivePart == ObjectiveComponent->ContactStarfleet->Parts[1]){
-		ObjectiveComponent->ContactStarfleet->SetActivePart(ObjectiveComponent->ContactStarfleet->Parts[2]);
-	}
-	//========================================== Updates resolve war with words objective to part 3 when Storage Drive is picked up and the objective is currently on part 2
-	if (Item->Name == "Storage Drive" && ObjectiveComponent->ResolveWarWithWords->ActivePart == ObjectiveComponent->ResolveWarWithWords->Parts[1]){
-		ObjectiveComponent->ResolveWarWithWords->SetActivePart(ObjectiveComponent->ResolveWarWithWords->Parts[2]);
-	}
+	//========================================== Set Current Weapon To Pickup
 	if (Item->Name == "GUTLING GUN" || Item->Name == "ROCKET LAUNCHER")
 	{
 		CurrentWeapon = Item->Name;
@@ -371,36 +415,6 @@ void AAvatar::ToggleInventory()
 	}
 }
 
-bool AAvatar::BackpackCheck(FString name)
-{
-	//========================================== Check If Item Is Present
-	for (auto const &tag : Backpack)
-	{
-		if (tag.Key == name)
-		{
-			return true;
-		}
-
-	}
-
-	return false;
-}
-
-int AAvatar::BackpackQuantity(FString name)
-{
-	//========================================== Retrieve Item Quantity
-	for (auto const &tag : Backpack)
-	{
-		if (tag.Key == name)
-		{
-			return tag.Value;
-		}
-
-	}
-
-	return 0;
-}
-
 void AAvatar::MouseClicked()
 {
 	//========================================== Get Mouse Click
@@ -423,38 +437,4 @@ void AAvatar::Damaged(AActor* OtherActor)
 	{
 		HitPoints = 0.f;
 	}
-}
-
-void AAvatar::PauseGame() {
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
-	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
-		GUI->ActiveWidget = EWidgets::PauseMenu;
-		GUI->DrawPauseMenu();
-	}
-	else if (GUI->ActiveWidget == EWidgets::PauseMenu) {
-		GUI->ActiveWidget = EWidgets::InGameHUD;
-		GUI->DrawInGame();
-	}
-	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
-		GUI->ActiveWidget = EWidgets::PauseMenu;
-		GUI->DrawPauseMenu();
-	}
-}
-
-void AAvatar::ToggleObjectives() {
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	AGUI* GUI = Cast<AGUI>(PController->GetHUD());
-	if (GUI->ActiveWidget == EWidgets::InGameHUD) {
-		GUI->ActiveWidget = EWidgets::ObjectiveMenu;
-		GUI->DrawObjectives();
-	}
-	else if (GUI->ActiveWidget == EWidgets::ObjectiveMenu) {
-		GUI->ActiveWidget = EWidgets::InGameHUD;
-		GUI->DrawInGame();
-	}
-}
-
-UObjectivesComponent* AAvatar::GetObjectiveComponent() {
-	return ObjectiveComponent;
 }

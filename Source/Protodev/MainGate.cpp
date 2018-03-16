@@ -13,10 +13,10 @@
 AMainGate::AMainGate()
 {
 	Action = "";
-	//========================================== Create Sub-Component
-	mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	//========================================== Change To Root-Component
-	mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	////========================================== Create Sub-Component
+	//mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+	////========================================== Change To Root-Component
+	//mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//========================================== Attack Sphere On Exit CallBack
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AMainGate::OutProx);
@@ -31,9 +31,9 @@ AMainGate::AMainGate()
 	//========================================== Change To Root-Component
 	staticmesh2->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
+//	staticmesh1->SetHiddenInGame(false);
+//	staticmesh2->SetHiddenInGame(true);
 
-	staticmesh1->SetHiddenInGame(false);
-	staticmesh2->SetHiddenInGame(true);
 }
 
 //========================================== Initialize
@@ -47,51 +47,34 @@ void AMainGate::BeginPlay()
 void AMainGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (triggered && timeSinceCollect <= 4 && first_time_in == false)
+	if (triggered && timeSinceCollect <= 4)
 	{
-	
+
 			if (Action == "Bye!")
 			{
-				////========================================== Atta Timer     
+				//========================================== Atta Timer     
 				//timeSinceCollect += DeltaTime;
 				//staticmesh1->SetHiddenInGame(false);
 
 				//if (timeSinceCollect > 4)
 				//{
-				//	staticmesh2->SetHiddenInGame(true);
+				//	//staticmesh2->SetHiddenInGame(true);
 				//	triggered = false;
+
 				//}
 			}
 
 			else if (Action == "Welcome!")
 			{
 				//========================================== Atta Timer     
-				timeSinceCollect += DeltaTime;
-				staticmesh1->SetHiddenInGame(true);
+		//		timeSinceCollect += DeltaTime;
+		////		staticmesh1->SetHiddenInGame(true);
 
-				if (timeSinceCollect > 4)
-				{
-					staticmesh2->SetHiddenInGame(false);
-					first_time_in = true;
-				}
+		//		if (timeSinceCollect > 4)
+		//		{
+		//	//		staticmesh2->SetHiddenInGame(false);
+		//		}
 			}
-	}
-
-	if (timeSinceCollect > 4 && first_time_in)
-	{
-		timeSinceCollect += DeltaTime;
-
-		if (timeSinceCollect > 10)
-		{
-			mesh->PlayAnimation(animation_close, false);
-
-			if (timeSinceCollect > 14)
-			{
-				staticmesh1->SetHiddenInGame(false);
-				staticmesh2->SetHiddenInGame(true);
-			}
-		}
-
 	}
 
 }
@@ -105,23 +88,21 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 		return;
 	}
 	//========================================== Return If Not Avatar
-	if (avatar != nullptr)
-	{
+	
+	Action = "Welcome!";
 
-		Action = "Welcome!";
 
-		if (!triggered) 
-		{ 
-			mesh->PlayAnimation(animation_open, false);
-			timeSinceCollect = 0;
-			triggered = true;
-		}
-		//========================================== Get Controller From Character
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		//========================================== Cast Controller As HUD
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
-		gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
-	}
+	/*mesh->PlayAnimation(animation_open, false);*/
+	timeSinceCollect = 0;
+	open = false;
+	triggered = true;
+	
+	//========================================== Get Controller From Character
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	//========================================== Cast Controller As HUD
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
+	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
+	
 }
 
 
@@ -134,23 +115,22 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		return;
 	}
 	//========================================== Avatar Exit From Sight Range
-	else
-	{
-		Action = "Bye!";
-		/*	
-		if (!triggered)
-		{
-			timeSinceCollect = 0;
-			mesh->PlayAnimation(animation_close, false);
-			triggered = true;
+	
+	Action = "Bye!";
+		
 
-		}*/
+	/*mesh->PlayAnimation(animation_close, false);*/
+	timeSinceCollect = 0;
+	triggered = false;
+	open = true;
 
-		//========================================== Get Controller From Character
-		APlayerController* PController = GetWorld()->GetFirstPlayerController();
-		//========================================== Cast Controller As HUD
-		AGUI* gui = Cast<AGUI>(PController->GetHUD());
-		gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
-	}
+	
+
+	//========================================== Get Controller From Character
+	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+	//========================================== Cast Controller As HUD
+	AGUI* gui = Cast<AGUI>(PController->GetHUD());
+	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
+	
 }
 

@@ -37,7 +37,7 @@ void AForceField::Tick(float DeltaTime)
 
 	if (avatar != nullptr)
 	{
-		if (avatar->BackpackCheck("ID CARD"))
+		if (avatar->Backpack.Contains("ID CARD"))
 		{
 			SetActorHiddenInGame(true);
 			SetActorEnableCollision(false);

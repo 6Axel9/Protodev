@@ -15,7 +15,6 @@ public:
 protected:
 	//========================================== Initialize
 	virtual void BeginPlay() override;
-	bool triggered;
 
 public:	
 
@@ -23,6 +22,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//========================================== Properties
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
+		bool triggered;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
 		FString Action;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)

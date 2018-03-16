@@ -65,7 +65,7 @@ void ARadar::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherAc
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (avatar->BackpackCheck("ID Card") && !triggered)
+		if (avatar->Backpack.Contains("ID Card") && !triggered)
 		{
 			Action = "The radar is now active and in search for a rescue party!";
 			skeletalmesh->PlayAnimation(animation, false);

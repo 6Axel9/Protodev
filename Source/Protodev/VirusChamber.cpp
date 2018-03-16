@@ -56,7 +56,7 @@ void AVirusChamber::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * 
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (!avatar->BackpackCheck("Virus Vial") && !triggered)
+		if (!avatar->Backpack.Contains("Virus Vial") && !triggered)
 		{
 			Action = "There you go your virus!";
 			mesh->PlayAnimation(animation, false);

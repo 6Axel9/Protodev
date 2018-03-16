@@ -23,9 +23,8 @@ protected:
 
 	float timeSinceCollect;
 
-	bool open;
-
-	bool first_time_in;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
+		bool open;
 
 public:
 
@@ -35,15 +34,15 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh2;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
-		USkeletalMeshComponent* mesh;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+	//	USkeletalMeshComponent* mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
-		UAnimationAsset* animation_open;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
+	//	UAnimationAsset* animation_open;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
-		UAnimationAsset* animation_close;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
+	//	UAnimationAsset* animation_close;
 
 
 	//========================================== Update

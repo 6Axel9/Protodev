@@ -1,15 +1,32 @@
 #pragma once
-
 #include "GameFramework/HUD.h"
 #include "GUI.generated.h"
-
 
 UENUM(BlueprintType)
 enum class EWidgets: uint8{
 	MainMenu		UMETA(DisplayName="Main Menu"),
 	InGameHUD		UMETA(DisplayName="In-Game HUD"),
-	PauseMenu		UMETA(DisplayName="Pause Menu"),
-	ObjectiveMenu	UMETA(DisplayName="Objective Menu"),
+	PauseMenu		UMETA(DisplayName="Pause Menu")
+};
+
+//========================================== Display Hud Icon
+struct Icon
+{
+	//========================================== Properties
+	FString name;
+	UTexture2D* icon;
+	//========================================== Default Icon
+	Icon()
+	{
+		name = "UNKNOWN ICON";
+		icon = 0;
+	}
+	//========================================== Icon Overloaded
+	Icon(FString& iName, UTexture2D* iIcon)
+	{
+		name = iName;
+		icon = iIcon;
+	}
 };
 
 //========================================== Display Hud Message
@@ -29,6 +46,12 @@ struct Message
 		backColor = FColor::Black;
 		time = 5.f;
 	}
+	//========================================== Message Overloaded (No Time)
+	Message(FString iMessage, FColor iFrontColor)
+	{
+		message = iMessage;
+		frontColor = iFrontColor;
+	}
 	//========================================== Message Overloaded (No Icon)
 	Message(FString iMessage, FColor iFrontColor, FColor iBackColor, float iTime)
 	{
@@ -46,26 +69,6 @@ struct Message
 		backColor = iBackColor;
 		icon = iIcon;
 		time = iTime;
-	}
-};
-
-//========================================== Display Hud Icon
-struct Icon
-{
-	//========================================== Properties
-	FString name;
-	UTexture2D* icon;
-	//========================================== Default Icon
-	Icon() 
-	{ 
-		name = "UNKNOWN ICON"; 
-		icon = 0; 
-	}
-	//========================================== Icon Overloaded
-	Icon(FString& iName, UTexture2D* iIcon)
-	{
-		name = iName;
-		icon = iIcon;
 	}
 };
 
@@ -103,20 +106,20 @@ public:
 	//========================================== Render
 	virtual void DrawHUD() override;
 
-	AGUI();
-
 	//========================================== Hud Propeties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hud)
 		UFont* Font;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hud)
 		UTexture2D* Pointer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Hud)
+		UTexture2D* Hud;
 
 	//========================================== Hud Containers
 	TArray<Message> Messages;
+	TArray<Message> Objectives;
 	TArray<Widget> Widgets;
 	FVector2D Dimensions;
 	Widget* Held;
-	APlayerController* PlayerController;
 
 	//========================================== Widgets
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
@@ -126,30 +129,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 		TSubclassOf<class UUserWidget> PauseMenuWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		TSubclassOf<class UUserWidget> ObjectivesWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-	EWidgets ActiveWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-	class UUserWidget* BP_widget;
+		EWidgets ActiveWidget;
 
 	void SetActiveWidget(EWidgets Widget);
-
 	//========================================== Add Hud Dynamically
 	void AddMessage(Message iMessage);
 	void AddWidget(Widget iWidget);
-	bool CheckItemByName(FString name);
+	void AddObjective(Message iMessage);
 	//========================================== Delete Hud Dynamically
 	void ClearWidgets();
+	void ClearObjectives();
 	//========================================== Render GUI
 	void DrawHealthbar();
 	void DrawMessages();
+	void DrawObjectives();
 	void DrawWidgets();
 	void DrawPointer();
-	void DrawObjectives();
-	void DrawMainMenu();
-	void DrawInGame();
-	void DrawPauseMenu();
-	
 	//========================================== Mouse Inputs
 	void MouseClicked();
 	void MouseMoved();

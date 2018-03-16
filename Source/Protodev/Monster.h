@@ -16,6 +16,9 @@ protected:
 	//========================================== Initialize
 	virtual void BeginPlay() override;
 
+	float time_since_dead;
+	bool needs_death;
+
 public:	
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
@@ -23,7 +26,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	//========================================== Late Initialization
 	virtual void PostInitializeComponents() override;
+	
+	UFUNCTION(BlueprintCallable)
+		bool GetNeedsToDie();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+		UStaticMeshComponent* deadAntMesh;
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float RotationSpeed;

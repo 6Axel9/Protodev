@@ -47,9 +47,9 @@ void AMainGate::BeginPlay()
 void AMainGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (triggered && timeSinceCollect <= 4)
+	if (triggered && timeSinceCollect <= 4 && first_time_in == false)
 	{
-
+	
 			if (Action == "Bye!")
 			{
 				////========================================== Atta Timer     
@@ -60,7 +60,6 @@ void AMainGate::Tick(float DeltaTime)
 				//{
 				//	staticmesh2->SetHiddenInGame(true);
 				//	triggered = false;
-
 				//}
 			}
 
@@ -73,8 +72,26 @@ void AMainGate::Tick(float DeltaTime)
 				if (timeSinceCollect > 4)
 				{
 					staticmesh2->SetHiddenInGame(false);
+					first_time_in = true;
 				}
 			}
+	}
+
+	if (timeSinceCollect > 4 && first_time_in)
+	{
+		timeSinceCollect += DeltaTime;
+
+		if (timeSinceCollect > 10)
+		{
+			mesh->PlayAnimation(animation_close, false);
+
+			if (timeSinceCollect > 14)
+			{
+				staticmesh1->SetHiddenInGame(false);
+				staticmesh2->SetHiddenInGame(true);
+			}
+		}
+
 	}
 
 }
@@ -120,7 +137,7 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	else
 	{
 		Action = "Bye!";
-		/*
+		/*	
 		if (!triggered)
 		{
 			timeSinceCollect = 0;

@@ -24,6 +24,9 @@ protected:
 	float timeSinceCollect;
 
 	bool open;
+
+	bool first_time_in;
+
 public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)

@@ -23,10 +23,16 @@ AMonster::AMonster()
 	//========================================== Timer
 	TimeSinceLastStrike = 0.f;
 
+
 	//========================================== Create Sub-Component
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	//========================================== Change To Root-Component
 	RootComponent = CollisionBox;
+
+	//========================================== Create Sub-Component
+	deadAntMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DeadMesh"));
+	//========================================== Change To Root-Component
+	deadAntMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//========================================== Create Sub-Component
 	SightRange = CreateDefaultSubobject<USphereComponent>(TEXT("SightSphere"));
@@ -47,6 +53,8 @@ AMonster::AMonster()
 	SightRange->OnComponentEndOverlap.AddDynamic(this, &AMonster::OutSight);
 	//========================================== Attack Sphere On Exit CallBack
 	AttackRange->OnComponentEndOverlap.AddDynamic(this, &AMonster::OutAttack);
+
+	deadAntMesh->SetHiddenInGame(true);
 }
 
 //========================================== Initialize 
@@ -54,7 +62,7 @@ void AMonster::BeginPlay()
 {
 	//========================================== Call Parent Setup
 	Super::BeginPlay();
-	
+
 }
 
 //========================================== Update
@@ -67,7 +75,7 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
-	if (isInAttackRange || isInSightRange) //do your math only if you need
+	if (isInAttackRange || isInSightRange && !needs_death) //do your math only if you need
 	{
 		FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
 
@@ -102,6 +110,18 @@ void AMonster::Tick(float DeltaTime)
 			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), RotationSpeed * DeltaTime));
 		}
 	}
+
+	if (needs_death)
+	{
+		time_since_dead += DeltaTime;
+		deadAntMesh->SetHiddenInGame(false);
+
+		if (time_since_dead > 10 )
+		{
+			needs_death = false;
+			Destroy();
+		}
+	}
 }
 
 //========================================== Inputs CallBacks
@@ -118,6 +138,11 @@ void AMonster::PostInitializeComponents()
 	//========================================== Call Parent Setup
 	Super::PostInitializeComponents();
 
+}
+
+bool AMonster::GetNeedsToDie()
+{
+	return needs_death;
 }
 
 void AMonster::ProxSight_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -185,6 +210,14 @@ void AMonster::Damaged(AActor* OtherActor)
 	//========================================== Destroy Object
 	if (HitPoints < 0.f)
 	{
-		Destroy();
+		TArray<USkeletalMeshComponent*> Components;
+		this->GetComponents<USkeletalMeshComponent>(Components);
+		for (int32 i = 0; i<Components.Num(); i++) //Count is zero
+		{
+			USkeletalMeshComponent* SkeletalMeshComponent = Components[i]; //null
+			SkeletalMeshComponent->SetHiddenInGame(true);
+		}
+
+		needs_death = true;
 	}
 }

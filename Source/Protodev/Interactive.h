@@ -23,7 +23,7 @@ public:
 
 	//========================================== Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
-	bool triggered;
+		bool triggered;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)
 		FString Action;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Interaction)

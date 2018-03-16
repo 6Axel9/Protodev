@@ -22,19 +22,20 @@ protected:
 
 	float timeSinceCollect;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
+		bool open;
+
+	bool canEnter;
 
 	bool isInSightRange;
 
 public:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
-		USkeletalMeshComponent* mesh;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
+	//	USkeletalMeshComponent* mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
-		UAnimationAsset* animation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawner)
-		UClass* SpawnedObject;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Meshes)
+	//	UAnimationAsset* animation;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh1;
@@ -46,6 +47,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void Prox(class UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 
-	/*UFUNCTION(BlueprintNativeEvent, Category = Collision)
-		void OutProx(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);*/
+	UFUNCTION(BlueprintNativeEvent, Category = Collision)
+		void OutProx(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };

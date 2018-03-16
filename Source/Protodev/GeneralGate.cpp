@@ -5,8 +5,6 @@
 #include "Avatar.h"
 #include "GUI.h"
 #include "GeneralGate.h"
-#include "ObjectivesComponent.h"
-#include "Objective.h"
 
 //========================================== Constructor
 AGeneralGate::AGeneralGate()
@@ -67,7 +65,6 @@ void AGeneralGate::Tick(float DeltaTime)
 
 void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
 	AAvatar* avatar = Cast<AAvatar>(OtherActor);
 	if (avatar == nullptr)
 	{
@@ -77,23 +74,25 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	if (avatar != nullptr)
 	{
 		
-		if (avatar->BackpackCheck("ID CARD"))
+		if (avatar->Backpack.Contains("ID Card"))
 		{
-			//================================ Checks if contact starfleet objective is on part 1 and if it is sets it to part 2;
-			if(avatar->ObjectiveComponent->ContactStarfleet->ActivePart == avatar->ObjectiveComponent->ContactStarfleet->Parts[0]){
-				avatar->ObjectiveComponent->ContactStarfleet->SetActivePart(avatar->ObjectiveComponent->ContactStarfleet->Parts[1]);
+			//================================ Checks & Update Related Mission ( Contact StarFleet )
+			if(avatar->Missions["ContactStarFleet"] == 1 && !avatar->Backpack.Contains("Battery Pack"))
+			{
+				avatar->Missions["ContactStarFleet"]++;
+				avatar->Part["ContactStarFleet"] = "Survive while you wait for the rescue party to arrive";
 			}
-			//================================ Checks if resolve war with words objective is on part 1 and if it is sets it to part 2;
-			if(avatar->ObjectiveComponent->ResolveWarWithWords->ActivePart == avatar->ObjectiveComponent->ResolveWarWithWords->Parts[0]){
-				avatar->ObjectiveComponent->ResolveWarWithWords->SetActivePart(avatar->ObjectiveComponent->ResolveWarWithWords->Parts[1]);
+			//================================ Checks & Update Related Mission ( Contact StarFleet )
+			if (avatar->Missions["ResolveWarWithWords"] == 1 && !avatar->Backpack.Contains("Storage Drive"))
+			{
+				avatar->Missions["ResolveWarWithWords"]++;
+				avatar->Part["ResolveWarWithWords"] = "Wait for the rescue party to arrive... You got nothing to fear now";
 			}
-			//================================ Checks if fix your ship and fly off objective is on part 1 and if it is sets it to part 2;
-			if(avatar->ObjectiveComponent->FixYourShip->ActivePart == avatar->ObjectiveComponent->FixYourShip->Parts[0]){
-				avatar->ObjectiveComponent->FixYourShip->SetActivePart(avatar->ObjectiveComponent->FixYourShip->Parts[1]);
-			}
-			//================================ Checks if poo on a stick objective is on part 1 and if it is sets it to part 2;
-			if(avatar->ObjectiveComponent->PooOnAStick->ActivePart == avatar->ObjectiveComponent->PooOnAStick->Parts[0]){
-				avatar->ObjectiveComponent->PooOnAStick->SetActivePart(avatar->ObjectiveComponent->PooOnAStick->Parts[1]);
+			//================================ Checks & Update Related Mission ( Contact StarFleet )
+			if (avatar->Missions["FixYourShip&Leave"] == 1 && !avatar->Backpack.Contains("Flux Capacitor"))
+			{
+				avatar->Missions["FixYourShip&Leave"]++;
+				avatar->Part["FixYourShip&Leave"] = "Time to Enter the Spaship and leave this hellish planet";
 			}
 			Action = "Welcome!";
 			mesh->GlobalAnimRateScale = 1;
@@ -121,7 +120,7 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 //	//========================================== Avatar Exit From Sight Range
 //	else
 //	{
-//		if (avatar->BackpackCheck("ID CARD"))
+//		if (avatar->Backpack.Contains("ID CARD"))
 //		{
 //			Action = "Bye!";
 //			

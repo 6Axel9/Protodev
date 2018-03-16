@@ -59,7 +59,7 @@ void AFluxCapacitor::Prox_Implementation(UPrimitiveComponent * HitComp, AActor *
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (avatar->BackpackCheck("Duct Tape"))
+		if (avatar->Backpack.Contains("Duct Tape"))
 		{
 			Action = "You fixed the flux capacitor already!";
 			triggered = true;

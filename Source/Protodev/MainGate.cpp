@@ -120,14 +120,15 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	else
 	{
 		Action = "Bye!";
-		/*
-		if (!triggered)
+		
+		if (triggered)
 		{
-			timeSinceCollect = 0;
 			mesh->PlayAnimation(animation_close, false);
-			triggered = true;
+			mesh->PlayAnimation(animation_close, false);
+			timeSinceCollect = 0;
+			triggered = false;
 
-		}*/
+		}
 
 		//========================================== Get Controller From Character
 		APlayerController* PController = GetWorld()->GetFirstPlayerController();

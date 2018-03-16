@@ -1,15 +1,8 @@
 #pragma once
 #include "GameFramework/Character.h"
-#include "Laser.h"
 #include "Avatar.generated.h"
 
-
-class APickupItem;	
-class AMonster;
-class ABullet;
-class AGUI;
-
-
+class APickupItem;
 
 UCLASS()
 class PROTODEV_API AAvatar : public ACharacter
@@ -91,23 +84,19 @@ public:
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float MaxHitPoints;
-	//========================================== Objective Component
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
-		class UObjectivesComponent* ObjectiveComponent;
-		class UObjectivesComponent* GetObjectiveComponent();
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
 	void ToggleParticles();
+	void ScrollLeft();
+	void ScrollRight();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
 	void Drop(UClass *Item);
 	void ToggleInventory();
-	bool BackpackCheck(FString name);
-	int BackpackQuantity(FString name);
 	void MouseClicked();
 
 	//========================================== Interactions
@@ -116,16 +105,22 @@ public:
 	float LaunchImpulse;
 	bool isInShooting;
 	
-
-	//========================================== Inventory Property
+	//========================================== Inventory Properties
 	TMap<FString, int> Backpack;
 	TMap<FString, UTexture2D*> Icons;
 	TMap<FString, UClass*> Classes;
 	bool InventoryShowing;
 
-	void PauseGame();
-
-	//========================================== Objective Commands
-	void ToggleObjectives();
-
+	//========================================== Objective Properties
+	int CurrentIndex;
+	TMap<FString, int> Missions;
+	TMap<FString, FString> Descriptions;
+	TMap<FString, FString> Part;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+		TArray<FString> CurrentObjectives;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+		FString CurrentDescription;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+		FString CurrentPart;
 };
+

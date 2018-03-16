@@ -129,8 +129,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 		TSubclassOf<class UUserWidget> PauseMenuWidget;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		TSubclassOf<class UUserWidget> ObjectivesWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
 		EWidgets ActiveWidget;
 
 	void SetActiveWidget(EWidgets Widget);

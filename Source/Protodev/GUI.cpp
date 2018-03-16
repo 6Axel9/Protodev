@@ -12,11 +12,9 @@ void AGUI::DrawHUD()
 	Dimensions.X = Canvas->SizeX;
 	Dimensions.Y = Canvas->SizeY;
 	//========================================== Draw Interface Components
-	DrawHealthbar();
 	DrawMessages();
 	DrawObjectives();
 	DrawWidgets();
-	DrawPointer();
 }
 
 void AGUI::DrawHealthbar()

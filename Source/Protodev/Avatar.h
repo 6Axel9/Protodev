@@ -101,15 +101,22 @@ public:
 
 	//========================================== Interactions
 	void Damaged(AActor* OtherActor);
-	FString CurrentWeapon;
 	float LaunchImpulse;
 	bool isInShooting;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+		FString CurrentWeapon;
 	
 	//========================================== Inventory Properties
-	TMap<FString, int> Backpack;
-	TMap<FString, UTexture2D*> Icons;
+
 	TMap<FString, UClass*> Classes;
-	bool InventoryShowing;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		TMap<FString, int> Backpack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		TMap<FString, UTexture2D*> Icons;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		bool InventoryShowing;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		FString CurrentItem;
 
 	//========================================== Objective Properties
 	int CurrentIndex;

@@ -67,16 +67,6 @@ AAvatar::AAvatar()
 	R_Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_Barrel"));
 	//========================================== Change To Root-Component
 	R_Barrel->AttachToComponent(R_GutlingGun, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Sub-Component
-	R_ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("R_ShotParticles"));
-	//========================================== Attach To Root (Default)
-	R_ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
-	//========================================== Create Sub-Component
-	L_ShotParticles = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("L_ShotParticles"));
-	//========================================== Attach To Root (Default)
-	L_ShotParticles->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize 
@@ -154,12 +144,21 @@ void AAvatar::Tick(float DeltaTime)
 				//========================================== Adjust Weapon Rotation
 				L_GutlingGun->SetWorldRotation(L_raycast.Rotation());
 
-				if (isInShooting)
+				if (isInShooting && Backpack.Contains("Ammo Pack"))
 				{
 					//========================================== Spawn Bullets
 					L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
 					//========================================== Shoot Bullet By Impulse
 					L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+					//========================================== Decrease Ammo Counter
+					if (Backpack["Ammo Pack"] > 1)
+					{
+						Backpack["Ammo Pack"]--;
+					}
+					else
+					{
+						Backpack.Remove("Ammo Pack");
+					}
 				}
 			}
 			if (Backpack[CurrentWeapon] == 2)
@@ -170,12 +169,21 @@ void AAvatar::Tick(float DeltaTime)
 				//========================================== Adjust Weapon Rotation
 				R_GutlingGun->SetWorldRotation(R_raycast.Rotation());
 
-				if (isInShooting)
+				if (isInShooting && Backpack.Contains("Ammo Pack"))
 				{
 					//========================================== Spawn Bullets
 					R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
 					//========================================== Shoot Bullet By Impulse
 					R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+					//========================================== Decrease Ammo Counter
+					if (Backpack["Ammo Pack"] > 1)
+					{
+						Backpack["Ammo Pack"]--;
+					}
+					else
+					{
+						Backpack.Remove("Ammo Pack");
+					}
 				}
 			}
 		}
@@ -208,8 +216,8 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//========================================== Actions
 	InputComponent->BindAction("ObjectivesScrollR", IE_Pressed, this, &AAvatar::ScrollRight);
 	InputComponent->BindAction("ObjectivesScrollL", IE_Pressed, this, &AAvatar::ScrollLeft);
-	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleParticles);
-	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleParticles);
+	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleShooting);
+	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleShooting);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 }
@@ -268,20 +276,9 @@ void AAvatar::Pitch(float Amount)
 	}
 }
 
-void AAvatar::ToggleParticles()
+void AAvatar::ToggleShooting()
 {
 	isInShooting = !isInShooting;
-
-	if (isInShooting)
-	{
-		R_ShotParticles->ActivateSystem();
-		L_ShotParticles->ActivateSystem();
-	}
-	else
-	{
-		R_ShotParticles->DeactivateSystem();
-		L_ShotParticles->DeactivateSystem();
-	}
 }
 
 void AAvatar::ScrollLeft()
@@ -334,20 +331,29 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Updates Battery Pack Related Mission ( Contact StarFleet )
 	if (Item->Name == "Battery Pack")
 	{
-		Missions["ContactStarFleet"]++;
-		Part["ContactStarFleet"] = "-> Enter the Modular Base \n-> Locate the Charging Unit where to slot-in the Battery Pack";
+		if (Missions.Contains("ContactStarFleet"))
+		{
+			Missions["ContactStarFleet"]++;
+			Part["ContactStarFleet"] = "-> Enter the Modular Base \n-> Locate the Charging Unit where to slot-in the Battery Pack";
+		}
 	}
 	//========================================== Updates Storage Drive Related Mission ( Peacefull Resolution )
 	if (Item->Name == "Storage Drive")
 	{
-		Missions["ResolveWarWithWords"]++;
-		Part["ResolveWarWithWords"] = "-> Enter the Modular Base \n-> Locate the Computer where to slot-in the Storage Drive";
+		if (Missions.Contains("ResolveWarWithWords"))
+		{
+			Missions["ResolveWarWithWords"]++;
+			Part["ResolveWarWithWords"] = "-> Enter the Modular Base \n-> Locate the Computer where to slot-in the Storage Drive";
+		}
 	}
 	//========================================== Updates Storage Drive Related Mission ( Fix Your Ship )
 	if (Item->Name == "Flux Capacitor")
 	{
-		Missions["FixYourShip&Leave"]++;
-		Part["FixYourShip&Leave"] = "-> Keep searching for Duct Tape \n-> Repair Book before leaving";
+		if (Missions.Contains("FixYourShip&Leave"))
+		{
+			Missions["FixYourShip&Leave"]++;
+			Part["FixYourShip&Leave"] = "-> Keep searching for Duct Tape \n-> Repair Book before leaving";
+		}
 	}
 	//========================================== Set Current Weapon To Pickup
 	if (Item->Name == "GUTLING GUN" || Item->Name == "ROCKET LAUNCHER")

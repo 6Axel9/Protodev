@@ -12,24 +12,9 @@ void AGUI::DrawHUD()
 	Dimensions.X = Canvas->SizeX;
 	Dimensions.Y = Canvas->SizeY;
 	//========================================== Draw Interface Components
-	DrawMessages();
+	/*DrawMessages();
 	DrawObjectives();
-	DrawWidgets();
-}
-
-void AGUI::DrawHealthbar()
-{
-	//========================================== Get Player Pawn As Avatar
-	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-
-	//========================================== Set Health Bar Size
-	float Width = 200.f, Height = 50.f, Pad = 12.f, Margin = 50.f;
-	//========================================== Get Per HP Size
-	float Hp = avatar->HitPoints / avatar->MaxHitPoints;
-
-	//========================================== Draw Bar Back
-	DrawRect(FLinearColor(0, 0, 0, 1), Canvas->SizeX - Width - Pad - Margin, Canvas->SizeY - Height - Pad - Margin, Width + 2 * Pad, Height + 2 * Pad);
-	DrawRect(FLinearColor(1 - Hp, Hp, 0, 1), Canvas->SizeX - Width - Margin, Canvas->SizeY - Height - Margin, Width * Hp, Height);
+	DrawWidgets();*/
 }
 
 void AGUI::DrawMessages()
@@ -101,14 +86,6 @@ void AGUI::DrawWidgets()
 		DrawTexture(Widgets[c].icon.icon, Widgets[c].pos.X, Widgets[c].pos.Y, Widgets[c].size.X, Widgets[c].size.Y, 0.f, 0.f, 1.f, 1.f);
 		DrawText(Widgets[c].icon.name, FLinearColor::Red, Widgets[c].pos.X, Widgets[c].pos.Y, Font, 1.f, false);
 	}
-}
-
-void AGUI::DrawPointer()
-{
-	//========================================== Pointer Size
-	float Width = 10, Height = 10;
-	//========================================== Draw Target Pointer
-	DrawTexture(Pointer, Dimensions.X / 2 - Width / 2, Dimensions.Y / 2 - Height / 2, Width, Height, 0.f, 0.f, 1.f, 1.f);
 }
 
 void AGUI::AddMessage(Message iMessage)
@@ -196,9 +173,4 @@ void AGUI::MouseMoved()
 	}
 
 	lastMouse = thisMouse;
-}
-
-void AGUI::SetActiveWidget(EWidgets Widget)
-{
-	ActiveWidget = Widget;
 }

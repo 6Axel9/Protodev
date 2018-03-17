@@ -70,11 +70,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UClass* Rocket;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
-		UParticleSystemComponent* R_ShotParticles;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
-		UParticleSystemComponent* L_ShotParticles;
-
 	//========================================== Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float RotationSpeed;
@@ -89,7 +84,7 @@ public:
 	void MoveRight(float Amount);
 	void Pitch(float Amount);
 	void Yaw(float Amount);
-	void ToggleParticles();
+	void ToggleShooting();
 	void ScrollLeft();
 	void ScrollRight();
 

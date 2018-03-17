@@ -2,13 +2,6 @@
 #include "GameFramework/HUD.h"
 #include "GUI.generated.h"
 
-UENUM(BlueprintType)
-enum class EWidgets: uint8{
-	MainMenu		UMETA(DisplayName="Main Menu"),
-	InGameHUD		UMETA(DisplayName="In-Game HUD"),
-	PauseMenu		UMETA(DisplayName="Pause Menu")
-};
-
 //========================================== Display Hud Icon
 struct Icon
 {
@@ -120,18 +113,6 @@ public:
 	TArray<Widget> Widgets;
 	FVector2D Dimensions;
 	Widget* Held;
-
-	//========================================== Widgets
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		TSubclassOf<class UUserWidget> MainMenuWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		TSubclassOf<class UUserWidget> InGameHUDWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		TSubclassOf<class UUserWidget> PauseMenuWidget;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Widgets)
-		EWidgets ActiveWidget;
-
-	void SetActiveWidget(EWidgets Widget);
 	//========================================== Add Hud Dynamically
 	void AddMessage(Message iMessage);
 	void AddWidget(Widget iWidget);
@@ -140,11 +121,9 @@ public:
 	void ClearWidgets();
 	void ClearObjectives();
 	//========================================== Render GUI
-	void DrawHealthbar();
 	void DrawMessages();
 	void DrawObjectives();
 	void DrawWidgets();
-	void DrawPointer();
 	//========================================== Mouse Inputs
 	void MouseClicked();
 	void MouseMoved();

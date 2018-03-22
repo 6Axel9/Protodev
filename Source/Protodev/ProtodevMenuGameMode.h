@@ -29,5 +29,4 @@ protected:
 	/** The widget instance that we are using as our menu. */
 	UPROPERTY()
 		UUserWidget* CurrentWidget;	
-	
 };

@@ -124,5 +124,11 @@ public:
 		FString CurrentDescription;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
 		FString CurrentPart;
+
+	//========================================== HighScore Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+		int CurrentScore;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+		int BestScore;
 };
 

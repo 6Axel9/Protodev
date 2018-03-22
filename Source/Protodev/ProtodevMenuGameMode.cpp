@@ -4,7 +4,6 @@
 #include "ProtodevMenuGameMode.h"
 
 
-
 void AProtodevMenuGameMode::BeginPlay()
 {
 	Super::BeginPlay();

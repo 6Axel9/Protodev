@@ -15,9 +15,9 @@ AAvatar::AAvatar()
 	//========================================== Weapon
 	CurrentWeapon = "None";
 	//========================================== MaxHealth
-	MaxHitPoints = 100.f;
+	MaxHitPoints = 25.f;
 	//========================================== Health
-	HitPoints = 100.f;
+	HitPoints = 25.f;
 	//========================================== Speed
 	RotationSpeed = 4.f;
 	//========================================== Speed

@@ -2,26 +2,21 @@
 
 #pragma once
 #include "Blueprint/UserWidget.h"
-
 #include "GameFramework/GameModeBase.h"
 #include "ProtodevGameModeBase.generated.h"
 
 /**
  * 
  */
-
-
-
 UCLASS()
 class PROTODEV_API AProtodevGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
-
 public:
 	/** Remove the current menu widget and create a new one from the specified class, if provided. */
 	UFUNCTION(BlueprintCallable, Category = "UMG Game")
-		void ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass);
+		void ChangeInGameWidget(TSubclassOf<UUserWidget> NewWidgetClass);
 
 protected:
 	/** Called when the game starts. */
@@ -34,6 +29,4 @@ protected:
 	/** The widget instance that we are using as our menu. */
 	UPROPERTY()
 		UUserWidget* CurrentWidget;
-	
-	
 };

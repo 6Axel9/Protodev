@@ -7,10 +7,10 @@
 void AProtodevGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
-	ChangeMenuWidget(StartingWidgetClass);
+	ChangeInGameWidget(StartingWidgetClass);
 }
 
-void AProtodevGameModeBase::ChangeMenuWidget(TSubclassOf<UUserWidget> NewWidgetClass)
+void AProtodevGameModeBase::ChangeInGameWidget(TSubclassOf<UUserWidget> NewWidgetClass)
 {
 	if (CurrentWidget != nullptr)
 	{

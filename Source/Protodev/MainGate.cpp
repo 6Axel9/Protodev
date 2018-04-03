@@ -47,34 +47,23 @@ void AMainGate::BeginPlay()
 void AMainGate::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (triggered && timeSinceCollect <= 4)
+
+	if (Action == "Bye!" || Action == "Welcome")
 	{
+		timesinceLastOpen += DeltaTime;
+	}
 
-			if (Action == "Bye!")
-			{
-				//========================================== Atta Timer     
-				//timeSinceCollect += DeltaTime;
-				//staticmesh1->SetHiddenInGame(false);
+	if (timesinceLastOpen > 20)
+	{
+		triggered = true;
+		open = false;
+	}
 
-				//if (timeSinceCollect > 4)
-				//{
-				//	//staticmesh2->SetHiddenInGame(true);
-				//	triggered = false;
-
-				//}
-			}
-
-			else if (Action == "Welcome!")
-			{
-				//========================================== Atta Timer     
-		//		timeSinceCollect += DeltaTime;
-		////		staticmesh1->SetHiddenInGame(true);
-
-		//		if (timeSinceCollect > 4)
-		//		{
-		//	//		staticmesh2->SetHiddenInGame(false);
-		//		}
-			}
+	if (timesinceLastOpen > 25)
+	{
+		triggered = false;
+		open = true;
+		timesinceLastOpen = 0;
 	}
 
 }
@@ -93,9 +82,9 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 
 
 	/*mesh->PlayAnimation(animation_open, false);*/
-	timeSinceCollect = 0;
-	open = false;
+
 	triggered = true;
+	open = false;
 	
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
@@ -120,7 +109,7 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		
 
 	/*mesh->PlayAnimation(animation_close, false);*/
-	timeSinceCollect = 0;
+
 	triggered = false;
 	open = true;
 

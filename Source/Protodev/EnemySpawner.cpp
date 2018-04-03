@@ -9,6 +9,7 @@ AEnemySpawner::AEnemySpawner()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	is_enemy_ranged_based = true;
 }
 
 // Called when the game starts or when spawned
@@ -38,7 +39,10 @@ void AEnemySpawner::Tick(float DeltaTime)
 			FVector temp_pos = LastPosition + FVector(FMath::RandRange(100, 200), FMath::RandRange(100, 200), 0.0f);
 
 			AMonster* enemy = GetWorld()->SpawnActor<AMonster>(SpawnedObject, temp_pos, GetActorRotation());
-			
+			if (!is_enemy_ranged_based)
+			{
+				enemy->needs_range = false;
+			}
 			LastPosition = temp_pos;
 			c++;
 			timeSinceSpawned = 0;

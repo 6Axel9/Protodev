@@ -65,25 +65,6 @@ void AGeneralGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 		open = false;
 		triggered = true;
 		
-		//================================ Checks & Update Related Mission ( Contact StarFleet )
-		if (avatar->Missions["ContactStarFleet"] == 1 && !avatar->Backpack.Contains("Battery Pack"))
-		{
-			avatar->Missions["ContactStarFleet"]++;
-			avatar->Part["ContactStarFleet"] = "Survive while you wait for the rescue party to arrive";
-		}
-		//================================ Checks & Update Related Mission ( Contact StarFleet )
-		if (avatar->Missions["ResolveWarWithWords"] == 1 && !avatar->Backpack.Contains("Storage Drive"))
-		{
-			avatar->Missions["ResolveWarWithWords"]++;
-			avatar->Part["ResolveWarWithWords"] = "Wait for the rescue party to arrive... You got nothing to fear now";
-		}
-		//================================ Checks & Update Related Mission ( Contact StarFleet )
-		if (avatar->Missions["FixYourShip&Leave"] == 1 && !avatar->Backpack.Contains("Flux Capacitor"))
-		{
-			avatar->Missions["FixYourShip&Leave"]++;
-			avatar->Part["FixYourShip&Leave"] = "Time to Enter the Spaship and leave this hellish planet";
-		}
-			
 		
 
 		//========================================== Get Controller From Character

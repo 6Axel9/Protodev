@@ -48,6 +48,7 @@ void APickupItem::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* Othe
 
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
+
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	gui->AddMessage(Message(FString("Picked up ") + FString::FromInt(Quantity) + FString(" ") + Name, Icon, FColor::White, FColor::Black, 5.f));

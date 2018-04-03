@@ -6,6 +6,8 @@
 //========================================== Constructor
 AMonster::AMonster()
 {
+	needs_range = true;
+
 	//========================================== Set Tick Every Frame
 	PrimaryActorTick.bCanEverTick = true;
 	//========================================== Speed
@@ -75,7 +77,7 @@ void AMonster::Tick(float DeltaTime)
 	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
-	if (isInAttackRange || isInSightRange && !needs_death) //do your math only if you need
+	if (isInAttackRange || isInSightRange || !needs_range && !needs_death) //do your math only if you need
 	{
 		FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
 
@@ -104,7 +106,7 @@ void AMonster::Tick(float DeltaTime)
 			}
 		}
 		//========================================== Follow On Sight
-		else if (isInSightRange)
+		else if (isInSightRange || !needs_range)
 		{
 			RootComponent->AddWorldOffset(toPlayerDirection * MovementSpeed * DeltaTime);
 			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), RotationSpeed * DeltaTime));
@@ -115,6 +117,8 @@ void AMonster::Tick(float DeltaTime)
 	{
 		time_since_dead += DeltaTime;
 		deadAntMesh->SetHiddenInGame(false);
+
+		needs_range = true;
 
 		if (time_since_dead > 10 )
 		{

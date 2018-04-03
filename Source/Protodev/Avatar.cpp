@@ -5,6 +5,44 @@
 #include "Bullet.h"
 #include "GUI.h"
 
+/*
+Objective Status:
+
+ContactStarFleet = Pick ID Card -> Pick battery from compound -> charge the battery -> Put it in the main computer in the com centre (this triggers radar animation when you are out)-> Kill all the enemies while waiting for the rescue ship (3 mins then game won)
+
+FixTheSmallEscapeShip = Pick any pickups -> Find the Duct Tape -> Fix the flux capacitor -> Reach the landing pad and kill all the enemies
+
+FixYourShip&Leave = Find screwdriver (placeholder) and the repair book -> Reach the main ship, "fix it" and leave (cutscene to be created)
+
+ResolveWarWithWords = Find the Storage drive -> Locate the pc and interact with it -> Facetime the leader (cutscene to be created)
+
+*************MOST OF THE OTHER MISSIONS REQUIRE OBJECTS THAT WE DONT HAVE AND STILL HAVENT TOUGHT ON HOW TO IMPLEMENT
+
+Also added: 
+
+New door for restricted zone with animation (can only be opened whith id card)
+
+Added a new item in inventory because we need the screwdriver as well
+
+Is range based variable for enemy spawner, if false enemies spawned by that actor will always seek the player (can be set both from blueprint and c++). 
+
+Time based objectives (e.g survive for 3 mins) will spawn enemies with the above variable false, but some initial spawners (like one every five) can be given then same property..
+
+Some decorative particles (in the compound)
+
+Weapons and 1500 bullets can now be found in one of the com bay
+
+The gate opens and close every 5 mins. It stays opened for 5 sec..
+
+
+ISSUES:
+
+The two doors open and close both at the same time altough they are two different blueprints
+
+*/
+
+
+
 //========================================== Constructor
 AAvatar::AAvatar()
 {
@@ -312,29 +350,33 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 
+	if (Item->Name != "Duct Tape")
+	{
+		CurrentObjectives.Add("FixTheSmallEscapeShip");
+		Missions.Add("FixTheSmallEscapeShip", 0);
+		Descriptions.Add("FixTheSmallEscapeShip", "Find a way to get the two smaller ships running");
+		Part.Add("FixTheSmallEscapeShip", "-> Locate the Duct Tape \n->Fix the Flux Capacitor with it");
+	}
+
 	//========================================== Actives ID Card Related Objectives
 	if (Item->Name == "ID Card")
 	{
 		CurrentObjectives.Add("ContactStarFleet");
 		CurrentObjectives.Add("ResolveWarWithWords");
-		CurrentObjectives.Add("FixYourShip&Leave");
 		Missions.Add("ContactStarFleet"   , 0);
 		Missions.Add("ResolveWarWithWords", 0); 
-		Missions.Add("FixYourShip&Leave"  , 0);
 		Descriptions.Add("ContactStarFleet"	  , "Find a way to contact the StarFleet for a rescue party ");
 		Descriptions.Add("ResolveWarWithWords", "Find a way to resolve the conflict without violence");
-		Descriptions.Add("FixYourShip&Leave"  , "Find a way to fix your damaged Spaceship and leave");
-		Part.Add("ContactStarFleet"	  , "-> Use the ID Card to access the Compound \n-> Locate the Battery Pack");
+		Part.Add("ContactStarFleet"	  , "-> Use the ID Card to access the Compound \n-> Locate the Battery Pack to power the rescue ship");
 		Part.Add("ResolveWarWithWords", "-> Use the ID Card to access the Compound \n-> Locate the Storage Drive");
-		Part.Add("FixYourShip&Leave"  , "-> Use the ID Card to access the Compound \n-> Locate the Flux Capacitor");
 	}
-	//========================================== Updates Battery Pack Related Mission ( Contact StarFleet )
-	if (Item->Name == "Battery Pack")
+	//========================================== Updates Battery Pack Related Mission ( Contact StarFleet ) 
+	if (Item->Name == "Battery Pack") 
 	{
 		if (Missions.Contains("ContactStarFleet"))
 		{
 			Missions["ContactStarFleet"]++;
-			Part["ContactStarFleet"] = "-> Enter the Modular Base \n-> Locate the Charging Unit where to slot-in the Battery Pack";
+			Part["ContactStarFleet"] = "-> The battery needs charge \n-> Locate the Charging Unit ";
 		}
 	}
 	//========================================== Updates Storage Drive Related Mission ( Peacefull Resolution )
@@ -346,13 +388,37 @@ void AAvatar::Pickup(APickupItem* Item)
 			Part["ResolveWarWithWords"] = "-> Enter the Modular Base \n-> Locate the Computer where to slot-in the Storage Drive";
 		}
 	}
-	//========================================== Updates Storage Drive Related Mission ( Fix Your Ship )
-	if (Item->Name == "Flux Capacitor")
+
+	//========================================== Fix your ship and leave
+	if (Item->Name == "Screwdriver")
 	{
-		if (Missions.Contains("FixYourShip&Leave"))
+		if (!Backpack.Contains("Repair Book"))
+		{
+			CurrentObjectives.Add("FixYourShip&Leave");
+			Missions.Add("FixYourShip&Leave", 0);
+			Descriptions.Add("FixYourShip&Leave", "Fix the crashed main ship and leave");
+			Part.Add("FixYourShip&Leave", "-> Find the repair book, \nit is somewhere in this place... ");
+		}
+		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Keep searching for Duct Tape \n-> Repair Book before leaving";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the repair book \nJust reach and clear the main ship from enemies... ";
+		}
+	}
+	//========================================== Fix your ship and leave
+	if (Item->Name == "Repair Book")
+	{
+		if (!Backpack.Contains("Screwdriver"))
+		{
+			CurrentObjectives.Add("FixYourShip&Leave");
+			Missions.Add("FixYourShip&Leave", 0);
+			Descriptions.Add("FixYourShip&Leave", "Fix the crashed main ship and leave");
+			Part.Add("FixYourShip&Leave", "-> Find the screwdriver, \nit is somewhere in this place... ");
+		}
+		else
+		{
+			Missions["FixYourShip&Leave"]++;
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver \nJust reach and clear the main ship from enemies... ";
 		}
 	}
 	//========================================== Set Current Weapon To Pickup

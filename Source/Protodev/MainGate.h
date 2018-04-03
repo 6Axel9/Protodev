@@ -21,7 +21,7 @@ protected:
 	//========================================== Initialize
 	virtual void BeginPlay() override;
 
-	float timeSinceCollect;
+	float timesinceLastOpen;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 		bool open;

@@ -21,6 +21,9 @@ public:
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		bool WonGame;
+
 	//========================================== Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 		bool triggered;

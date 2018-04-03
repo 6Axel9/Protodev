@@ -40,5 +40,8 @@ public:
 
 	TArray <FVector> Positions;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = EnemiesSpawner)
+		bool is_enemy_ranged_based;
+
 	int c;
 };

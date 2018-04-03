@@ -71,4 +71,6 @@ public:
 		void OutAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	//========================================== Interactions
 	void Damaged(AActor* OtherActor);
+
+	bool needs_range;
 };

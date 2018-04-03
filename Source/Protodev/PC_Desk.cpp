@@ -56,6 +56,7 @@ void APC_Desk::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 	//========================================== Return If Not Avatar
 	if (avatar->Backpack.Contains("Storage Drive"))
 	{
+		avatar->Missions["ResolveWarWithWords"]++;
 		avatar->Part["ResolveWarWithWords"] = "->Reach the Landing Pad \n->Kill all the enemies";
 		avatar->Backpack.Remove("Storage Drive");
 

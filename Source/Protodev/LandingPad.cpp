@@ -10,7 +10,7 @@
 //========================================== Constructor
 ALandingPad::ALandingPad()
 {
-	Action = "This is a battery charger!";
+	Action = "";
 
 	//========================================== Create Sub-Component
 	FixDevice = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ThingToBeFixed"));
@@ -44,10 +44,11 @@ void ALandingPad::Tick(float DeltaTime)
 		
 			for (int i = 0; i < 3; i++)
 			{
-				AEnemySpawner * enemy = GetWorld()->SpawnActor<AEnemySpawner>(Spawner, GetActorLocation() + FVector(-500.0f, -1500.0f,100.0f), GetActorRotation());
+				AEnemySpawner * enemy = GetWorld()->SpawnActor<AEnemySpawner>(Spawner, RootComponent->GetComponentLocation() + FVector(-500.0f, -1500.0f,100.0f), GetActorRotation());
+				enemy->is_enemy_ranged_based = false;
 			}
-			hasSpawned = true;
 
+			hasSpawned = true;
 		}
 	}
 }
@@ -55,15 +56,15 @@ void ALandingPad::Tick(float DeltaTime)
 void ALandingPad::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	AAvatar* avatar = Cast<AAvatar>(OtherActor);
+	//========================================== Return If Not Avatar
 	if (avatar == nullptr)
 	{
 		return;
 	}
-	//========================================== Return If Not Avatar
+	//========================================== Check If No Parts Available
 	if (avatar->Part.Num() > 0)
 	{
-		//========================================== Check If No Parts Available
-		if (avatar->Part["ContactStarFleet"] == "->Reach the Landing Pad \n->Kill all the enemies")
+		if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building...")
 		{
 			triggered = true;
 		}
@@ -88,7 +89,7 @@ void ALandingPad:: WinPointProx_Implementation(UPrimitiveComponent * HitComp, AA
 	if (avatar->Part.Num() > 0)
 	{
 		//========================================== Check If No Parts Available
-		if (avatar->Part["ContactStarFleet"] == "->Reach the Landing Pad \n->Kill all the enemies" && hasSpawned)
+		if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building..." && hasSpawned)
 		{
 			WonGame = true;
 		}

@@ -5,12 +5,12 @@
 #include "Avatar.h"
 #include "GUI.h"
 #include "Radar.h"
+#include "EnemySpawner.h"
 
 
 //========================================== Constructor
 ARadar::ARadar()
 {
-	Action = "The activation of the radar require some kind of authorization";
 
 	//========================================== Create Sub-Component
 	skeletalmesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
@@ -52,6 +52,33 @@ void ARadar::Tick(float DeltaTime)
 		}
 	}
 
+	if (triggered)
+	{
+		if (!hasSpawned)
+		{
+
+			for (int i = 0; i < 5; i++)
+			{
+				AEnemySpawner * enemy = GetWorld()->SpawnActor<AEnemySpawner>(Spawner, RootComponent->GetComponentLocation() + FVector(-500.0f + i * 100, 0.0f, 0.0f), GetActorRotation());
+				enemy->is_enemy_ranged_based = false;
+
+			}
+
+			hasSpawned = true;
+
+		}
+	}
+
+	if (hasSpawned)
+	{
+		surviveCount += DeltaTime;
+	}
+
+	if (surviveCount > 180)
+	{
+		WonGame = true;
+	}
+
 }
 
 void ARadar::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
@@ -65,14 +92,18 @@ void ARadar::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherAc
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (avatar->Backpack.Contains("ID Card") && !triggered)
+		if (avatar->Part.Num() > 0 && avatar->Part.Contains("ContactStarFleet"))
 		{
-			Action = "The radar is now active and in search for a rescue party!";
-			skeletalmesh->PlayAnimation(animation, false);
-			triggered = true;
+			if (!triggered && avatar->Part["ContactStarFleet"] == "->Wait for the escape ship \n->Survive enemy waves")
+			{
+				Action = "The radar is now active and in search for a rescue party!";
+				skeletalmesh->PlayAnimation(animation, false);
+				triggered = true;
+			}
 		}
-
 	}
+
+
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 	//========================================== Cast Controller As HUD

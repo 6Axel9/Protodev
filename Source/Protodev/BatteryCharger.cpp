@@ -57,8 +57,7 @@ void ABatteryCharger::Prox_Implementation(UPrimitiveComponent * HitComp, AActor 
 	if (avatar->Backpack.Contains("Battery Pack"))
 	{
 		avatar->Missions["ContactStarFleet"]++;
-		avatar->Part["ContactStarFleet"] = "->Reach the Landing Pad \n->Kill all the enemies";
-		avatar->Backpack.Remove("Battery Pack");
+		avatar->Part["ContactStarFleet"] = "->Find the main computer \n->Use it to contact the rescue party";
 
 		triggered = true;
 	}

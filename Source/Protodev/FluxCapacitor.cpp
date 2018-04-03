@@ -49,26 +49,25 @@ void AFluxCapacitor::Tick(float DeltaTime)
 
 void AFluxCapacitor::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
-
 	AAvatar* avatar = Cast<AAvatar>(OtherActor);
 	if (avatar == nullptr)
 	{
 		return;
 	}
 	//========================================== Return If Not Avatar
-	if (avatar != nullptr)
+	if (avatar->Backpack.Contains("Duct Tape"))
 	{
-		if (avatar->Backpack.Contains("Duct Tape"))
-		{
-			Action = "You fixed the flux capacitor already!";
-			triggered = true;
-		}
+		avatar->Missions["FixTheSmallEscapeShip"]++;
+		avatar->Part["FixTheSmallEscapeShip"] = "->Reach the activation point in small room \n in the landing pad building...";
+		avatar->Backpack.Remove("Duct Tape");
+
+		triggered = true;
 	}
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
+
 }
 

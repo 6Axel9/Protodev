@@ -104,6 +104,8 @@ public:
 	bool isInShooting;
 	int CurrentWeaponIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+		TArray<FString> CollectedWeapons;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 		FString CurrentWeapon;
 	
 	//========================================== Inventory Properties
@@ -111,6 +113,8 @@ public:
 	TMap<FString, UClass*> Classes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
 		TMap<FString, int> Backpack;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+		TArray<FString> CollectedItems;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
 		TMap<FString, UTexture2D*> Icons;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
@@ -131,9 +135,9 @@ public:
 		FString CurrentPart;
 
 	//========================================== HighScore Properties
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
 		int CurrentScore;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Objectives)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
 		int BestScore;
 };
 

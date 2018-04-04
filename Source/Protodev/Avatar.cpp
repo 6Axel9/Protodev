@@ -125,11 +125,14 @@ void AAvatar::Tick(float DeltaTime)
 	{
 		CurrentDescription = Descriptions[CurrentObjectives[CurrentIndex]];
 		CurrentPart = Part[CurrentObjectives[CurrentIndex]];
-		CurrentObjectives.Shrink();
 	}
-	if (Backpack.Num() > 0)
+	if (CollectedItems.Num() > 0)
 	{
-		CurrentItem = "ID Card";
+		CurrentItem = CollectedItems[CurrentItemIndex];
+	}
+	if (CollectedWeapons.Num() > 0)
+	{
+		CurrentWeapon = CollectedWeapons[CurrentWeaponIndex];
 	}
 
 	//========================================== Get Controller From Character
@@ -365,17 +368,33 @@ void AAvatar::ScrollRight()
 
 void AAvatar::ScrollWeaponUp()
 {
+	if (CurrentWeaponIndex == 0)
+	{
+		CurrentWeaponIndex = CollectedWeapons.Num() - 1;
+	}
+	else
+	{
+		CurrentWeaponIndex--;
+	}
 }
 
 void AAvatar::ScrollWeaponDown()
 {
+	if (CurrentWeaponIndex == CollectedWeapons.Num() - 1)
+	{
+		CurrentWeaponIndex = 0;
+	}
+	else
+	{
+		CurrentWeaponIndex++;
+	}
 }
 
 void AAvatar::ScrollItemLeft()
 {
 	if (CurrentItemIndex == 0)
 	{
-		CurrentItemIndex = Backpack.Num() - 1;
+		CurrentItemIndex = CollectedItems.Num() - 1;
 	}
 	else
 	{
@@ -385,7 +404,7 @@ void AAvatar::ScrollItemLeft()
 
 void AAvatar::ScrollItemRight()
 {
-	if (CurrentItemIndex == Backpack.Num() - 1)
+	if (CurrentItemIndex == CollectedItems.Num() - 1)
 	{
 		CurrentItemIndex = 0;
 	}
@@ -402,12 +421,12 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 
-	if (Item->Name != "Duct Tape")
+	if (Item->Name == "Duct Tape")
 	{
 		CurrentObjectives.Add("FixTheSmallEscapeShip");
 		Missions.Add("FixTheSmallEscapeShip", 0);
 		Descriptions.Add("FixTheSmallEscapeShip", "Find a way to get the two smaller ships running");
-		Part.Add("FixTheSmallEscapeShip", "-> Locate the Duct Tape \n->Fix the Flux Capacitor with it");
+		Part.Add("FixTheSmallEscapeShip", "-> Use the Duct Tape once you on an escape ship, \n   it should fix their Flux Capacitor");
 	}
 
 	//========================================== Actives ID Card Related Objectives
@@ -449,12 +468,12 @@ void AAvatar::Pickup(APickupItem* Item)
 			CurrentObjectives.Add("FixYourShip&Leave");
 			Missions.Add("FixYourShip&Leave", 0);
 			Descriptions.Add("FixYourShip&Leave", "Fix the crashed main ship and leave");
-			Part.Add("FixYourShip&Leave", "-> Find the repair book, \nit is somewhere in this place... ");
+			Part.Add("FixYourShip&Leave", "-> Find the repair book, \n   it is somewhere in this place... ");
 		}
 		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Looks like you already found the repair book \nJust reach and clear the main ship from enemies... ";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the repair book, \n   just reach and clear the main ship from enemies... ";
 		}
 	}
 	//========================================== Fix your ship and leave
@@ -465,18 +484,13 @@ void AAvatar::Pickup(APickupItem* Item)
 			CurrentObjectives.Add("FixYourShip&Leave");
 			Missions.Add("FixYourShip&Leave", 0);
 			Descriptions.Add("FixYourShip&Leave", "Fix the crashed main ship and leave");
-			Part.Add("FixYourShip&Leave", "-> Find the screwdriver, \nit is somewhere in this place... ");
+			Part.Add("FixYourShip&Leave", "-> Find the screwdriver, \n   it is somewhere in this place... ");
 		}
 		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver \nJust reach and clear the main ship from enemies... ";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies... ";
 		}
-	}
-	//========================================== Set Current Weapon To Pickup
-	if (Item->Name == "GUTLING GUN" || Item->Name == "ROCKET LAUNCHER")
-	{
-		CurrentWeapon = Item->Name;
 	}
 	//========================================== Item Already Picked
 	if (Backpack.Contains(Item->Name))
@@ -487,6 +501,16 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Item Unpicked
 	else
 	{
+		//========================================== Memorize Non Weapon Items
+		if (Item->Name != "GUTLING GUN" && Item->Name != "ROCKET LAUNCHER")
+		{
+			CollectedItems.Add(Item->Name);
+		}
+		//========================================== Memorize Weapon Items
+		else
+		{
+			CollectedWeapons.Add(Item->Name);
+		}
 		//========================================== Add New Item
 		Backpack.Add(Item->Name, Item->Quantity);
 		//========================================== Add New Icon

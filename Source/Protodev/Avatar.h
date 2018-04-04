@@ -87,6 +87,10 @@ public:
 	void ToggleShooting();
 	void ScrollLeft();
 	void ScrollRight();
+	void ScrollWeaponUp();
+	void ScrollWeaponDown();
+	void ScrollItemLeft();
+	void ScrollItemRight();
 
 	//========================================== Inventory Commands
 	void Pickup(APickupItem *Item);
@@ -98,11 +102,12 @@ public:
 	void Damaged(AActor* OtherActor);
 	float LaunchImpulse;
 	bool isInShooting;
+	int CurrentWeaponIndex;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 		FString CurrentWeapon;
 	
 	//========================================== Inventory Properties
-
+	int CurrentItemIndex;
 	TMap<FString, UClass*> Classes;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
 		TMap<FString, int> Backpack;

@@ -57,7 +57,7 @@ AAvatar::AAvatar()
 	//========================================== Health
 	HitPoints = 25.f;
 	//========================================== Speed
-	RotationSpeed = 4.f;
+	RotationSpeed = 25.f;
 	//========================================== Speed
 	CameraSpeed = 200.f;
 
@@ -125,6 +125,11 @@ void AAvatar::Tick(float DeltaTime)
 	{
 		CurrentDescription = Descriptions[CurrentObjectives[CurrentIndex]];
 		CurrentPart = Part[CurrentObjectives[CurrentIndex]];
+		CurrentObjectives.Shrink();
+	}
+	if (Backpack.Num() > 0)
+	{
+		CurrentItem = "ID Card";
 	}
 
 	//========================================== Get Controller From Character
@@ -135,8 +140,6 @@ void AAvatar::Tick(float DeltaTime)
 	FRotator rotation = PController->PlayerCameraManager->GetCameraRotation();
 	FVector direction = rotation.Vector();
 	rotation.Pitch = 0.0f;
-
-	RootComponent->SetWorldRotation(FMath::Lerp(RootComponent->GetComponentRotation().Quaternion(), rotation.Quaternion(), RotationSpeed * DeltaTime));
 
 	if (!Backpack.Contains(CurrentWeapon))
 	{
@@ -254,8 +257,12 @@ void AAvatar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	//========================================== Actions
 	InputComponent->BindAction("ObjectivesScrollR", IE_Pressed, this, &AAvatar::ScrollRight);
 	InputComponent->BindAction("ObjectivesScrollL", IE_Pressed, this, &AAvatar::ScrollLeft);
-	InputComponent->BindAction("Particles", IE_Pressed, this, &AAvatar::ToggleShooting);
-	InputComponent->BindAction("Particles", IE_Released, this, &AAvatar::ToggleShooting);
+	InputComponent->BindAction("ItemsScrollR", IE_Pressed, this, &AAvatar::ScrollItemRight);
+	InputComponent->BindAction("ItemsScrollL", IE_Pressed, this, &AAvatar::ScrollItemLeft);
+	InputComponent->BindAction("WeaponsScrollU", IE_Pressed, this, &AAvatar::ScrollWeaponUp);
+	InputComponent->BindAction("WeaponsScrollD", IE_Pressed, this, &AAvatar::ScrollWeaponDown);
+	InputComponent->BindAction("ShootWeapon", IE_Pressed, this, &AAvatar::ToggleShooting);
+	InputComponent->BindAction("ShootWeapon", IE_Released, this, &AAvatar::ToggleShooting);
 	InputComponent->BindAction("Inventory", IE_Pressed, this, &AAvatar::ToggleInventory);
 	InputComponent->BindAction("MouseClickedLMB", IE_Pressed, this, &AAvatar::MouseClicked);
 }
@@ -265,10 +272,17 @@ void AAvatar::MoveForward(float Amount)
 	//========================================== Enter If Ready And Pressed
 	if (Controller && Amount)
 	{
+		//========================================== Get Controller From Character
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+
+		//========================================== Get Target Position & Direction
+		FRotator rotation = PController->PlayerCameraManager->GetCameraRotation();
+		rotation.Pitch = 0;
+		RootComponent->SetWorldRotation(FMath::Lerp(RootComponent->GetComponentRotation().Quaternion(), rotation.Quaternion(), fabs(Amount) / RotationSpeed));
+
 		FVector forward = GetActorForwardVector();
 		AddMovementInput(forward, Amount);
 	}
-	
 }
 
 void AAvatar::MoveRight(float Amount)
@@ -276,10 +290,16 @@ void AAvatar::MoveRight(float Amount)
 	//========================================== Enter If Ready And Pressed
 	if (Controller && Amount)
 	{
+		//========================================== Get Controller From Character
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+
+		//========================================== Get Target Position & Direction
+		FRotator rotation = PController->PlayerCameraManager->GetCameraRotation();
+		RootComponent->SetWorldRotation(FMath::Lerp(RootComponent->GetComponentRotation().Quaternion(), rotation.Quaternion(), fabs(Amount) / RotationSpeed));
+
 		FVector right = GetActorRightVector();
 		AddMovementInput(right, Amount);
 	}
-	
 }
 
 void AAvatar::Yaw(float Amount)
@@ -321,7 +341,7 @@ void AAvatar::ToggleShooting()
 
 void AAvatar::ScrollLeft()
 {
-	if (CurrentIndex < 1)
+	if (CurrentIndex == 0)
 	{
 		CurrentIndex = CurrentObjectives.Num() - 1;
 	}
@@ -333,13 +353,45 @@ void AAvatar::ScrollLeft()
 
 void AAvatar::ScrollRight()
 {
-	if (CurrentIndex > CurrentObjectives.Num() - 2)
+	if (CurrentIndex == CurrentObjectives.Num() - 1)
 	{
 		CurrentIndex = 0;
 	}
 	else
 	{
 		CurrentIndex++;
+	}
+}
+
+void AAvatar::ScrollWeaponUp()
+{
+}
+
+void AAvatar::ScrollWeaponDown()
+{
+}
+
+void AAvatar::ScrollItemLeft()
+{
+	if (CurrentItemIndex == 0)
+	{
+		CurrentItemIndex = Backpack.Num() - 1;
+	}
+	else
+	{
+		CurrentItemIndex--;
+	}
+}
+
+void AAvatar::ScrollItemRight()
+{
+	if (CurrentItemIndex == Backpack.Num() - 1)
+	{
+		CurrentItemIndex = 0;
+	}
+	else
+	{
+		CurrentItemIndex++;
 	}
 }
 

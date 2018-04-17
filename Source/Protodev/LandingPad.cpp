@@ -64,9 +64,13 @@ void ALandingPad::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Ot
 	//========================================== Check If No Parts Available
 	if (avatar->Part.Num() > 0)
 	{
-		if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building...")
+		if (avatar->Part.Contains("FixTheSmallEscapeShip"))
 		{
-			triggered = true;
+
+			if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building...")
+			{
+				triggered = true;
+			}
 		}
 	}
 	//========================================== Get Controller From Character
@@ -88,10 +92,14 @@ void ALandingPad:: WinPointProx_Implementation(UPrimitiveComponent * HitComp, AA
 	//========================================== Return If Not Avatar
 	if (avatar->Part.Num() > 0)
 	{
-		//========================================== Check If No Parts Available
-		if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building..." && hasSpawned)
+		if (avatar->Part.Contains("FixTheSmallEscapeShip"))
 		{
-			WonGame = true;
+			//========================================== Check If No Parts Available
+			if (avatar->Part["FixTheSmallEscapeShip"] == "->Reach the activation point in small room \n in the landing pad building..." && hasSpawned)
+			{
+				WonGame = true;
+			}
+
 		}
 	}
 	//========================================== Get Controller From Character

@@ -53,18 +53,18 @@ void AMainGate::Tick(float DeltaTime)
 		timesinceLastOpen += DeltaTime;
 	}
 
-	if (timesinceLastOpen > 20)
-	{
-		triggered = true;
-		open = false;
-	}
+	//if (timesinceLastOpen > 20)
+	//{
+	//	triggered = true;
+	//	open = false;
+	//}
 
-	if (timesinceLastOpen > 25)
-	{
-		triggered = false;
-		open = true;
-		timesinceLastOpen = 0;
-	}
+	//if (timesinceLastOpen > 25)
+	//{
+	//	triggered = false;
+	//	open = true;
+	//	timesinceLastOpen = 0;
+	//}
 
 }
 

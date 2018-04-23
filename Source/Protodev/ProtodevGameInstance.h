@@ -16,18 +16,8 @@ class PROTODEV_API UProtodevGameInstance : public UGameInstance
 public:
 	virtual void Init() override;
 
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> LoadingScreenWidget;
-
-	UPROPERTY()
-		UUserWidget* LoadingWidget;
-
-	TSharedPtr < class SWidget > loadswidget;
-
 	UFUNCTION()
 		virtual void BeginLoadingScreen(const FString& MapName);
 	UFUNCTION()
 		virtual void EndLoadingScreen();
-	
-	
 };

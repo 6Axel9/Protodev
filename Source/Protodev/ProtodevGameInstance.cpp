@@ -16,22 +16,20 @@ void UProtodevGameInstance::Init()
 	
 }
 
-void UProtodevGameInstance::BeginLoadingScreen(const FString& InMapName)
+void UProtodevGameInstance::BeginLoadingScreen(const FString& MapName)
 {
-	if (!IsRunningDedicatedServer())
+	if (!IsRunningDedicatedServer() && MapName == "/Game/MyAssets/Blueprints/Level/PlayLevel")
 	{
-		LoadingWidget = CreateWidget<UUserWidget>(this, LoadingScreenWidget);
-		loadswidget = LoadingWidget->TakeWidget();
 		FLoadingScreenAttributes LoadingScreen;
 		LoadingScreen.bAutoCompleteWhenLoadingCompletes = false;
-		LoadingScreen.bWaitForManualStop = true;
-		LoadingScreen.MinimumLoadingScreenDisplayTime = 3;
-		LoadingScreen.WidgetLoadingScreen = loadswidget;
-		//LoadingScreen.WidgetLoadingScreen = FLoadingScreenAttributes::NewTestLoadingScreenWidget();
-		//LoadingScreen.MoviePaths.Add(TEXT("Intro"));
-
+		LoadingScreen.bWaitForManualStop = false;
+		LoadingScreen.MinimumLoadingScreenDisplayTime = -1;
+		LoadingScreen.bMoviesAreSkippable = true;
+		LoadingScreen.PlaybackType = EMoviePlaybackType::MT_Normal;
+		LoadingScreen.bAllowInEarlyStartup = true;
+		LoadingScreen.MoviePaths.Add(TEXT("IntroVideo"));
 		GetMoviePlayer()->SetupLoadingScreen(LoadingScreen);
-		//GetMoviePlayer()->PlayMovie();
+		GetMoviePlayer()->PlayMovie();
 	}
 }
 

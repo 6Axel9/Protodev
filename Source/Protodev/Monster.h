@@ -18,6 +18,7 @@ protected:
 
 	float time_since_dead;
 	bool needs_death;
+	AAvatar *avatar;
 
 public:	
 	//========================================== Update

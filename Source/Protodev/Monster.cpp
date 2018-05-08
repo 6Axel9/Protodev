@@ -65,6 +65,8 @@ void AMonster::BeginPlay()
 	//========================================== Call Parent Setup
 	Super::BeginPlay();
 
+	//========================================== Get Player Pawn As Avatar
+	avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 }
 
 //========================================== Update
@@ -72,9 +74,6 @@ void AMonster::Tick(float DeltaTime)
 {
 	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
-
-	//========================================== Get Player Pawn As Avatar
-	AAvatar *avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 	//========================================== Get To Player Transformations
 	if (isInAttackRange || isInSightRange || !needs_range && !needs_death) //do your math only if you need
@@ -117,6 +116,7 @@ void AMonster::Tick(float DeltaTime)
 	{
 		time_since_dead += DeltaTime;
 		deadAntMesh->SetHiddenInGame(false);
+		deadAntMesh->SetCollisionProfileName(TEXT("BlockAllDynamic"));
 
 		needs_range = true;
 

@@ -33,7 +33,6 @@ AMainGate::AMainGate()
 
 //	staticmesh1->SetHiddenInGame(false);
 //	staticmesh2->SetHiddenInGame(true);
-
 }
 
 //========================================== Initialize

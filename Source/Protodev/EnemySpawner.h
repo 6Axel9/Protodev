@@ -25,6 +25,7 @@ class PROTODEV_API AEnemySpawner : public ASpawner
 	unsigned int  Level;
 
 	float timeSinceSpawned;
+	float spawnTimer;
 
 protected:
 	// Called when the game starts or when spawned
@@ -34,6 +35,8 @@ protected:
 
 	FVector LastPosition;
 
+	void SpawnEnemy();
+
 public:
 	//========================================== Update
 	virtual void Tick(float DeltaTime) override;
@@ -42,6 +45,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = EnemiesSpawner)
 		bool is_enemy_ranged_based;
+
+	FTimerHandle TimerHandle_DefaultTimer;
 
 	int c;
 };

@@ -9,7 +9,7 @@
 APickupItem::APickupItem()
 {
 	//========================================== Set Tick Every Frame
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	//========================================== Name
 	Name = "UNKNOWN ITEM";
 	//========================================== Quantity

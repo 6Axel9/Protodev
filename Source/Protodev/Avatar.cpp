@@ -57,7 +57,7 @@ AAvatar::AAvatar()
 	//========================================== Health
 	HitPoints = 25.f;
 	//========================================== Speed
-	RotationSpeed = 25.f;
+	RotationSpeed = 15.f;
 	//========================================== Speed
 	CameraSpeed = 200.f;
 

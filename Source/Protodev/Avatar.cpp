@@ -42,7 +42,6 @@ The two doors open and close both at the same time altough they are two differen
 */
 
 
-
 //========================================== Constructor
 AAvatar::AAvatar()
 {
@@ -105,6 +104,16 @@ AAvatar::AAvatar()
 	R_Barrel = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_Barrel"));
 	//========================================== Change To Root-Component
 	R_Barrel->AttachToComponent(R_GutlingGun, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	L_RocketLauncher = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("L_RocketLauncher"));
+	//========================================== Change To Root-Component
+	L_RocketLauncher->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	R_RocketLauncher = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_RocketLauncher"));
+	//========================================== Change To Root-Component
+	R_RocketLauncher->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize 
@@ -148,6 +157,8 @@ void AAvatar::Tick(float DeltaTime)
 	{
 		L_GutlingGun->SetHiddenInGame(true, true);
 		R_GutlingGun->SetHiddenInGame(true, true);
+		L_RocketLauncher->SetHiddenInGame(true, true);
+		R_RocketLauncher->SetHiddenInGame(true, true);
 	}
 	else
 	{
@@ -180,67 +191,149 @@ void AAvatar::Tick(float DeltaTime)
 		//========================================== Loop Through Items
 		if (CurrentWeapon == "GUTLING GUN")
 		{
-			if (Backpack[CurrentWeapon] > 0)
-			{
-				ABullet* L_Bullet;
-				//========================================== Visualize Weapon
-				L_GutlingGun->SetHiddenInGame(false, true);
-				//========================================== Adjust Weapon Rotation
-				L_GutlingGun->SetWorldRotation(L_raycast.Rotation());
+			//========================================== Visualize Weapon
+			L_GutlingGun->SetHiddenInGame(false, true);
+			L_RocketLauncher->SetHiddenInGame(true, true);
+			R_RocketLauncher->SetHiddenInGame(true, true);
 
-				if (isInShooting && Backpack.Contains("Ammo Pack"))
+			if (Backpack.Contains("Ammo Pack"))
+			{
+				//========================================== Switch Ammo
+				CurrentAmmo = "Ammo Pack";
+
+				if (Backpack[CurrentWeapon] > 0)
 				{
-					//========================================== Spawn Bullets
-					L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
-					//========================================== Shoot Bullet By Impulse
-					L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
-					//========================================== Decrease Ammo Counter
-					if (Backpack["Ammo Pack"] > 1)
+					ABullet* L_Bullet;
+					//========================================== Adjust Weapon Rotation
+					L_GutlingGun->SetWorldRotation(L_raycast.Rotation());
+
+					if (isInShooting)
 					{
-						Backpack["Ammo Pack"]--;
-					}
-					else
-					{
-						Backpack.Remove("Ammo Pack");
+						Counter += DeltaTime;
+						if (Counter > FireRateBullet)
+						{
+							Counter = 0;
+							//========================================== Spawn Bullets
+							L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
+							//========================================== Shoot Bullet By Impulse
+							L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+							//========================================== Decrease Ammo Counter
+							if (Backpack["Ammo Pack"] > 1)
+							{
+								Backpack["Ammo Pack"]--;
+							}
+							else
+							{
+								Backpack.Remove("Ammo Pack");
+							}
+						}
 					}
 				}
-			}
-			if (Backpack[CurrentWeapon] == 2)
-			{
-				ABullet* R_Bullet;
-				//========================================== Visualize Weapon
-				R_GutlingGun->SetHiddenInGame(false, true);
-				//========================================== Adjust Weapon Rotation
-				R_GutlingGun->SetWorldRotation(R_raycast.Rotation());
-
-				if (isInShooting && Backpack.Contains("Ammo Pack"))
+				if (Backpack[CurrentWeapon] == 2)
 				{
-					//========================================== Spawn Bullets
-					R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
-					//========================================== Shoot Bullet By Impulse
-					R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
-					//========================================== Decrease Ammo Counter
-					if (Backpack["Ammo Pack"] > 1)
+					ABullet* R_Bullet;
+					//========================================== Visualize Weapon
+					R_GutlingGun->SetHiddenInGame(false, true);
+					//========================================== Adjust Weapon Rotation
+					R_GutlingGun->SetWorldRotation(R_raycast.Rotation());
+
+					if (isInShooting)
 					{
-						Backpack["Ammo Pack"]--;
-					}
-					else
-					{
-						Backpack.Remove("Ammo Pack");
+						Counter += DeltaTime;
+						if (Counter > FireRateBullet)
+						{
+							Counter = 0;
+							//========================================== Spawn Bullets
+							R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
+							//========================================== Shoot Bullet By Impulse
+							R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+							//========================================== Decrease Ammo Counter
+							if (Backpack["Ammo Pack"] > 1)
+							{
+								Backpack["Ammo Pack"]--;
+							}
+							else
+							{
+								Backpack.Remove("Ammo Pack");
+							}
+						}
 					}
 				}
 			}
 		}
 		if (CurrentWeapon == "ROCKET LAUNCHER")
 		{
-			/*if (Backpack[CurrentWeapon] > 0)
+			//========================================== Visualize Weapon
+			L_RocketLauncher->SetHiddenInGame(false, true);
+			L_GutlingGun->SetHiddenInGame(true, true);
+			R_GutlingGun->SetHiddenInGame(true, true);
+
+			if (Backpack.Contains("Rocket Pack"))
 			{
-				L_RocketLauncher->SetWorldRotation(L_raycast.Rotation());
+				//========================================== Switch Ammo
+				CurrentAmmo = "Rocket Pack";
+
+				if (Backpack[CurrentWeapon] > 0)
+				{
+					ABullet* L_Rocket;
+					//========================================== Adjust Weapon Rotation
+					L_RocketLauncher->SetWorldRotation(L_raycast.Rotation());
+
+					if (isInShooting)
+					{
+						Counter += DeltaTime;
+						if (Counter > FireRateRocket)
+						{
+							Counter = 0;
+							//========================================== Spawn Bullets
+							L_Rocket = GetWorld()->SpawnActor<ABullet>(Rocket, L_nozzleFire, L_Ammo_raycast.Rotation());
+							//========================================== Shoot Bullet By Impulse
+							L_Rocket->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+							//========================================== Decrease Ammo Counter
+							if (Backpack["Rocket Pack"] > 1)
+							{
+								Backpack["Rocket Pack"]--;
+							}
+							else
+							{
+								Backpack.Remove("Rocket Pack");
+							}
+						}
+					}
+
+				}
+				if (Backpack[CurrentWeapon] == 2)
+				{
+					ABullet* R_Rocket;
+					//========================================== Visualize Weapon
+					R_RocketLauncher->SetHiddenInGame(false, true);
+					//========================================== Adjust Weapon Rotation
+					R_RocketLauncher->SetWorldRotation(R_raycast.Rotation());
+
+					if (isInShooting)
+					{
+						Counter += DeltaTime;
+						if (Counter > FireRateRocket)
+						{
+							Counter = 0;
+							//========================================== Spawn Bullets
+							R_Rocket = GetWorld()->SpawnActor<ABullet>(Rocket, R_nozzleFire, R_Ammo_raycast.Rotation());
+							//========================================== Shoot Bullet By Impulse
+							R_Rocket->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+							//========================================== Decrease Ammo Counter
+							if (Backpack["Rocket Pack"] > 1)
+							{
+								Backpack["Rocket Pack"]--;
+							}
+							else
+							{
+								Backpack.Remove("Rocket Pack");
+							}
+						}
+					}
+
+				}
 			}
-			if (Backpack[CurrentWeapon] == 2)
-			{
-				R_RocketLauncher->SetWorldRotation(R_raycast.Rotation());
-			}*/
 		}
 	}
 }

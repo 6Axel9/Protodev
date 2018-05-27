@@ -51,18 +51,10 @@ public:
 		UStaticMeshComponent* R_Barrel;
 	//========================================== RocketLauncher Properties
 
-	/*FUTURE
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* R_RocketLauncher;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* L_RocketLauncher;
-
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		USkinnedMeshComponent* R_Cannon;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
-		USkinnedMeshComponent* L_Cannon;*/
-
 
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
@@ -107,6 +99,8 @@ public:
 		TArray<FString> CollectedWeapons;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 		FString CurrentWeapon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
+		FString CurrentAmmo;
 	
 	//========================================== Inventory Properties
 	int CurrentItemIndex;
@@ -139,5 +133,13 @@ public:
 		int CurrentScore;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
 		int BestScore;
+	
+	//========================================== FireRate
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
+		int FireRateRocket;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
+		int FireRateBullet;
+
+	float Counter;
 };
 

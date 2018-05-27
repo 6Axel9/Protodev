@@ -1,7 +1,8 @@
 #include "Protodev.h"
 #include "Monster.h"
-#include "Bullet.h"
-#include "Avatar.h"
+#include "EngineUtils.h"
+
+
 
 //========================================== Constructor
 AMonster::AMonster()
@@ -57,6 +58,8 @@ AMonster::AMonster()
 	AttackRange->OnComponentEndOverlap.AddDynamic(this, &AMonster::OutAttack);
 
 	deadAntMesh->SetHiddenInGame(true);
+
+	needs_range = true;
 }
 
 //========================================== Initialize 
@@ -67,6 +70,8 @@ void AMonster::BeginPlay()
 
 	//========================================== Get Player Pawn As Avatar
 	avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+
+
 }
 
 //========================================== Update
@@ -76,25 +81,25 @@ void AMonster::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//========================================== Get To Player Transformations
-	if (isInAttackRange || isInSightRange || !needs_range && !needs_death) //do your math only if you need
+	if (!needs_death) //do your math only if you need
 	{
 		FVector toPlayerDirection = avatar->GetActorLocation() - GetActorLocation();
+
+		FVector desired_direction = FVector(0);
+		FRotator desired_rotation = FRotator(0);
+
 
 		float distance = toPlayerDirection.Size();
 		float deceleration = distance / 50.f;
 
 		float new_speed = MovementSpeed * deceleration;
 
-		toPlayerDirection.Normalize();
-		FVector desired_velocity = toPlayerDirection * (new_speed * DeltaTime);
-
-		desired_velocity.Normalize();
-		FRotator toPlayerRotation = desired_velocity.Rotation();
 
 		//========================================== Rotate On Attack
 		if (isInAttackRange)
 		{
-			RootComponent->SetWorldRotation(toPlayerRotation);
+			isMoving = false;
+
 			//========================================== Atta Timer     
 			TimeSinceLastStrike += DeltaTime;
 			//========================================== Remove Message     
@@ -103,12 +108,54 @@ void AMonster::Tick(float DeltaTime)
 				avatar->Damaged(this);
 				TimeSinceLastStrike = 0.f;
 			}
+			
 		}
 		//========================================== Follow On Sight
 		else if (isInSightRange || !needs_range)
 		{
+
+			toPlayerDirection.Normalize();
+			desired_direction = toPlayerDirection * (new_speed * DeltaTime);
+
+			desired_direction.Normalize();
+			desired_rotation = desired_direction.Rotation();
+
+			RootComponent->SetWorldRotation(desired_rotation);
+
 			RootComponent->AddWorldOffset(toPlayerDirection * MovementSpeed * DeltaTime);
-			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), toPlayerRotation.Quaternion(), RotationSpeed * DeltaTime));
+			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), desired_rotation.Quaternion(), RotationSpeed * DeltaTime));
+		}
+		//========================================== Always aim for the gate otherwhise
+		if (!isInSightRange && needs_range)
+		{
+			FVector _target = FVector(0);
+
+			//========================================== Get Gate Object from the World
+			for (TActorIterator<AMainGate> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+			{
+				gate = *ActorItr;
+				_target = gate->GetActorLocation();
+				if (gate->open)
+				{
+					needs_range = false;
+				}
+			}
+
+			FVector toGateDirection = _target - GetActorLocation();
+
+
+			isMoving = true;
+
+			toGateDirection.Normalize();
+			desired_direction = toGateDirection * (new_speed * DeltaTime);
+
+			desired_direction.Normalize();
+			desired_rotation = desired_direction.Rotation();
+
+			RootComponent->SetWorldRotation(desired_rotation);
+			
+			RootComponent->AddWorldOffset(toGateDirection * MovementSpeed * DeltaTime);
+			RootComponent->SetWorldRotation(FMath::Lerp(GetActorQuat(), desired_rotation.Quaternion(), RotationSpeed * DeltaTime));
 		}
 	}
 

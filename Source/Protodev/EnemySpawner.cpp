@@ -50,14 +50,3 @@ void AEnemySpawner::SpawnEnemy(){
 		c++;
 	}
 }
-
-
-FVector AEnemySpawner::RandomPointOnUnitCircle(float radius)
-{
-	float angle = FMath::RandRange(0.0f, PI * 2);
-	float x = sin(angle) * radius;
-	float y = cos(angle) * radius;
-
-
-	return FVector(x, y, 0.0f);
-}

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Bullet.h"
-#include "Avatar.h"
-#include "MainGate.h"
 #include "GameFramework/Character.h"
 #include "Monster.generated.h"
 
@@ -22,7 +19,6 @@ protected:
 	float time_since_dead;
 	bool needs_death;
 	AAvatar *avatar;
-	AMainGate *gate;
 
 public:	
 	//========================================== Update
@@ -32,7 +28,6 @@ public:
 	//========================================== Late Initialization
 	virtual void PostInitializeComponents() override;
 	
-
 	UFUNCTION(BlueprintCallable)
 		bool GetNeedsToDie();
 
@@ -58,9 +53,6 @@ public:
 		bool isInAttackRange;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
 		bool isInSightRange;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = State)
-		bool isMoving;
-
 	//========================================== Colliders Properties
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Monster)
 		UBoxComponent* CollisionBox;

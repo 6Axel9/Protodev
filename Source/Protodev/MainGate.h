@@ -23,10 +23,10 @@ protected:
 
 	float timesinceLastOpen;
 
-public:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 		bool open;
+
+public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh1;

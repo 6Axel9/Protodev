@@ -39,7 +39,7 @@ void AEnemySpawner::Tick(float DeltaTime)
 void AEnemySpawner::SpawnEnemy(){
 	if (c < GROUP_SIZE)
 	{
-		FVector temp_pos = LastPosition + FVector(FMath::RandRange(100, 200), FMath::RandRange(100, 200), 0.0f);
+		FVector temp_pos = LastPosition + FVector(FMath::RandRange(100, 200), FMath::RandRange(100, 200), 0.0f) - FVector(FMath::RandRange(100, 200), FMath::RandRange(100, 200), 0.0f);
 
 		AMonster* enemy = GetWorld()->SpawnActor<AMonster>(SpawnedObject, temp_pos, GetActorRotation());
 		if (!is_enemy_ranged_based)

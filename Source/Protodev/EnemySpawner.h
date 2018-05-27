@@ -30,12 +30,9 @@ class PROTODEV_API AEnemySpawner : public ASpawner
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	
 	float RandomNumber(float min, float max);
-	
-	//========================================== Tool Function for random point on circle
-	FVector RandomPointOnUnitCircle(float radius);
-	
+
 	FVector LastPosition;
 
 	void SpawnEnemy();
@@ -53,4 +50,3 @@ public:
 
 	int c;
 };
-

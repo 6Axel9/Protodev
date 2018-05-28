@@ -40,7 +40,7 @@ void AVirusChamber::Tick(float DeltaTime)
 		
 		if (timeSinceCollect > 15)
 		{
-			APickupItem * _pickupitem = GetWorld()->SpawnActor<APickupItem>(SpawnedObject, GetActorLocation() + (GetActorRotation().Vector() * 250) - FVector(0.0f,0.0f, 150.0f), GetActorRotation());
+			APickupItem* _pickupitem = GetWorld()->SpawnActor<APickupItem>(SpawnedObject, GetActorLocation() + (GetActorRotation().Vector() * 250) - FVector(0.0f,0.0f, 150.0f), GetActorRotation());
 			PrimaryActorTick.bCanEverTick = false;
 		}
 	}

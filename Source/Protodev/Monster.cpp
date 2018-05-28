@@ -169,6 +169,7 @@ void AMonster::Tick(float DeltaTime)
 
 		if (time_since_dead > 10 )
 		{
+			DropItem(LootDropped);
 			needs_death = false;
 			Destroy();
 		}
@@ -271,4 +272,9 @@ void AMonster::Damaged(AActor* OtherActor)
 
 		needs_death = true;
 	}
+}
+
+void AMonster::DropItem(UClass* Object)
+{
+	APickupItem* _pickupitem = GetWorld()->SpawnActor<APickupItem>(Object, GetActorLocation(), GetActorRotation());
 }

@@ -253,12 +253,12 @@ void AMonster::OutAttack_Implementation(UPrimitiveComponent * HitComp, AActor * 
 	}
 }
 
-void AMonster::Damaged(AActor* OtherActor)
+void AMonster::Damaged(AActor* OtherActor, int Damage)
 {
 	//========================================== Get Actor As Monster
 	ABullet* bullet = Cast<ABullet>(OtherActor);
 	//========================================== Damaged At Location
-	HitPoints -= bullet->Damage;
+	HitPoints -= Damage;
 	//========================================== Destroy Object
 	if (HitPoints < 0.f)
 	{

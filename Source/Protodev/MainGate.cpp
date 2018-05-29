@@ -90,6 +90,11 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
+
+	if (GateOpenAudio) {
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
+	}
 	
 }
 
@@ -120,5 +125,9 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
 	
+	if (GateOpenAudio) {
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
+	}
 }
 

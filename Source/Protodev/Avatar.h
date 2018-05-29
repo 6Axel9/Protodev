@@ -134,12 +134,33 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
 		int BestScore;
 	
-	//========================================== FireRate
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
-		int FireRateRocket;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
-		int FireRateBullet;
+	//========================================== Audio Properties
+	UAudioComponent* MovingGearAudioComponent;
+	UAudioComponent* GutlingGunAudioComponent;
+	UAudioComponent* RocketLauncherAudioComponent;
+	//UAudioComponent* RobotAudioComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* MovingGearAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GutlingGunShootingAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GutlingGunNoAmmoAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RocketLauncherShootingAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RocketLauncherNoAmmoAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RobotHitAudio;
 
-	float Counter;
+	//========================================== FireRate
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float GutlingGunCooldown;
+	float L_GutlingGunCooldownTimer;
+	float R_GutlingGunCooldownTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float RocketLauncherCooldown;
+	float L_RocketLauncherCooldownTimer;
+	float R_RocketLauncherCooldownTimer;
+
 };
 

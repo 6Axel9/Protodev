@@ -79,7 +79,7 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void OutAttack(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	//========================================== Interactions
-	void Damaged(AActor* OtherActor);
+	void Damaged(AActor* OtherActor, int Damage);
 	//========================================== Interactions
 	void DropItem(UClass* Object);
 

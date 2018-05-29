@@ -34,6 +34,10 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh2;
 
+	//========================================== Audio Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GateOpenAudio;
+
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 	//	USkeletalMeshComponent* mesh;
 

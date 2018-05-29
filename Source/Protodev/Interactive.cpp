@@ -49,11 +49,11 @@ void AInteractive::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	gui->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
 }
 
-void AInteractive::Damaged(AActor* OtherActor)
-{
-	////========================================== Get Actor As Monster
-	//ABullet* bullet = Cast<ABullet>(OtherActor);
-	////========================================== Damaged At Location
-	//ImpactParticles->SetWorldLocation(bullet->GetActorLocation());
-	//ImpactParticles->ActivateSystem();
-}
+//void AInteractive::Damaged(AActor* OtherActor)
+//{
+//	////========================================== Get Actor As Monster
+//	//ABullet* bullet = Cast<ABullet>(OtherActor);
+//	////========================================== Damaged At Location
+//	//ImpactParticles->SetWorldLocation(bullet->GetActorLocation());
+//	//ImpactParticles->ActivateSystem();
+//}

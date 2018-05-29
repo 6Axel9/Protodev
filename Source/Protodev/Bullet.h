@@ -36,4 +36,9 @@ public:
 	//========================================== On Particles Death CallBacks
 	UFUNCTION(BlueprintNativeEvent, Category = Particles)
 		void OnFinish(UParticleSystemComponent* PSystem);
+
+	//========================================== Audio Properties
+	UAudioComponent* BulletAudioComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* BulletExplosionAudio;
 };

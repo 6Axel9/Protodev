@@ -35,7 +35,5 @@ public:
 		UStaticMeshComponent* body;
 
 
-
-	
 	
 };

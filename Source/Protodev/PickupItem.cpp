@@ -22,6 +22,12 @@ APickupItem::APickupItem()
 
 	//========================================== Prox Sphere On Trigger CallBack
 	ProxQuad->OnComponentBeginOverlap.AddDynamic(this, &APickupItem::Prox);
+
+	//========================================== Create Sub-Component
+	PickupAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PickupAudioComponent"));
+	//========================================== Change To Root-Component
+	PickupAudioComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	PickupAudioComponent->bStopWhenOwnerDestroyed = false;
 }
 
 //========================================== Initialize
@@ -58,6 +64,12 @@ void APickupItem::Prox_Implementation(UPrimitiveComponent* HitComp, AActor* Othe
 
 	//========================================== Pick Up Item
 	avatar->Pickup(this);
+
+	//========================================== Play Audio
+	if (PickupItemAudio) {
+		PickupAudioComponent->SetSound(PickupItemAudio);
+		PickupAudioComponent->Play();
+	}
 
 	//========================================== Destroy Current
 	Destroy();

@@ -4,6 +4,7 @@
 #include "Monster.h"
 #include "Bullet.h"
 #include "GUI.h"
+#include "Rocket.h"
 
 /*
 Objective Status:
@@ -59,6 +60,14 @@ AAvatar::AAvatar()
 	RotationSpeed = 15.f;
 	//========================================== Speed
 	CameraSpeed = 200.f;
+	//========================================== Gutling Gun Shooting Speed
+	GutlingGunCooldown = 0.1f;
+	L_GutlingGunCooldownTimer = 0;
+	R_GutlingGunCooldownTimer = 0;
+	//========================================== Rocket Launcher Shooting Speed
+	RocketLauncherCooldown = 2.f;
+	L_RocketLauncherCooldownTimer = 0;
+	R_RocketLauncherCooldownTimer = 0;
 
 	//========================================== Create Sub-Component
 	MainBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MainBody"));
@@ -114,6 +123,19 @@ AAvatar::AAvatar()
 	R_RocketLauncher = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("R_RocketLauncher"));
 	//========================================== Change To Root-Component
 	R_RocketLauncher->AttachToComponent(UpperBody, FAttachmentTransformRules::KeepRelativeTransform);
+
+	//========================================== Create Sub-Component
+	MovingGearAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("MovingGearAudioComponent"));
+	//========================================== Change To Root-Component
+	MovingGearAudioComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	GutlingGunAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("GutlingGunAudioComponent"));
+	//========================================== Change To Root-Component
+	GutlingGunAudioComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	//========================================== Create Sub-Component
+	RocketLauncherAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("RocketLauncherAudioComponent"));
+	//========================================== Change To Root-Component
+	RocketLauncherAudioComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 }
 
 //========================================== Initialize 
@@ -129,6 +151,10 @@ void AAvatar::Tick(float DeltaTime)
 	//========================================== Call Parent Setup
 	Super::Tick(DeltaTime);
 
+	//========================================== Disable Gear Audio If Not Moving
+	if (GetInputAxisValue("Forward") == 0 && GetInputAxisValue("Strafe") == 0 && MovingGearAudioComponent->IsPlaying()) {
+		MovingGearAudioComponent->Stop();
+	}
 
 	if (CurrentObjectives.Num() > 0)
 	{
@@ -187,6 +213,13 @@ void AAvatar::Tick(float DeltaTime)
 		R_raycast.Normalize();
 		L_Ammo_raycast.Normalize();
 		R_Ammo_raycast.Normalize();
+		//========================================== Disable Audio
+		if (GutlingGunShootingAudio && !isInShooting && GutlingGunAudioComponent->IsPlaying() && GutlingGunAudioComponent->Sound == GutlingGunShootingAudio) {
+			GutlingGunAudioComponent->Stop();
+		}
+		else if (RocketLauncherShootingAudio && !isInShooting && RocketLauncherAudioComponent->IsPlaying() && RocketLauncherAudioComponent->Sound == RocketLauncherShootingAudio) {
+			RocketLauncherAudioComponent->Stop();
+		}
 
 		//========================================== Loop Through Items
 		if (CurrentWeapon == "GUTLING GUN")
@@ -207,26 +240,30 @@ void AAvatar::Tick(float DeltaTime)
 					//========================================== Adjust Weapon Rotation
 					L_GutlingGun->SetWorldRotation(L_raycast.Rotation());
 
-					if (isInShooting)
+					if (isInShooting  && L_GutlingGunCooldownTimer <= 0)
 					{
-						Counter += DeltaTime;
-						if (Counter > FireRateBullet)
+						//========================================== Spawn Bullets
+						L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
+						//========================================== Shoot Bullet By Impulse
+						L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+						//========================================== Decrease Ammo Counter
+						if (Backpack["Ammo Pack"] > 1)
 						{
-							Counter = 0;
-							//========================================== Spawn Bullets
-							L_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, L_nozzleFire, L_Ammo_raycast.Rotation());
-							//========================================== Shoot Bullet By Impulse
-							L_Bullet->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
-							//========================================== Decrease Ammo Counter
-							if (Backpack["Ammo Pack"] > 1)
-							{
-								Backpack["Ammo Pack"]--;
-							}
-							else
-							{
-								Backpack.Remove("Ammo Pack");
-							}
+							Backpack["Ammo Pack"]--;
 						}
+						else
+						{
+							Backpack.Remove("Ammo Pack");
+						}
+						L_GutlingGunCooldownTimer = GutlingGunCooldown;
+						//========================================== Play Audio
+						if (!GutlingGunAudioComponent->IsPlaying() && GutlingGunShootingAudio) {
+							GutlingGunAudioComponent->SetSound(GutlingGunShootingAudio);
+							GutlingGunAudioComponent->Play();
+						}
+					}
+					else {
+						L_GutlingGunCooldownTimer -= DeltaTime;
 					}
 				}
 				if (Backpack[CurrentWeapon] == 2)
@@ -237,26 +274,39 @@ void AAvatar::Tick(float DeltaTime)
 					//========================================== Adjust Weapon Rotation
 					R_GutlingGun->SetWorldRotation(R_raycast.Rotation());
 
-					if (isInShooting)
+					if (isInShooting && R_GutlingGunCooldownTimer <= 0)
 					{
-						Counter += DeltaTime;
-						if (Counter > FireRateBullet)
+						//========================================== Spawn Bullets
+						R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
+						//========================================== Shoot Bullet By Impulse
+						R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+						//========================================== Decrease Ammo Counter
+						if (Backpack["Ammo Pack"] > 1)
 						{
-							Counter = 0;
-							//========================================== Spawn Bullets
-							R_Bullet = GetWorld()->SpawnActor<ABullet>(Bullet, R_nozzleFire, R_Ammo_raycast.Rotation());
-							//========================================== Shoot Bullet By Impulse
-							R_Bullet->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
-							//========================================== Decrease Ammo Counter
-							if (Backpack["Ammo Pack"] > 1)
-							{
-								Backpack["Ammo Pack"]--;
-							}
-							else
-							{
-								Backpack.Remove("Ammo Pack");
-							}
+							Backpack["Ammo Pack"]--;
 						}
+						else
+						{
+							Backpack.Remove("Ammo Pack");
+						}
+						R_GutlingGunCooldownTimer = GutlingGunCooldown;
+						//========================================== Play Audio
+						if (!GutlingGunAudioComponent->IsPlaying() && GutlingGunShootingAudio) {
+							GutlingGunAudioComponent->SetSound(GutlingGunShootingAudio);
+							GutlingGunAudioComponent->Play();
+						}
+					}
+					else {
+						R_GutlingGunCooldownTimer -= DeltaTime;
+					}
+				}
+			}
+			//========================================== Play Audio
+			else {
+				if (isInShooting && GutlingGunNoAmmoAudio) {
+					if (!GutlingGunAudioComponent->IsPlaying() || GutlingGunAudioComponent->IsPlaying() && GutlingGunAudioComponent->Sound != GutlingGunNoAmmoAudio) {
+						GutlingGunAudioComponent->SetSound(GutlingGunNoAmmoAudio);
+						GutlingGunAudioComponent->Play();
 					}
 				}
 			}
@@ -275,66 +325,82 @@ void AAvatar::Tick(float DeltaTime)
 
 				if (Backpack[CurrentWeapon] > 0)
 				{
-					ABullet* L_Rocket;
+					ARocket* L_Rocket;
 					//========================================== Adjust Weapon Rotation
 					L_RocketLauncher->SetWorldRotation(L_raycast.Rotation());
 
-					if (isInShooting)
+					if (isInShooting && L_RocketLauncherCooldownTimer <= 0)
 					{
-						Counter += DeltaTime;
-						if (Counter > FireRateRocket)
+						//========================================== Spawn Bullets
+						L_Rocket = GetWorld()->SpawnActor<ARocket>(Rocket, L_nozzleFire, L_Ammo_raycast.Rotation());
+						//========================================== Shoot Bullet By Impulse
+						L_Rocket->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
+						//========================================== Decrease Ammo Counter
+						if (Backpack["Rocket Pack"] > 1)
 						{
-							Counter = 0;
-							//========================================== Spawn Bullets
-							L_Rocket = GetWorld()->SpawnActor<ABullet>(Rocket, L_nozzleFire, L_Ammo_raycast.Rotation());
-							//========================================== Shoot Bullet By Impulse
-							L_Rocket->ProxSphere->AddImpulse(L_Ammo_raycast * LaunchImpulse);
-							//========================================== Decrease Ammo Counter
-							if (Backpack["Rocket Pack"] > 1)
-							{
-								Backpack["Rocket Pack"]--;
-							}
-							else
-							{
-								Backpack.Remove("Rocket Pack");
-							}
+							Backpack["Rocket Pack"]--;
+						}
+						else
+						{
+							Backpack.Remove("Rocket Pack");
+						}
+						L_RocketLauncherCooldownTimer = RocketLauncherCooldown;
+						//========================================== Play Audio
+						if (!RocketLauncherAudioComponent->IsPlaying() && RocketLauncherShootingAudio) {
+							RocketLauncherAudioComponent->SetSound(RocketLauncherShootingAudio);
+							RocketLauncherAudioComponent->Play();
 						}
 					}
-
+					else {
+						L_RocketLauncherCooldownTimer -= DeltaTime;
+					}
+					
 				}
 				if (Backpack[CurrentWeapon] == 2)
 				{
-					ABullet* R_Rocket;
+					ARocket* R_Rocket;
 					//========================================== Visualize Weapon
 					R_RocketLauncher->SetHiddenInGame(false, true);
 					//========================================== Adjust Weapon Rotation
 					R_RocketLauncher->SetWorldRotation(R_raycast.Rotation());
 
-					if (isInShooting)
+					if (isInShooting && R_RocketLauncherCooldownTimer <= 0)
 					{
-						Counter += DeltaTime;
-						if (Counter > FireRateRocket)
+						//========================================== Spawn Bullets
+						R_Rocket = GetWorld()->SpawnActor<ARocket>(Rocket, R_nozzleFire, R_Ammo_raycast.Rotation());
+						//========================================== Shoot Bullet By Impulse
+						R_Rocket->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
+						//========================================== Decrease Ammo Counter
+						if (Backpack["Rocket Pack"] > 1)
 						{
-							Counter = 0;
-							//========================================== Spawn Bullets
-							R_Rocket = GetWorld()->SpawnActor<ABullet>(Rocket, R_nozzleFire, R_Ammo_raycast.Rotation());
-							//========================================== Shoot Bullet By Impulse
-							R_Rocket->ProxSphere->AddImpulse(R_Ammo_raycast * LaunchImpulse);
-							//========================================== Decrease Ammo Counter
-							if (Backpack["Rocket Pack"] > 1)
-							{
-								Backpack["Rocket Pack"]--;
-							}
-							else
-							{
-								Backpack.Remove("Rocket Pack");
-							}
+							Backpack["Rocket Pack"]--;
+						}
+						else
+						{
+							Backpack.Remove("Rocket Pack");
+						}
+						R_RocketLauncherCooldownTimer = RocketLauncherCooldown;
+						//========================================== Play Audio
+						if (!RocketLauncherAudioComponent->IsPlaying() && RocketLauncherShootingAudio) {
+							RocketLauncherAudioComponent->SetSound(RocketLauncherShootingAudio);
+							RocketLauncherAudioComponent->Play();
 						}
 					}
-
+					else {
+						R_RocketLauncherCooldownTimer -= DeltaTime;
+					}
 				}
 			}
-		}
+			//========================================== Play Audio
+			else {
+				if (isInShooting && RocketLauncherNoAmmoAudio) {
+					if (!RocketLauncherAudioComponent->IsPlaying() || RocketLauncherAudioComponent->IsPlaying() && RocketLauncherAudioComponent->Sound != RocketLauncherNoAmmoAudio) {
+						RocketLauncherAudioComponent->SetSound(RocketLauncherNoAmmoAudio);
+						RocketLauncherAudioComponent->Play();
+					}
+				}
+			}
+		}	
 	}
 }
 
@@ -378,6 +444,12 @@ void AAvatar::MoveForward(float Amount)
 
 		FVector forward = GetActorForwardVector();
 		AddMovementInput(forward, Amount);
+
+		//========================================== Play Audio
+		if (!MovingGearAudioComponent->IsPlaying() && MovingGearAudio) {
+			MovingGearAudioComponent->SetSound(MovingGearAudio);
+			MovingGearAudioComponent->Play();
+		}
 	}
 }
 
@@ -395,6 +467,12 @@ void AAvatar::MoveRight(float Amount)
 
 		FVector right = GetActorRightVector();
 		AddMovementInput(right, Amount);
+
+		//========================================== Play Audio
+		if (!MovingGearAudioComponent->IsPlaying() && MovingGearAudio) {
+			MovingGearAudioComponent->SetSound(MovingGearAudio);
+			MovingGearAudioComponent->Play();
+		}
 	}
 }
 

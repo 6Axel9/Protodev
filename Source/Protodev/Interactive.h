@@ -37,5 +37,5 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)
 		void Prox(class UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 	//========================================== Interactions
-	void Damaged(AActor* OtherActor);
+	void Damaged(AActor* OtherActor, float Damage);
 };

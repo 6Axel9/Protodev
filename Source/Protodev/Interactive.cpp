@@ -49,7 +49,7 @@ void AInteractive::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	gui->AddMessage(Message(Action, Button, FColor::Black,FColor::White, 5.f));
 }
 
-void AInteractive::Damaged(AActor* OtherActor)
+void AInteractive::Damaged(AActor* OtherActor, float Damage)
 {
 	////========================================== Get Actor As Monster
 	//ABullet* bullet = Cast<ABullet>(OtherActor);

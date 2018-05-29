@@ -52,18 +52,18 @@ void AMainGate::Tick(float DeltaTime)
 		timesinceLastOpen += DeltaTime;
 	}
 
-	if (timesinceLastOpen > 50)
-	{
-		triggered = true;
-		open = false;
-	}
+	//if (timesinceLastOpen > 20)
+	//{
+	//	triggered = true;
+	//	open = false;
+	//}
 
-	if (timesinceLastOpen > 55)
-	{
-		triggered = false;
-		open = true;
-		timesinceLastOpen = 0;
-	}
+	//if (timesinceLastOpen > 25)
+	//{
+	//	triggered = false;
+	//	open = true;
+	//	timesinceLastOpen = 0;
+	//}
 
 }
 
@@ -84,6 +84,11 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 
 	triggered = true;
 	open = false;
+
+	if(GateOpenAudio){
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
+	}
 	
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
@@ -112,7 +117,10 @@ void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * O
 	triggered = false;
 	open = true;
 
-	
+	if(GateOpenAudio){
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
+		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
+	}
 
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();

@@ -30,6 +30,12 @@ ABullet::ABullet()
 	ProxSphere->OnComponentHit.AddDynamic(this, &ABullet::OnHit);
 	//========================================== Particles Death CallBack
 	ImpactParticles->OnSystemFinished.AddDynamic(this, &ABullet::OnFinish);
+
+	//========================================== Create Sub-Component
+	BulletAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BulletAudioComponent"));
+	//========================================== Change To Root-Component
+	BulletAudioComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	BulletAudioComponent->bStopWhenOwnerDestroyed = false;
 }
 
 //========================================== Initialize 
@@ -50,13 +56,13 @@ void ABullet::OnHit_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 	AInteractive* obstacle = Cast<AInteractive>(OtherActor);
 	if (obstacle != nullptr)
 	{
-		obstacle->Damaged(this);
+		obstacle->Damaged(this, Damage);
 	}
 	//========================================== Damaging Monster
 	AMonster* monster = Cast<AMonster>(OtherActor);
 	if (monster != nullptr)
 	{
-		monster->Damaged(this);
+		monster->Damaged(this, Damage);
 	}
 	//========================================== Releasing Particles
 	ImpactParticles->ActivateSystem();
@@ -64,6 +70,13 @@ void ABullet::OnHit_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 	//========================================== Set Components Off
 	StaticMesh->SetHiddenInGame(true);
 	SetActorEnableCollision(false);
+
+	//========================================== Play Audio
+	if(BulletExplosionAudio){
+		//UGameplayStatics::PlaySoundAtLocation(this, BulletExplosionAudio, GetActorLocation());
+		BulletAudioComponent->SetSound(BulletExplosionAudio);
+		BulletAudioComponent->Play();
+	}
 }
 
 void ABullet::OnFinish_Implementation(UParticleSystemComponent* PSystem)

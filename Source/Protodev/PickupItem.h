@@ -22,7 +22,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//========================================== Properties
-	FString Name;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+		FString Name;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 		int32 Quantity;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
@@ -31,6 +32,11 @@ public:
 		USphereComponent* ProxSphere;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Item)
 		UBoxComponent* ProxQuad;
+
+	//========================================== Audio Properties
+	UAudioComponent* PickupAudioComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* PickupItemAudio;
 
 	//========================================== OnBeginOverlap CallBacks
 	UFUNCTION(BlueprintNativeEvent, Category = Collision)

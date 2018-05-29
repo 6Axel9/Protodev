@@ -23,16 +23,20 @@ protected:
 
 	float timesinceLastOpen;
 
-public:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Interaction)
 		bool open;
+
+public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh1;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 		UStaticMeshComponent* staticmesh2;
+
+	//========================================== Audio Properties
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GateOpenAudio;
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Meshes)
 	//	USkeletalMeshComponent* mesh;

@@ -56,6 +56,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
 		UStaticMeshComponent* L_RocketLauncher;
 
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* R_Cannon;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = RobotBody)
+		UStaticMeshComponent* L_Cannon;
+
+
 	//========================================== Weapon Properties
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Ammo)
 		UClass* Bullet;
@@ -71,6 +78,14 @@ public:
 		float HitPoints;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
 		float MaxHitPoints;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float GutlingGunCooldown;
+	float L_GutlingGunCooldownTimer;
+	float R_GutlingGunCooldownTimer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Player)
+		float RocketLauncherCooldown;
+	float L_RocketLauncherCooldownTimer;
+	float R_RocketLauncherCooldownTimer;
 	//========================================== Movements CallBacks
 	void MoveForward(float Amount);   
 	void MoveRight(float Amount);
@@ -99,8 +114,6 @@ public:
 		TArray<FString> CollectedWeapons;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
 		FString CurrentWeapon;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Weapon)
-		FString CurrentAmmo;
 	
 	//========================================== Inventory Properties
 	int CurrentItemIndex;
@@ -133,13 +146,23 @@ public:
 		int CurrentScore;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
 		int BestScore;
-	
-	//========================================== FireRate
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
-		int FireRateRocket;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = HighScore)
-		int FireRateBullet;
 
-	float Counter;
+	//========================================== Audio Properties
+	UAudioComponent* MovingGearAudioComponent;
+	UAudioComponent* GutlingGunAudioComponent;
+	UAudioComponent* RocketLauncherAudioComponent;
+	//UAudioComponent* RobotAudioComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* MovingGearAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GutlingGunShootingAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* GutlingGunNoAmmoAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RocketLauncherShootingAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RocketLauncherNoAmmoAudio;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+		USoundCue* RobotHitAudio;
 };
 

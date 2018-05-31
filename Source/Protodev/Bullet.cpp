@@ -64,6 +64,10 @@ void ABullet::OnHit_Implementation(UPrimitiveComponent * HitComp, AActor * Other
 	{
 		monster->Damaged(this, Damage);
 	}
+	else
+	{
+		return;
+	}
 	//========================================== Releasing Particles
 	ImpactParticles->ActivateSystem();
 	ImpactParticles->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);

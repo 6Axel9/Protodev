@@ -48,6 +48,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		UClass* LootDropped;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
+		UClass* LootDropped2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float BaseAttackDamage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Monster)
 		float AttackTimeout;
@@ -84,4 +86,5 @@ public:
 	void DropItem(UClass* Object);
 
 	bool needs_range;
+	bool will_follow = false;
 };

@@ -4,6 +4,7 @@
 #include "PickupItem.h"
 #include "Avatar.h"
 #include "GUI.h"
+#include "Monster.h"
 #include "MainGate.h"
 
 
@@ -13,10 +14,6 @@
 AMainGate::AMainGate()
 {
 	Action = "";
-	////========================================== Create Sub-Component
-	//mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	////========================================== Change To Root-Component
-	//mesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
 	//========================================== Attack Sphere On Exit CallBack
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &AMainGate::OutProx);
@@ -31,8 +28,12 @@ AMainGate::AMainGate()
 	//========================================== Change To Root-Component
 	staticmesh2->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 
-//	staticmesh1->SetHiddenInGame(false);
-//	staticmesh2->SetHiddenInGame(true);
+
+	//========================================== Create Sub-Component
+	reachpoint = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PointToReach"));
+	//========================================== Change To Root-Component
+	reachpoint->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
 }
 
 //========================================== Initialize
@@ -52,13 +53,13 @@ void AMainGate::Tick(float DeltaTime)
 		timesinceLastOpen += DeltaTime;
 	}
 
-	if (timesinceLastOpen > 50)
+	if (timesinceLastOpen > 10)
 	{
 		triggered = true;
 		open = false;
 	}
 
-	if (timesinceLastOpen > 55)
+	if (timesinceLastOpen > 15)
 	{
 		triggered = false;
 		open = true;
@@ -78,9 +79,6 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 	//========================================== Return If Not Avatar
 	
 	Action = "Welcome!";
-
-
-	/*mesh->PlayAnimation(animation_open, false);*/
 
 	triggered = true;
 	open = false;
@@ -102,32 +100,36 @@ void AMainGate::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Othe
 void AMainGate::OutProx_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex)
 {
 	AAvatar* avatar = Cast<AAvatar>(OtherActor);
-	if (avatar == nullptr)
+	if (avatar != nullptr)
 	{
-
-		return;
-	}
-	//========================================== Avatar Exit From Sight Range
+		//========================================== Avatar Exit From Sight Range
 	
-	Action = "Bye!";
+		Action = "Bye!";
+
+		triggered = false;
+		open = true;
+
+		//========================================== Get Controller From Character
+		APlayerController* PController = GetWorld()->GetFirstPlayerController();
+		//========================================== Cast Controller As HUD
+		AGUI* gui = Cast<AGUI>(PController->GetHUD());
+		gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
+	
+		if (GateOpenAudio) {
+			UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
+			UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
+		}
 		
-
-	/*mesh->PlayAnimation(animation_close, false);*/
-
-	triggered = false;
-	open = true;
-
-	
-
-	//========================================== Get Controller From Character
-	APlayerController* PController = GetWorld()->GetFirstPlayerController();
-	//========================================== Cast Controller As HUD
-	AGUI* gui = Cast<AGUI>(PController->GetHUD());
-	gui->AddMessage(Message(Action, Button, FColor::Black, FColor::White, 5.f));
-	
-	if (GateOpenAudio) {
-		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, 400, 0));
-		UGameplayStatics::PlaySoundAtLocation(this, GateOpenAudio, GetActorLocation() + FVector(0, -400, 0));
 	}
+
+	AMonster* monster = Cast<AMonster>(OtherActor);
+
+	if (monster != nullptr)
+	{
+		monster->will_follow = true;
+		monster->needs_range = false;
+
+	}
+
 }
 

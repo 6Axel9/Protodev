@@ -94,6 +94,26 @@ void AMonster::Tick(float DeltaTime)
 
 		float new_speed = MovementSpeed * deceleration;
 
+		FVector _target = FVector(0);
+
+		//========================================== Get Gate Object from the World
+		for (TActorIterator<AMainGate> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+		{
+			if (!will_follow)
+			{
+				gate = *ActorItr;
+				_target = gate->reachpoint->GetComponentLocation();
+				if (gate->triggered)
+				{
+					needs_range = false;
+				}
+				else
+				{
+					needs_range = true;
+				}
+
+			}
+		}
 
 		//========================================== Rotate On Attack
 		if (isInAttackRange)
@@ -111,9 +131,9 @@ void AMonster::Tick(float DeltaTime)
 			
 		}
 		//========================================== Follow On Sight
-		else if (isInSightRange || !needs_range)
+		else if (isInSightRange || !needs_range || will_follow)
 		{
-
+			
 			toPlayerDirection.Normalize();
 			desired_direction = toPlayerDirection * (new_speed * DeltaTime);
 
@@ -128,21 +148,7 @@ void AMonster::Tick(float DeltaTime)
 		//========================================== Always aim for the gate otherwhise
 		if (!isInSightRange && needs_range)
 		{
-			FVector _target = FVector(0);
-
-			//========================================== Get Gate Object from the World
-			for (TActorIterator<AMainGate> ActorItr(GetWorld()); ActorItr; ++ActorItr)
-			{
-				gate = *ActorItr;
-				_target = gate->GetActorLocation();
-				if (gate->open)
-				{
-					needs_range = false;
-				}
-			}
-
 			FVector toGateDirection = _target - GetActorLocation();
-
 
 			isMoving = true;
 
@@ -169,7 +175,7 @@ void AMonster::Tick(float DeltaTime)
 
 		if (time_since_dead > 10 )
 		{
-			DropItem(LootDropped);
+			(FMath::RandRange(0, 1) == 0) ? DropItem(LootDropped) : DropItem(LootDropped2);
 			needs_death = false;
 			Destroy();
 		}

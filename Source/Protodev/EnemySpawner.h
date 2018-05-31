@@ -9,7 +9,7 @@
 /**
  * 
  */
-#define GROUP_SIZE 20
+#define GROUP_SIZE 10
 
 class AMonster;
 

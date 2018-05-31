@@ -597,7 +597,7 @@ void AAvatar::Pickup(APickupItem* Item)
 		CurrentObjectives.Add("FixTheSmallEscapeShip");
 		Missions.Add("FixTheSmallEscapeShip", 0);
 		Descriptions.Add("FixTheSmallEscapeShip", "Find a way to get the two smaller ships running");
-		Part.Add("FixTheSmallEscapeShip", "-> Use the Duct Tape once you on an escape ship, \n   it should fix their Flux Capacitor");
+		Part.Add("FixTheSmallEscapeShip", "-> Use the Duct Tape once you enter the Compound, \n   it should fix their Flux Capacitor");
 	}
 
 	//========================================== Actives ID Card Related Objectives
@@ -607,7 +607,7 @@ void AAvatar::Pickup(APickupItem* Item)
 		CurrentObjectives.Add("ResolveWarWithWords");
 		Missions.Add("ContactStarFleet"   , 0);
 		Missions.Add("ResolveWarWithWords", 0); 
-		Descriptions.Add("ContactStarFleet"	  , "Find a way to contact the StarFleet for a rescue party ");
+		Descriptions.Add("ContactStarFleet"	  , "Find a way to contact the StarFleet for a rescue party");
 		Descriptions.Add("ResolveWarWithWords", "Find a way to resolve the conflict without violence");
 		Part.Add("ContactStarFleet"	  , "-> Use the ID Card to access the Compound \n-> Locate the Battery Pack to power the rescue ship");
 		Part.Add("ResolveWarWithWords", "-> Use the ID Card to access the Compound \n-> Locate the Storage Drive");
@@ -644,7 +644,7 @@ void AAvatar::Pickup(APickupItem* Item)
 		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Looks like you already found the repair book, \n   just reach and clear the main ship from enemies... ";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the repair book, \n   just reach and clear the main ship from enemies...";
 		}
 	}
 	//========================================== Fix your ship and leave
@@ -660,7 +660,7 @@ void AAvatar::Pickup(APickupItem* Item)
 		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies... ";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies...";
 		}
 	}
 	//========================================== Item Already Picked

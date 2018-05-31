@@ -76,14 +76,13 @@ void ARadar::Tick(float DeltaTime)
 
 	if (surviveCount > 180)
 	{
-		WonGame = true;
+		AAvatar* avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		avatar->Part["ContactStarFleet"] = "Completed";
 	}
-
 }
 
 void ARadar::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherActor, UPrimitiveComponent * OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
 	AAvatar* avatar = Cast<AAvatar>(OtherActor);
 	if (avatar == nullptr)
 	{
@@ -92,11 +91,10 @@ void ARadar::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * OtherAc
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (avatar->Part.Num() > 0 && avatar->Part.Contains("ContactStarFleet"))
+		if (avatar->Part.Contains("ContactStarFleet"))
 		{
 			if (!triggered && avatar->Part["ContactStarFleet"] == "->Wait for the escape ship \n->Survive enemy waves")
 			{
-				Action = "The radar is now active and in search for a rescue party!";
 				skeletalmesh->PlayAnimation(animation, false);
 				triggered = true;
 			}

@@ -62,7 +62,8 @@ void ASpaceShip::Tick(float DeltaTime)
 
 	if (surviveCount > 360)
 	{
-		WonGame = true;
+		AAvatar* avatar = Cast<AAvatar>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		avatar->Part["FixYourShip&Leave"] = "Completed";
 	}
 
 }
@@ -78,16 +79,18 @@ void ASpaceShip::Prox_Implementation(UPrimitiveComponent * HitComp, AActor * Oth
 	//========================================== Return If Not Avatar
 	if (avatar != nullptr)
 	{
-		if (avatar->Part.Num() > 0 && avatar->Part.Contains("FixYourShip&Leave"))
+		if (avatar->Part.Contains("FixYourShip&Leave"))
 		{
-			if (!triggered)
+			if (avatar->Part["FixYourShip&Leave"] == "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies..." ||
+				avatar->Part["FixYourShip&Leave"] == "-> Looks like you already found the repair book, \n   just reach and clear the main ship from enemies...")
 			{
-				triggered = true;
+				if (!triggered)
+				{
+					triggered = true;
+				}
 			}
 		}
 	}
-
-
 	//========================================== Get Controller From Character
 	APlayerController* PController = GetWorld()->GetFirstPlayerController();
 	//========================================== Cast Controller As HUD
@@ -105,14 +108,15 @@ void ASpaceShip::WinPointProx_Implementation(UPrimitiveComponent * HitComp, AAct
 	}
 
 	//========================================== Return If Not Avatar
-	if (avatar->Backpack.Num() > 0)
+	if (avatar->Part.Contains("FixYourShip&Leave"))
 	{
-		if (avatar->Backpack.Contains("Screwdriver") && avatar->Backpack.Contains("Repair Book"))
+		if (avatar->Part["FixYourShip&Leave"] == "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies..." ||
+			avatar->Part["FixYourShip&Leave"] == "-> Looks like you already found the repair book, \n   just reach and clear the main ship from enemies...")
 		{
 			//========================================== Check If No Parts Available
 			if (hasSpawned)
 			{
-				WonGame = true;
+				avatar->Part["FixYourShip&Leave"] = "Completed";
 			}
 		}
 

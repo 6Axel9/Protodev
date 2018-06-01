@@ -7,7 +7,7 @@
 //========================================== Constructor
 AVirusVial::AVirusVial()
 {
-	Name = "Virus Vial";
+	Name = "Health Pack";
 
 }
 

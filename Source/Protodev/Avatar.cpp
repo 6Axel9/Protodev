@@ -592,6 +592,17 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Cast Controller As HUD
 	AGUI* gui = Cast<AGUI>(PController->GetHUD());
 
+	//========================================== Recover Health
+	if (Item->Name == "Health Pack")
+	{
+		HitPoints += 20.f;
+		if (HitPoints > MaxHitPoints) 
+		{ 
+			HitPoints = MaxHitPoints;
+		}
+		return;
+	}
+	//========================================== Activate Duct Tape Related Mission
 	if (Item->Name == "Duct Tape")
 	{
 		CurrentObjectives.Add("FixTheSmallEscapeShip");
@@ -599,7 +610,6 @@ void AAvatar::Pickup(APickupItem* Item)
 		Descriptions.Add("FixTheSmallEscapeShip", "Find a way to get the two smaller ships running");
 		Part.Add("FixTheSmallEscapeShip", "-> Use the Duct Tape once you enter the Compound, \n   it should fix their Flux Capacitor");
 	}
-
 	//========================================== Actives ID Card Related Objectives
 	if (Item->Name == "ID Card")
 	{
@@ -632,7 +642,7 @@ void AAvatar::Pickup(APickupItem* Item)
 	}
 
 	//========================================== Fix your ship and leave
-	if (Item->Name == "Screwdriver")
+	if (Item->Name == "Tool Box")
 	{
 		if (!Backpack.Contains("Repair Book"))
 		{
@@ -650,17 +660,17 @@ void AAvatar::Pickup(APickupItem* Item)
 	//========================================== Fix your ship and leave
 	if (Item->Name == "Repair Book")
 	{
-		if (!Backpack.Contains("Screwdriver"))
+		if (!Backpack.Contains("Tool Box"))
 		{
 			CurrentObjectives.Add("FixYourShip&Leave");
 			Missions.Add("FixYourShip&Leave", 0);
 			Descriptions.Add("FixYourShip&Leave", "Fix the crashed main ship and leave");
-			Part.Add("FixYourShip&Leave", "-> Find the screwdriver, \n   it is somewhere in this place... ");
+			Part.Add("FixYourShip&Leave", "-> Find the tool box, \n   it is somewhere in this place... ");
 		}
 		else
 		{
 			Missions["FixYourShip&Leave"]++;
-			Part["FixYourShip&Leave"] = "-> Looks like you already found the screwdriver, \n   just reach and clear the main ship from enemies...";
+			Part["FixYourShip&Leave"] = "-> Looks like you already found the tool box, \n   just reach and clear the main ship from enemies...";
 		}
 	}
 	//========================================== Item Already Picked
